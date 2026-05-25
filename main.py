@@ -222,7 +222,7 @@ def main():
     parser.add_argument("--write", type=str, help="AI를 통해 글을 작성할 주제 지정")
     parser.add_argument("--auto", action="store_true", help="주제 은행에서 기존 포스트 수 기준으로 자동 주제 선정하여 발행")
     parser.add_argument("--model", type=str, default="ollama", choices=["ollama", "gemini"], help="AI 모델 타입 (ollama 또는 gemini)")
-    parser.add_argument("--model-name", type=str, help="사용할 상세 모델명 (기본값: llama3.1:latest 또는 gemini-1.5-flash)")
+    parser.add_argument("--model-name", type=str, help="사용할 상세 모델명 (기본값: llama3.1:latest 또는 gemini-2.5-flash)")
     parser.add_argument("--api-key", type=str, help="Gemini API 키 (환경 변수 GEMINI_API_KEY 로도 가능)")
     parser.add_argument("--build-only", action="store_true", help="배포 없이 사이트 빌드만 수행")
     
@@ -231,9 +231,10 @@ def main():
     # 모델명 기본값 처리
     model_name = args.model_name
     if not model_name:
-        model_name = "llama3.1:latest" if args.model == "ollama" else "gemini-2.0-flash"
+        model_name = "llama3.1:latest" if args.model == "ollama" else "gemini-2.5-flash"
         
     api_key = args.api_key or os.environ.get("GEMINI_API_KEY")
+
     
     # 1단계: AI 글쓰기 수행 (지정한 주제 또는 자동 주제가 있을 경우)
     target_topic = None
