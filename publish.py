@@ -72,6 +72,7 @@ def main():
     run_git_command(["branch", "-M", "main"])
 
     # 4. 원격 저장소 설정 확인
+    success, remotes = run_git_command(["remote", "-v"])
     if "origin" not in remotes:
         repo_url = f"https://github.com/{CONFIG['github_username']}/{CONFIG['github_username']}.github.io.git"
         print(f"[OK] 원격 저장소(origin) 연결 설정 중: {repo_url}")
