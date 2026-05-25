@@ -140,7 +140,7 @@ category: "테크"
         # 방어적 코드: 복사 과정에서 혼입될 수 있는 앞뒤 공백 및 따옴표 제거
         api_key = api_key.strip().strip('"').strip("'").strip()
             
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
         data = {
             "contents": [{
                 "parts": [{"text": prompt}]
@@ -231,7 +231,7 @@ def main():
     # 모델명 기본값 처리
     model_name = args.model_name
     if not model_name:
-        model_name = "llama3.1:latest" if args.model == "ollama" else "gemini-1.5-flash"
+        model_name = "llama3.1:latest" if args.model == "ollama" else "gemini-2.0-flash"
         
     api_key = args.api_key or os.environ.get("GEMINI_API_KEY")
     
