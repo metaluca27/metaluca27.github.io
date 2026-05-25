@@ -1,0 +1,51 @@
+name: Auto Daily Publish
+
+on:
+  schedule:
+    # 매일 UTC 00:00 (한국 시간 오전 9시)에 자동으로 실행
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 깃허브 웹 UI에서 수동으로 실행 가능하게 설정
+
+permissions:
+  contents: write # 깃허브 액션이 코드를 커밋하고 푸시할 수 있는 권한 부여
+
+jobs:
+  publish-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 소스코드 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 히스토리 전체를 받아와 푸시 충돌 예방
+
+      # 2. 파이썬 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 3. 필요한 파이썬 라이브러리 설치
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install markdown
+
+      # 4. 자동 포스팅 생성 및 배포 스크립트 실행
+      - name: Run NABE Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # 제미니 API 키가 설정되어 있는지 사전에 체크
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "[ERROR] GEMINI_API_KEY가 설정되어 있지 않습니다."
+            exit 1
+          fi
+          
+          # Git 사용자 설정 (액션 러너가 푸시하기 위해 필수)
+          git config --global user.name "metaluca27"
+          git config --global user.email "metaluca27@users.noreply.github.com"
+          
+          # 제미니 플래시 모델을 활용해 자동으로 다음 글을 쓰고 빌드하여 푸시까지 처리
+          python main.py --auto --model gemini
