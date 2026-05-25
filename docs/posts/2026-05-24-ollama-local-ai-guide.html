@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>홈 - InfoLoomia</title>
-    <meta name="description" content="지식을 엮어 미래를 보다 - IT, 테크, AI 및 생산성 지식 정보">
+    <title>내 PC에서 실행하는 개인용 AI: Ollama로 로컬 LLM 손쉽게 구축하기 - InfoLoomia</title>
+    <meta name="description" content="OpenAI나 Google API 비용 걱정 없이, 내 로컬 컴퓨터에서 오픈소스 대형 언어 모델(Llama 3, Gemma 2)을 무료로 구동하는 Ollama 설치 및 활용 가이드입니다.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -435,72 +435,75 @@
 
     <!-- Hero / Headline (Only on Homepage) -->
     
-    <section class="hero">
-        <div class="container">
-            <h1>InfoLoomia</h1>
-            <p>지식을 엮어 미래를 보다 - IT, 테크, AI 및 생산성 지식 정보</p>
-        </div>
-    </section>
-    
 
     <!-- Main Content Layout -->
     <div class="container main-layout">
         
         <!-- Center Content -->
         <main>
-            <div class="post-list">
+            
+        <article class="post-detail">
+            <h1>내 PC에서 실행하는 개인용 AI: Ollama로 로컬 LLM 손쉽게 구축하기</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-05-24</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+            <div class="post-content">
+                <p>안녕하세요, IT 및 인공지능 지식을 깊이 있게 다루는 루카(Luka)입니다.</p>
+<p>챗GPT나 제미니처럼 강력한 클라우드 AI 서비스들이 일상화되었습니다. 하지만 기업 기밀 문서나 개인정보가 담긴 텍스트를 인공지능에 입력할 때, '데이터가 유출되어 학습에 쓰이면 어쩌지?' 하는 찝찝함이 드는 것은 어쩔 수 없습니다. 또한 API를 대량으로 활용하는 자동화 프로그램을 만들다 보면 눈덩이처럼 불어나는 사용 비용도 무시하지 못할 장벽입니다.</p>
+<p>이러한 한계를 완벽하게 극복할 수 있는 대안이 있습니다. 바로 <strong>내 컴퓨터의 자원(CPU/GPU)만을 활용하여 100% 오프라인으로 작동하는 로컬 대형 언어 모델(Local LLM)</strong>을 가동하는 것입니다. </p>
+<p>오늘은 이 로컬 LLM을 전 세계에서 가장 쉽고 세련되게 구동해 주는 강력한 도구, <strong>오라마(Ollama)</strong>의 활용법에 대해 파헤쳐 보겠습니다.</p>
+<hr />
+<h2>1. Ollama란 무엇이며 왜 필요한가?</h2>
+<p>과거에는 오픈소스 AI 모델(예: Llama, Mistral 등)을 로컬에 다운로드하여 돌리려면 복잡한 파이썬 가상 환경을 구축하고, 의존 라이브러리를 맞춰야 하며, GPU 메모리(VRAM) 용량 설정 등을 수동으로 다 맞춰야 하는 엄청난 난도가 요구되었습니다.</p>
+<p><strong>Ollama</strong>는 이러한 복잡한 프로세스를 마치 도커(Docker) 컨테이너 서비스처럼 커맨드라인 명령어 한 줄로 단순화한 프로그램입니다.</p>
+<h3>로컬 LLM의 장점:</h3>
+<ol>
+<li><strong>완벽한 데이터 프라이버시</strong>: 네트워크 케이블을 뽑아도 작동합니다. 내 데이터가 외부 서버로 한 바이트도 유출되지 않습니다.</li>
+<li><strong>이용 요금 0원</strong>: 아무리 긴 텍스트를 많이 생성해도 전기세를 제외하면 추가 비용이 0원입니다.</li>
+<li><strong>손쉬운 API 연동</strong>: Ollama는 자체적으로 로컬 웹 서버(<code>http://localhost:11434</code>)를 띄워 개발자가 파이썬이나 자바스크립트로 간단히 API 통신을 할 수 있게 열어줍니다.</li>
+</ol>
+<hr />
+<h2>2. Ollama 설치 및 기본 사용법</h2>
+<p>Ollama의 최대 강점은 설치가 정말 심플하다는 것입니다.</p>
+<h3>1단계: 다운로드 및 설치</h3>
+<p>Ollama 공식 웹사이트(<a href="https://ollama.com">ollama.com</a>)에 접속하여 자신의 운영체제(Windows, macOS, Linux)에 맞는 설치 프로그램을 다운로드한 뒤 실행합니다.</p>
+<h3>2단계: 터미널에서 AI 모델 실행</h3>
+<p>설치가 끝나면 터미널(Windows의 경우 PowerShell 또는 cmd)을 열고 구동하고 싶은 인공지능 오픈소스 모델을 호출합니다. </p>
+<p>가장 범용적이고 한국어 성능이 준수한 Meta의 최신 모델 <code>Llama 3.1 (8B)</code> 모델을 받아보겠습니다.</p>
+<pre class="codehilite"><code class="language-bash">ollama run llama3.1
+</code></pre>
 
-            <article class="post-card">
-                <div class="post-meta">
-                    <span><i class="fa-regular fa-calendar"></i> 2026-05-25</span>
-                    <span><i class="fa-regular fa-folder"></i> 테크</span>
-                </div>
-                <h2 class="post-title"><a href="/posts/2026-05-25-seo-writing-template.html">구글 상위 노출을 보장하는 SEO 최적화 테크 블로그 글쓰기 공식 5가지</a></h2>
-                <p class="post-excerpt">검색엔진 최적화(SEO)의 기본 원리를 이해하고 구글 봇이 좋아하는 구조적인 웹 포스팅 작성법과 핵심 템플릿을 정리했습니다.</p>
-                <a href="/posts/2026-05-25-seo-writing-template.html" class="read-more">더 읽어보기 <i class="fa-solid fa-arrow-right"></i></a>
-            </article>
-            
-            <article class="post-card">
-                <div class="post-meta">
-                    <span><i class="fa-regular fa-calendar"></i> 2026-05-24</span>
-                    <span><i class="fa-regular fa-folder"></i> 테크</span>
-                </div>
-                <h2 class="post-title"><a href="/posts/2026-05-24-ollama-local-ai-guide.html">내 PC에서 실행하는 개인용 AI: Ollama로 로컬 LLM 손쉽게 구축하기</a></h2>
-                <p class="post-excerpt">OpenAI나 Google API 비용 걱정 없이, 내 로컬 컴퓨터에서 오픈소스 대형 언어 모델(Llama 3, Gemma 2)을 무료로 구동하는 Ollama 설치 및 활용 가이드입니다.</p>
-                <a href="/posts/2026-05-24-ollama-local-ai-guide.html" class="read-more">더 읽어보기 <i class="fa-solid fa-arrow-right"></i></a>
-            </article>
-            
-            <article class="post-card">
-                <div class="post-meta">
-                    <span><i class="fa-regular fa-calendar"></i> 2026-05-23</span>
-                    <span><i class="fa-regular fa-folder"></i> 테크</span>
-                </div>
-                <h2 class="post-title"><a href="/posts/2026-05-23-productivity-tools.html">현대인의 디지털 정리법: 노션과 옵시디언을 결합한 하이브리드 메모 워크플로우</a></h2>
-                <p class="post-excerpt">협업과 프로젝트 관리에 특화된 노션(Notion)과 개인 지식 관리(PKM)의 최강자 옵시디언(Obsidian)을 조화롭게 함께 쓰는 스마트한 생산성 전략입니다.</p>
-                <a href="/posts/2026-05-23-productivity-tools.html" class="read-more">더 읽어보기 <i class="fa-solid fa-arrow-right"></i></a>
-            </article>
-            
-            <article class="post-card">
-                <div class="post-meta">
-                    <span><i class="fa-regular fa-calendar"></i> 2026-05-22</span>
-                    <span><i class="fa-regular fa-folder"></i> 테크</span>
-                </div>
-                <h2 class="post-title"><a href="/posts/2026-05-22-chatgpt-prompt-tips.html">ChatGPT 답변 퀄리티를 200% 끌어올리는 실전 프롬프트 엔지니어링 꿀팁</a></h2>
-                <p class="post-excerpt">원하는 답변을 정확하게 얻기 위한 ChatGPT 프롬프트 작성 공식과 팁, 역할 부여(Role-Playing) 활용법을 알아봅니다.</p>
-                <a href="/posts/2026-05-22-chatgpt-prompt-tips.html" class="read-more">더 읽어보기 <i class="fa-solid fa-arrow-right"></i></a>
-            </article>
-            
-            <article class="post-card">
-                <div class="post-meta">
-                    <span><i class="fa-regular fa-calendar"></i> 2026-05-21</span>
-                    <span><i class="fa-regular fa-folder"></i> 테크</span>
-                </div>
-                <h2 class="post-title"><a href="/posts/2026-05-21-ai-blog-automation-guide.html">AI 시대에 100% 무료로 블로그 자동화 시스템 구축하는 방법</a></h2>
-                <p class="post-excerpt">서버 비용 부담 없이 깃허브 페이지와 인공지능을 결합하여 구글 애드센스 수익형 블로그를 자동으로 운영하는 아키텍처 가이드입니다.</p>
-                <a href="/posts/2026-05-21-ai-blog-automation-guide.html" class="read-more">더 읽어보기 <i class="fa-solid fa-arrow-right"></i></a>
-            </article>
+<p>이 명령어를 입력하면 모델 가중치 파일(약 4.7GB)이 자동으로 다운로드되며, 다운로드가 끝나면 터미널 안에서 곧바로 AI와 대화(Chat)를 나눌 수 있는 콘솔 창이 나타납니다.</p>
+<hr />
+<h2>3. 대표적인 추천 로컬 AI 모델 목록</h2>
+<p>내 컴퓨터 사양(특히 그래픽 카드의 VRAM)에 맞춰 모델을 선택해야 합니다. 일반적인 노트북이나 PC 환경(RAM 16GB 내외, VRAM 6~8GB)에서 쓰기 좋은 대표 모델들입니다.</p>
+<ul>
+<li><strong>Llama 3.1 (8B)</strong>: 메타에서 배포한 현재 가장 압도적인 생태계를 구축한 80억 매개변수 모델입니다. 번역 및 코딩, 일반 상식 능력에서 밸런스가 매우 훌륭합니다.</li>
+<li><strong>Gemma 2 (9B / 2B)</strong>: 구글이 공개한 고성능 경량 오픈 모델입니다. 특히 20억 매개변수 짜리 <code>gemma2:2b</code> 버전은 VRAM이 거의 없는 저사양 노트북에서도 쾌적한 속도로 실행되면서도 뛰어난 한국어 요약 성능을 자랑합니다.</li>
+<li><strong>Phi-3 (3.8B)</strong>: 마이크로소프트가 모바일 기기 구동을 겨냥해 만든 초소형 모델로, 가볍지만 영어 기반 논리력과 코딩 완성도가 매우 높습니다.</li>
+</ul>
+<hr />
+<h2>4. 로컬 AI 활용도 200% 높이기: Web UI 연동</h2>
+<p>터미널의 검은 화면에서 텍스트로만 대화하는 것이 답답하다면, ChatGPT와 똑같이 아름다운 웹 브라우저 인터페이스를 제공하는 오픈소스 프론트엔드 도구와 연동할 수 있습니다.</p>
+<p>가장 널리 쓰이는 것은 <strong>Open WebUI</strong>입니다. 도커가 설치되어 있다면 아래 명령어 한 줄로 ChatGPT 못지않은 개인용 인공지능 채팅 사이트를 즉시 띄울 수 있습니다.</p>
+<pre class="codehilite"><code class="language-bash">docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+</code></pre>
+
+<p>웹 브라우저에서 <code>localhost:3000</code>에 접속하면, 로컬에서 다운로드한 다양한 LLM 모델들을 목록에서 편하게 골라가며 대화를 나누고, PDF 파일을 업로드해 요약하는 RAG 기능까지 무료로 쓸 수 있게 됩니다.</p>
+<hr />
+<h2>마치며</h2>
+<p>불과 몇 년 전만 해도 초대형 인공지능을 개인 컴퓨터에서 구동하는 것은 불가능에 가까운 상상이었습니다. 하지만 이제 오픈소스 진영의 눈부신 압축 알고리즘과 Ollama 같은 우수한 래퍼 도구들 덕분에 내 컴퓨터 안에 강력한 AI 비서를 키우는 시대가 열렸습니다.</p>
+<p>클라우드 비용 걱정 없이 인공지능 프로그램을 마음껏 개발하고 실험해 보고 싶다면, 오늘 당장 Ollama를 설치하여 나만의 로컬 AI 환경을 구축해 보세요! </p>
+<p>다음 시간에도 실용적인 인공지능 자동화 팁으로 찾아뵙겠습니다. 감사합니다.</p>
             </div>
-
+            
+        </article>
+        
         </main>
         
         <!-- Right Sidebar -->
