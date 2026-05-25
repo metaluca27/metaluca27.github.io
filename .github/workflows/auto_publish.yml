@@ -35,10 +35,12 @@ jobs:
       # 4. 자동 포스팅 생성 및 사이트 빌드 (배포는 건너뜀)
       - name: Run NABE Engine (Build Only)
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # 대장님이 Secrets(비밀값) 혹은 Variables(환경변수) 중 어느 탭에 등록했든 인식하도록 Fall-back 처리
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || vars.GEMINI_API_KEY }}
         run: |
           if [ -z "$GEMINI_API_KEY" ]; then
             echo "[ERROR] GEMINI_API_KEY가 설정되어 있지 않습니다."
+            echo "깃허브 설정의 Secrets에 GEMINI_API_KEY 이름으로 등록했는지 확인해 주세요."
             exit 1
           fi
           
