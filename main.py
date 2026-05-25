@@ -137,6 +137,9 @@ category: "테크"
             print("[ERROR] 에러: Gemini API 키가 제공되지 않았습니다.")
             return None
             
+        # 방어적 코드: 복사 과정에서 혼입될 수 있는 앞뒤 공백 및 따옴표 제거
+        api_key = api_key.strip().strip('"').strip("'").strip()
+            
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
         data = {
             "contents": [{
@@ -167,7 +170,15 @@ category: "테크"
                 return text.strip()
         except Exception as e:
             print(f"[ERROR] Gemini API 호출 실패: {e}")
+            # 구글 서버가 돌려준 자세한 에러 바디 파싱 시도 및 출력
+            if hasattr(e, "read"):
+                try:
+                    error_body = e.read().decode("utf-8")
+                    print(f"[ERROR] Gemini API 응답 상세: {error_body}")
+                except Exception:
+                    pass
             return None
+
 
 def create_post_file(content):
     """생성된 글을 마크다운 파일로 저장"""
