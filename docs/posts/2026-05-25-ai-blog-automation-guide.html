@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 시대에 100% 무료로 블로그 자동화 시스템 구축하는 방법 - InfoLoomia</title>
+    <meta name="description" content="서버 비용 부담 없이 깃허브 페이지와 인공지능을 결합하여 구글 애드센스 수익형 블로그를 자동으로 운영하는 아키텍처 가이드입니다.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>AI 시대에 100% 무료로 블로그 자동화 시스템 구축하는 방법</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-05-25</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+            <div class="post-content">
+                <p>안녕하세요, IT와 테크 지식을 공부하고 기록하는 루카(Luka)입니다. </p>
+<p>최근 인공지능(AI) 기술의 비약적인 발전으로 개인이 1인 미디어를 운영하고 자동화하는 진입 장벽이 엄청나게 낮아졌습니다. 과거에는 블로그를 자동으로 운영하려면 비싼 워드프레스 호스팅 서버 요금을 내거나 복잡한 서버 프로그래밍이 필수적이었습니다. </p>
+<p>하지만 오늘 소개해 드릴 <strong>정적 사이트 빌더(Static Site Generator)와 깃허브 페이지(GitHub Pages) 조합</strong>을 사용하면 <strong>평생 서버 비용 0원</strong>으로 구글 애드센스 승인을 유지하고 자율형 블로그를 구축할 수 있습니다. </p>
+<p>어떻게 이것이 가능한지, 그 구체적인 원리와 장점들을 하나씩 살펴보겠습니다.</p>
+<hr />
+<h2>1. 왜 워드프레스 대신 깃허브 페이지일까?</h2>
+<p>보통 수익형 블로그라고 하면 대부분 워드프레스(WordPress)를 떠올립니다. 워드프레스는 매우 훌륭한 도구이지만, 치명적인 단점이 있습니다. 바로 <strong>유지 비용</strong>과 <strong>서버 관리 리소스</strong>입니다.</p>
+<ul>
+<li><strong>유지 비용 부담</strong>: 클라우드웨이즈(Cloudways)나 다른 호스팅을 사용할 경우 매달 최소 $10에서 $20(약 1만 5천 원 ~ 3만 원) 상당의 비용이 지속적으로 빠져나갑니다. 만약 블로그 관리에 잠시 소홀해져 포스팅을 멈추더라도 서버 비용은 끊임없이 청구됩니다.</li>
+<li><strong>해킹 및 관리 리소스</strong>: 워드프레스는 전 세계 웹사이트의 상당수를 차지하는 만큼 해커들의 타겟이 되기 쉽고, 주기적인 플러그인 업데이트와 보안 관리를 수동으로 해주어야 합니다.</li>
+</ul>
+<p>반면, <strong>깃허브 페이지(GitHub Pages)</strong>는 전 세계 최대 코드 저장소인 GitHub에서 무료로 제공하는 웹 호스팅 서비스입니다. 
+- 데이터베이스를 사용하지 않고 오직 <strong>HTML, CSS, JS 파일(정적 파일)</strong>로만 사이트를 구동하기 때문에 해킹 위험이 원천적으로 차단됩니다.
+- 구글 애드센스 코드를 한 번 심어두면 트래픽이 아무리 폭증해도 <strong>서버가 다운되지 않으며, 호스팅 비용은 완벽하게 평생 0원</strong>입니다.</p>
+<hr />
+<h2>2. 파이썬과 인공지능을 활용한 자동화 메커니즘</h2>
+<p>"깃허브 블로그는 개발자만 쓸 수 있고, 마크다운(Markdown) 문법을 알아야 해서 쓰기 어렵지 않나요?"라는 질문이 가장 많습니다.</p>
+<p>이를 해결하기 위해 우리는 파이썬 기반의 <strong>NABE(Nova Autonomous Blog Engine)</strong> 아키텍처를 도입했습니다. 전체 작동 프로세스는 매우 심플합니다.</p>
+<ol>
+<li><strong>AI의 콘텐츠 생성</strong>: 로컬 AI 엔진(Ollama의 <code>Llama 3.1</code> 또는 <code>Gemma 2</code>)이 지정된 키워드나 최신 트렌드를 분석하여 구글 검색 최적화(SEO) 규격에 맞는 고품질 마크다운 형식의 포스팅을 자동으로 작성합니다.</li>
+<li><strong>파이썬 정적 빌드</strong>: 파이썬 빌더(<code>build.py</code>)가 작성된 마크다운 포스팅들을 읽어 아름다운 반응형 다크모드 HTML 페이지로 순식간에 컴파일합니다. 이때 구글 애드센스용 <code>ads.txt</code>와 검색엔진 봇이 긁어갈 <code>sitemap.xml</code>도 함께 자동 갱신됩니다.</li>
+<li><strong>깃 자동 배포</strong>: 컴파일이 끝나면 배포 스크립트(<code>publish.py</code>)가 깃허브 서버로 <code>Push</code> 명령을 내려 1초 만에 전 세계로 글을 송출합니다.</li>
+</ol>
+<p>블로그 주인인 대장님(사용자)은 어려운 개발 명령어를 칠 필요 없이, 오직 인공지능 비서에게 <strong>"오늘 테크 트렌드 글 하나 써서 올려줘"</strong>라고 말 한마디만 던지면 전 과정이 논스톱으로 처리됩니다.</p>
+<hr />
+<h2>3. 수익성 극대화를 위한 애드센스 연동 전략</h2>
+<p>정적 블로그에서 구글 애드센스를 운영할 때 꼭 챙겨야 할 3가지 팁입니다.</p>
+<h3>Ads.txt 파일 관리</h3>
+<p>구글 애드센스에서 가장 빈번하게 발생하는 오류 중 하나가 <code>Ads.txt</code> 소유권 누락입니다. 저희 NABE 빌더는 빌드할 때마다 자동으로 도메인 최상위 루트에 <code>ads.txt</code> 파일을 생성해 주므로 소유권 분쟁 걱정 없이 안전하게 수익을 정산받을 수 있습니다.</p>
+<h3>사이트맵 자동 제출</h3>
+<p>새로운 글이 발행되면 <code>sitemap.xml</code>이 실시간으로 수정되어 구글 서치 콘솔(Search Console)에 업데이트 정보를 전송합니다. 이를 통해 검색 노출 반영 속도가 대폭 향상됩니다.</p>
+<hr />
+<h2>마치며</h2>
+<p>블로그 운영의 핵심은 <strong>꾸준함</strong>입니다. 하지만 바쁜 본업 속에서 매일 글을 쓰고 사이트를 관리하는 것은 여간 지치는 일이 아닙니다. </p>
+<p>서버 비용 걱정이 없는 무료 깃허브 블로그에 인공지능 자동화라는 강력한 날개를 달아보세요. 더 적은 에너지로 더 큰 패시브 인컴(Passive Income) 파이프라인을 구축할 수 있을 것입니다.</p>
+<p>다음 포스팅에서는 실제로 구글 서치 콘솔에 등록하고 트래픽을 모니터링하는 상세 가이드를 제공해 드리겠습니다. 감사합니다!</p>
+            </div>
+            
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-05-25-ai-blog-automation-guide.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">AI 시대에 100% 무료로 블로그 자동화 시스템 구축하는 방법</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>

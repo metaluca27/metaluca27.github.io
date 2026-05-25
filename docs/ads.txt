@@ -1,0 +1,2 @@
+# Google AdSense ads.txt 파일
+# 승인 후 ca-pub 번호가 입력되면 자동으로 활성화됩니다.
