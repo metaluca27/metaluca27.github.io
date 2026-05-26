@@ -8,4 +8,6 @@ CONFIG = {
     "author": "Luka",
     "adsense_client": "ca-pub-3073744952767165",  # 애드센스 승인 완료 후 ca-pub-XXXXXXXXXXXXXXXX 번호를 입력하세요
 }
+# Force rebuild trigger
+
 
