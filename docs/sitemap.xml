@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-05-26T21:19:15+09:00</lastmod>
+        <lastmod>2026-05-27T03:59:20+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
@@ -45,6 +45,12 @@
     <url>
         <loc>https://infoloomia.com/posts/2026-05-26-파이썬-비동기-프로그래밍-마스터하기-Asyncio-기초부터-실전-최적화까지.html</loc>
         <lastmod>2024-10-27T00:00:00+09:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/posts/2026-05-27-브라우저-렌더링-마스터하기-LCP-점수-수직-상승시키는-웹-성능-최적화-가이드.html</loc>
+        <lastmod>2024-04-23T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
