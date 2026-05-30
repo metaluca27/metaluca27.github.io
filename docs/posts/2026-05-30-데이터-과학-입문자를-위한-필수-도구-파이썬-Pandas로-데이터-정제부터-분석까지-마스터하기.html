@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데이터 과학 입문자를 위한 필수 도구: 파이썬 Pandas로 데이터 정제부터 분석까지 마스터하기 - InfoLoomia</title>
+    <meta name="description" content="데이터 분석의 핵심 라이브러리, Pandas! 이 글에서 Pandas를 활용한 효율적인 데이터 정제 기법과 기초 분석 방법을 루카와 함께 실전 예제로 마스터하고, 데이터 전문가로 성장하는 첫걸음을 내딛으세요.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>데이터 과학 입문자를 위한 필수 도구: 파이썬 Pandas로 데이터 정제부터 분석까지 마스터하기</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2023-10-27</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, IT와 테크 지식을 공부하고 기록하는 루카(Luka)입니다.</p>
+<h2>데이터, 그 무한한 가능성의 시작: 왜 Pandas인가?</h2>
+<p>현대 사회는 데이터의 홍수 속에 살고 있습니다. 기업의 비즈니스 의사결정부터 과학 연구, 개인의 일상에 이르기까지, 데이터는 이제 선택이 아닌 필수가 되었죠. 하지만 '날것'의 데이터는 그 자체로 가치를 가지기 어렵습니다. 복잡하고, 누락되어 있으며, 때로는 오류를 포함하기도 합니다. 이러한 데이터를 가공하고, 정제하며, 의미 있는 정보로 탈바꿈시키는 과정이 바로 '데이터 분석'이며, 이때 가장 강력하고 대중적으로 사용되는 도구가 바로 파이썬의 <code>pandas</code> 라이브러리입니다.</p>
+<p><code>pandas</code>는 파이썬에서 정형 데이터(테이블 형태의 데이터)를 다루는 데 최적화된 도구입니다. 엑셀 스프레드시트나 SQL 데이터베이스처럼 행과 열로 이루어진 데이터를 효율적으로 처리할 수 있게 해주죠. 이 글에서는 <code>pandas</code>를 처음 접하는 분들이나 기본적인 사용법을 다시 한번 다지고 싶은 분들을 위해, 데이터 정제(Data Cleaning)부터 기초적인 데이터 분석(Basic Data Analysis)까지, 핵심적인 내용들을 실질적인 예시와 함께 쉽고 깊이 있게 다뤄보겠습니다. 저와 함께 데이터 전문가로 성장하는 첫걸음을 내딛어 볼까요?</p>
+<h2>1. Pandas, 데이터 과학의 심장 (기본 개념 이해하기)</h2>
+<p><code>pandas</code>는 "Panel Data"에서 유래된 이름으로, 시리즈(Series)와 데이터프레임(DataFrame)이라는 두 가지 핵심 데이터 구조를 기반으로 합니다.</p>
+<h3>1.1. Series: 1차원 데이터의 표현</h3>
+<p><code>Series</code>는 엑셀의 한 열과 같은 1차원 배열 형태의 데이터입니다. 각 값에 인덱스(index)를 부여할 수 있어 특정 값을 빠르게 찾거나 조작할 수 있습니다.</p>
+<pre class="codehilite"><code class="language-python">import pandas as pd
+
+# Series 생성 예시
+s = pd.Series([10, 20, 30, 40, 50], index=['a', 'b', 'c', 'd', 'e'])
+print(s)
+</code></pre>
+
+<h3>1.2. DataFrame: 2차원 테이블 데이터의 핵심</h3>
+<p><code>DataFrame</code>은 <code>pandas</code>의 핵심이자 가장 많이 사용되는 구조로, 여러 개의 <code>Series</code>가 모여 행과 열을 이루는 2차원 테이블 형태의 데이터입니다. 마치 관계형 데이터베이스의 테이블이나 엑셀 시트와 같다고 생각하시면 됩니다.</p>
+<pre class="codehilite"><code class="language-python"># DataFrame 생성 예시
+data = {
+    '이름': ['김철수', '박영희', '이민지', '최현우'],
+    '나이': [25, 30, 22, 28],
+    '도시': ['서울', '부산', '제주', '서울']
+}
+df = pd.DataFrame(data)
+print(df)
+</code></pre>
+
+<h2>2. 데이터 불러오기: 분석의 첫 단추</h2>
+<p><code>pandas</code>의 가장 기본적인 기능 중 하나는 다양한 형식의 데이터를 불러오는 것입니다. CSV, Excel, SQL 등 대부분의 정형 데이터를 지원합니다.</p>
+<pre class="codehilite"><code class="language-python"># CSV 파일 불러오기 예시
+# df_sales = pd.read_csv('sales_data.csv')
+
+# Excel 파일 불러오기 예시
+# df_excel = pd.read_excel('customer_data.xlsx')
+
+# 예시를 위해 샘플 데이터프레임을 계속 사용하겠습니다.
+df_sample = pd.DataFrame({
+    '상품명': ['A', 'B', 'C', 'A', 'D', None, 'C', 'B'],
+    '가격': [1000, 2000, 1500, 1000, 3000, 2500, 1500, 2000],
+    '판매량': [10, 5, 8, 12, 3, 7, 9, None],
+    '판매일': ['2023-10-01', '2023-10-01', '2023-10-02', '2023-10-03', '2023-10-03', '2023-10-04', '2023-10-05', '2023-10-05']
+})
+print(&quot;원본 DataFrame:&quot;)
+print(df_sample)
+</code></pre>
+
+<p>데이터를 불러온 후에는 <code>df.head()</code>, <code>df.info()</code>, <code>df.describe()</code> 등을 통해 데이터의 전반적인 구조와 통계 정보를 빠르게 파악할 수 있습니다.</p>
+<h2>3. 지저분한 데이터, 깨끗하게! 데이터 정제 A to Z</h2>
+<p>실제 데이터는 대부분 지저분합니다. 결측치(missing values), 중복값(duplicates), 잘못된 데이터 타입 등으로 가득하죠. <code>pandas</code>는 이러한 문제를 해결하는 강력한 기능을 제공합니다.</p>
+<h3>3.1. 결측치(Missing Values) 처리</h3>
+<p>결측치는 데이터 분석을 방해하는 주요 요소입니다. <code>pandas</code>를 이용해 결측치를 확인하고 처리하는 방법을 알아봅시다.</p>
+<h4>3.1.1. 결측치 확인</h4>
+<p><code>isnull()</code> 또는 <code>isna()</code> 메서드를 사용하면 각 셀이 결측치인지 아닌지를 True/False로 반환합니다. <code>sum()</code>과 함께 사용하면 각 열의 결측치 개수를 쉽게 파악할 수 있습니다.</p>
+<pre class="codehilite"><code class="language-python">print(&quot;\n각 열의 결측치 개수:&quot;)
+print(df_sample.isnull().sum())
+</code></pre>
+
+<h4>3.1.2. 결측치 제거 (<code>dropna()</code>)</h4>
+<p>가장 간단한 방법은 결측치가 있는 행이나 열을 제거하는 것입니다. <code>dropna()</code> 메서드를 사용하며, <code>axis</code> 인자로 행(<code>axis=0</code>, 기본값) 또는 열(<code>axis=1</code>)을 지정할 수 있습니다. <code>how='any'</code> (하나라도 결측치면 제거) 또는 <code>how='all'</code> (모든 값이 결측치일 때만 제거)도 중요합니다.</p>
+<pre class="codehilite"><code class="language-python"># 결측치가 있는 행 제거
+df_cleaned_row = df_sample.dropna(axis=0)
+print(&quot;\n결측치 행 제거 후:&quot;)
+print(df_cleaned_row)
+
+# '상품명' 열에 결측치가 있어도 해당 열을 모두 제거하려면 (주의! 데이터 손실 큼)
+# df_cleaned_col = df_sample.dropna(axis=1)
+# print(&quot;\n결측치 열 제거 후 (이 예시에서는 상품명 열만 남을 것):&quot;)
+# print(df_cleaned_col)
+</code></pre>
+
+<p><strong>팁:</strong> <code>dropna()</code>는 원본 데이터를 변경하지 않고 새로운 DataFrame을 반환합니다. 원본을 변경하려면 <code>inplace=True</code> 인자를 사용하세요.</p>
+<h4>3.1.3. 결측치 채우기 (<code>fillna()</code>)</h4>
+<p>결측치를 제거하는 것이 항상 좋은 방법은 아닙니다. 데이터 손실이 크거나 특정 값을 대체해야 할 때는 <code>fillna()</code>를 사용합니다.
+*   <strong>특정 값으로 채우기</strong>: 0, 평균, 중앙값 등.
+*   <strong>이전/이후 값으로 채우기</strong>: <code>method='ffill'</code> (forward fill, 이전 값으로 채움), <code>method='bfill'</code> (backward fill, 이후 값으로 채움).</p>
+<pre class="codehilite"><code class="language-python"># '판매량' 열의 결측치를 해당 열의 중앙값으로 채우기
+median_sales = df_sample['판매량'].median()
+df_filled_median = df_sample.fillna({'판매량': median_sales})
+print(f&quot;\n'판매량' 결측치를 중앙값({median_sales})으로 채운 후:&quot;)
+print(df_filled_median)
+
+# '상품명' 열의 None을 '알 수 없음'으로 채우기
+df_filled_str = df_sample.fillna({'상품명': '알 수 없음'})
+print(&quot;\n'상품명' 결측치를 '알 수 없음'으로 채운 후:&quot;)
+print(df_filled_str)
+</code></pre>
+
+<h3>3.2. 중복 데이터(Duplicate Data) 처리</h3>
+<p>동일한 행이 여러 번 나타나는 중복 데이터는 분석 결과를 왜곡할 수 있습니다.</p>
+<h4>3.2.1. 중복 데이터 확인 (<code>duplicated()</code>)</h4>
+<p><code>duplicated()</code> 메서드는 각 행이 이전 행과 중복되는지 여부를 True/False로 반환합니다. <code>sum()</code>을 붙여 중복 행의 개수를 확인할 수 있습니다.</p>
+<pre class="codehilite"><code class="language-python">print(&quot;\n중복 행 확인:&quot;)
+print(df_sample.duplicated())
+print(f&quot;총 중복 행 개수: {df_sample.duplicated().sum()}&quot;)
+</code></pre>
+
+<h4>3.2.2. 중복 데이터 제거 (<code>drop_duplicates()</code>)</h4>
+<p><code>drop_duplicates()</code> 메서드는 중복 행을 제거합니다. <code>keep</code> 인자를 통해 어떤 중복을 남길지 설정할 수 있습니다 (<code>'first'</code>, <code>'last'</code>, <code>False</code>).</p>
+<pre class="codehilite"><code class="language-python"># 중복 행 제거 (기본값: 첫 번째 값만 남기고 나머지는 제거)
+df_no_duplicates = df_sample.drop_duplicates()
+print(&quot;\n중복 행 제거 후:&quot;)
+print(df_no_duplicates)
+
+# 특정 열 기준으로 중복 제거 (예: '상품명'과 '가격'이 같으면 중복으로 간주)
+df_unique_products = df_sample.drop_duplicates(subset=['상품명', '가격'])
+print(&quot;\n'상품명'과 '가격' 기준으로 중복 제거 후:&quot;)
+print(df_unique_products)
+</code></pre>
+
+<h3>3.3. 데이터 타입(Data Type) 변환</h3>
+<p>데이터가 올바른 타입으로 저장되어 있어야 정확한 연산과 분석이 가능합니다. <code>df.dtypes</code>로 현재 타입을 확인하고, <code>astype()</code>으로 변환합니다.</p>
+<pre class="codehilite"><code class="language-python">print(&quot;\n원본 데이터 타입:&quot;)
+print(df_sample.dtypes)
+
+# '판매일' 열을 datetime 타입으로 변환
+df_sample['판매일'] = pd.to_datetime(df_sample['판매일'])
+
+# '가격' 열이 만약 문자열로 되어있었다면 숫자로 변환
+# df_sample['가격'] = df_sample['가격'].astype(int)
+
+print(&quot;\n데이터 타입 변환 후:&quot;)
+print(df_sample.dtypes)
+</code></pre>
+
+<h2>4. 데이터, 이제 분석하자! Pandas로 하는 기초 분석</h2>
+<p>깨끗하게 정제된 데이터를 가지고 기본적인 분석을 시작해봅시다.</p>
+<h3>4.1. 기술 통계(Descriptive Statistics) 확인</h3>
+<p><code>describe()</code> 메서드는 숫자형 데이터 열에 대한 기본적인 통계 요약(개수, 평균, 표준편차, 최솟값, 최댓값, 사분위수 등)을 제공합니다.</p>
+<pre class="codehilite"><code class="language-python">print(&quot;\n기술 통계 요약:&quot;)
+print(df_sample.describe())
+
+# 개별 통계 값 확인
+print(f&quot;\n상품 가격 평균: {df_sample['가격'].mean()}원&quot;)
+print(f&quot;최대 판매량: {df_sample['판매량'].max()}개&quot;)
+</code></pre>
+
+<h3>4.2. 데이터 필터링 및 선택</h3>
+<p>원하는 조건에 맞는 데이터만 추출하는 것은 분석의 기본입니다. <code>loc</code> (라벨 기반), <code>iloc</code> (정수 위치 기반), 그리고 불리언 인덱싱을 활용할 수 있습니다.</p>
+<pre class="codehilite"><code class="language-python"># 가격이 2000원 이상인 상품만 선택
+df_high_price = df_sample[df_sample['가격'] &gt;= 2000]
+print(&quot;\n가격이 2000원 이상인 상품:&quot;)
+print(df_high_price)
+
+# 특정 '상품명'만 선택
+df_product_a = df_sample[df_sample['상품명'] == 'A']
+print(&quot;\n상품 A의 판매 내역:&quot;)
+print(df_product_a)
+
+# 여러 조건 필터링 (예: 가격이 1500원 이상이고 판매량이 10개 미만)
+df_filtered = df_sample[(df_sample['가격'] &gt;= 1500) &amp; (df_sample['판매량'] &lt; 10)]
+print(&quot;\n가격 1500원 이상 &amp; 판매량 10개 미만 상품:&quot;)
+print(df_filtered)
+</code></pre>
+
+<h3>4.3. 데이터 그룹화 (<code>groupby()</code>)</h3>
+<p><code>groupby()</code>는 특정 열의 값들을 기준으로 데이터를 그룹으로 묶고, 각 그룹에 대한 집계 함수(평균, 합계, 개수 등)를 적용할 때 사용됩니다. 이는 데이터에서 패턴이나 인사이트를 발견하는 데 매우 유용합니다.</p>
+<pre class="codehilite"><code class="language-python"># 상품명별 평균 가격 및 총 판매량 계산
+df_grouped = df_sample.groupby('상품명').agg(
+    평균_가격=('가격', 'mean'),
+    총_판매량=('판매량', 'sum')
+)
+print(&quot;\n상품명별 평균 가격 및 총 판매량:&quot;)
+print(df_grouped)
+
+# 판매일별 총 판매량 계산
+df_daily_sales = df_sample.groupby('판매일')['판매량'].sum().reset_index()
+print(&quot;\n판매일별 총 판매량:&quot;)
+print(df_daily_sales)
+</code></pre>
+
+<h3>4.4. 데이터 정렬 (<code>sort_values()</code>)</h3>
+<p>데이터를 특정 열의 값을 기준으로 오름차순 또는 내림차순으로 정렬하여 추세나 순위를 파악할 수 있습니다.</p>
+<pre class="codehilite"><code class="language-python"># 가격을 기준으로 내림차순 정렬
+df_sorted_price = df_sample.sort_values(by='가격', ascending=False)
+print(&quot;\n가격을 기준으로 내림차순 정렬:&quot;)
+print(df_sorted_price)
+
+# 상품명 오름차순, 판매량 내림차순으로 다중 정렬
+df_sorted_multi = df_sample.sort_values(by=['상품명', '판매량'], ascending=[True, False])
+print(&quot;\n상품명 오름차순, 판매량 내림차순 다중 정렬:&quot;)
+print(df_sorted_multi)
+</code></pre>
+
+<h2>5. Pandas, 실전 활용을 위한 팁</h2>
+<ul>
+<li><strong>메서드 체이닝(Method Chaining)</strong>: 여러 <code>pandas</code> 작업을 한 줄로 연결하여 코드를 더 간결하고 읽기 쉽게 만들 수 있습니다.
+    <code>python
+    # 예시: 결측치 채우고, 중복 제거 후, 특정 조건으로 필터링
+    df_result = df_sample.fillna({'판매량': 0}).drop_duplicates().loc[lambda x: x['가격'] &gt; 1000]
+    # print(df_result)</code></li>
+<li><strong>원본 데이터 보존</strong>: 중요한 분석 단계에서는 <code>df = df.copy()</code>를 사용하여 원본 데이터를 복사한 후 작업하는 습관을 들이는 것이 좋습니다.</li>
+<li><strong>시각화 연동</strong>: <code>pandas</code> DataFrame은 <code>matplotlib</code>나 <code>seaborn</code> 같은 시각화 라이브러리와 쉽게 연동되어 데이터를 그래프로 표현하는 데 용이합니다.</li>
+</ul>
+<h2>마치며: 데이터와 소통하는 즐거움, Pandas와 함께!</h2>
+<p>지금까지 파이썬 <code>pandas</code> 라이브러리를 활용한 데이터 정제 및 기초 분석의 핵심적인 내용들을 살펴보았습니다. 데이터를 불러와 결측치와 중복값을 처리하고, 데이터 타입을 변환하며, 나아가 기술 통계와 필터링, 그룹화, 정렬을 통해 데이터 속 숨겨진 의미를 찾아내는 과정은 데이터 분석의 기본이자 가장 중요한 단계입니다.</p>
+<p><code>pandas</code>는 단순히 데이터를 조작하는 도구가 아니라, 데이터를 이해하고, 데이터를 통해 질문하고, 데이터로부터 통찰을 얻는 '데이터와 소통하는 언어'라고 생각합니다. 오늘 배운 내용을 바탕으로 다양한 실제 데이터를 직접 다루면서 자신만의 분석 노하우를 쌓아가시길 바랍니다.</p>
+<p>데이터의 세계는 무궁무진하며, <code>pandas</code>와 함께라면 여러분도 훌륭한 데이터 탐험가가 될 수 있을 겁니다! 궁금한 점이 있다면 언제든지 댓글로 질문해 주세요. 다음번에는 더 흥미로운 IT 및 테크 지식으로 찾아오겠습니다.</p>
+<p>감사합니다.
+루카(Luka) 드림.</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-05-25-seo-writing-template.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">구글 상위 노출을 보장하는 SEO 최적화 테크 블로그 글쓰기 공식 5가지</a></li>
+        <li><a href="/posts/2026-05-24-ollama-local-ai-guide.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">내 PC에서 실행하는 개인용 AI: Ollama로 로컬 LLM 손쉽게 구축하기</a></li>
+        <li><a href="/posts/2026-05-23-productivity-tools.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">현대인의 디지털 정리법: 노션과 옵시디언을 결합한 하이브리드 메모 워크플로우</a></li>
+        <li><a href="/posts/2026-05-22-chatgpt-prompt-tips.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">ChatGPT 답변 퀄리티를 200% 끌어올리는 실전 프롬프트 엔지니어링 꿀팁</a></li>
+        <li><a href="/posts/2026-05-21-ai-blog-automation-guide.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">AI 시대에 100% 무료로 블로그 자동화 시스템 구축하는 방법</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
