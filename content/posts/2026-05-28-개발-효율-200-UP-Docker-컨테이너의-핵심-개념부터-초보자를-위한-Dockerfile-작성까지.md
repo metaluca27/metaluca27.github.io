@@ -1,6 +1,6 @@
 ---
 title: "개발 효율 200% UP! Docker 컨테이너의 핵심 개념부터 초보자를 위한 Dockerfile 작성까지"
-date: 2023-10-27
+date: 2026-05-28
 description: "변화하는 IT 환경 속에서 개발 생산성을 극대화하는 Docker 컨테이너 기술의 핵심 개념을 파헤치고, 초보자도 쉽게 따라 할 수 있는 Dockerfile 작성법과 실용적인 팁을 루카가 알려드립니다."
 category: "테크"
 ---

@@ -57,7 +57,7 @@ jobs:
           
           # 변경사항이 있는지 확인 후 커밋 및 푸시
           if ! git diff --quiet --cached; then
-            git commit -m "NABE Auto-Publish (GitHub Actions) [skip ci]"
+            git commit -m "NABE Auto-Publish (GitHub Actions)"
             git push origin main
           else
             echo "No changes to commit."

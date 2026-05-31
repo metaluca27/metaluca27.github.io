@@ -191,8 +191,24 @@ def create_post_file(content):
             
     # 특수문자 제거 및 영문/한글 슬러그화
     slug = re.sub(r'[^\w\s-]', '', title).strip().replace(" ", "-")
-    filename = f"{datetime.now().strftime('%Y-%m-%d')}-{slug}.md"
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    filename = f"{today_str}-{slug}.md"
     filepath = os.path.join(CONTENT_DIR, filename)
+    
+    # Front Matter의 date가 다를 경우 강제 교정
+    fm_match = re.match(r"^(---\s*\n)(.*?\n)(---\s*\n.*)$", content, re.DOTALL)
+    if fm_match:
+        header, front_matter, body = fm_match.groups()
+        lines = front_matter.split("\n")
+        date_found = False
+        for i, line in enumerate(lines):
+            if line.lower().startswith("date:"):
+                lines[i] = f"date: {today_str}"
+                date_found = True
+                break
+        if not date_found:
+            lines.insert(0, f"date: {today_str}")
+        content = header + "\n".join(lines) + body
     
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(content)
