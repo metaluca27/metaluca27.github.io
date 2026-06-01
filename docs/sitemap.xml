@@ -2,9 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-05-31T04:01:21+09:00</lastmod>
+        <lastmod>2026-06-01T04:15:25+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/posts/2026-06-01-웹의-문을-지키는-방패-OWASP-Top-10-완전-정복과-철벽-방어-전략.html</loc>
+        <lastmod>2026-06-01T00:00:00+09:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/posts/2026-05-31-Git-브랜치-전략의-표준-Git-Flow-vs-GitHub-Flow-완벽-비교-분석-feat-어떤-전략이-우리-팀에-맞을까.html</loc>
