@@ -2,12 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-06-03T04:18:48+09:00</lastmod>
+        <lastmod>2026-06-03T06:24:04+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/posts/2026-06-03-지옥에서-온-속도-FastAPI로-파이썬-초고속-웹-API-서버-개발-완전-정복-가이드.html</loc>
+        <lastmod>2026-06-03T00:00:00+09:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/posts/2026-06-03-맥북-초고수-되는-비법-공개-생산성-200-폭발시키는-필수-앱--단축키-총정리.html</loc>
         <lastmod>2026-06-03T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
