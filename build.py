@@ -265,6 +265,14 @@ def main():
             f.write("# Google AdSense ads.txt 파일\n# 승인 후 ca-pub 번호가 입력되면 자동으로 활성화됩니다.\n")
     print("[OK] ads.txt 생성 완료")
 
+    # 5-2. robots.txt 파일 생성
+    robots_path = os.path.join(PUBLIC_DIR, "robots.txt")
+    with open(robots_path, "w", encoding="utf-8") as f:
+        f.write("User-agent: *\n")
+        f.write("Allow: /\n")
+        f.write(f"Sitemap: https://{CONFIG['domain']}/sitemap.xml\n")
+    print("[OK] robots.txt 생성 완료")
+
     # 6. sitemap.xml 파일 생성
     print("[*] sitemap.xml 생성 중...")
     now_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S+09:00")

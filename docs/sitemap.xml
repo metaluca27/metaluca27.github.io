@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-06-06T03:39:14+09:00</lastmod>
+        <lastmod>2026-06-06T16:57:14+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
@@ -25,13 +25,13 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-03-지옥에서-온-속도-FastAPI로-파이썬-초고속-웹-API-서버-개발-완전-정복-가이드.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-03-맥북-초고수-되는-비법-공개-생산성-200-폭발시키는-필수-앱--단축키-총정리.html</loc>
         <lastmod>2026-06-03T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-03-맥북-초고수-되는-비법-공개-생산성-200-폭발시키는-필수-앱--단축키-총정리.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-03-지옥에서-온-속도-FastAPI로-파이썬-초고속-웹-API-서버-개발-완전-정복-가이드.html</loc>
         <lastmod>2026-06-03T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -85,13 +85,13 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-25-머신러닝-초보자를-위한-필독서-지도학습과-비지도학습-이보다-쉬울-순-없다.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-25-seo-writing-template.html</loc>
         <lastmod>2026-05-25T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-25-seo-writing-template.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-25-머신러닝-초보자를-위한-필독서-지도학습과-비지도학습-이보다-쉬울-순-없다.html</loc>
         <lastmod>2026-05-25T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
