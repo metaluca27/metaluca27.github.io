@@ -2,6 +2,7 @@
 import os
 import re
 import shutil
+import urllib.parse
 import markdown
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -287,10 +288,22 @@ def main():
     ET.SubElement(url_node, "changefreq").text = "daily"
     ET.SubElement(url_node, "priority").text = "1.0"
     
+    # 6-1-2. 정적 페이지들 sitemap 등록 (about.html, contact.html, privacy-policy.html 등)
+    static_pages = ["about.html", "contact.html", "privacy-policy.html"]
+    for page in static_pages:
+        page_path = os.path.join(PUBLIC_DIR, page)
+        if os.path.exists(page_path):
+            url_node = ET.SubElement(urlset, "url")
+            ET.SubElement(url_node, "loc").text = f"https://{CONFIG['domain']}/{page}"
+            ET.SubElement(url_node, "lastmod").text = now_str
+            ET.SubElement(url_node, "changefreq").text = "monthly"
+            ET.SubElement(url_node, "priority").text = "0.5"
+            
     # 6-2. 포스팅 sitemap 등록
     for post in posts_metadata:
         url_node = ET.SubElement(urlset, "url")
-        ET.SubElement(url_node, "loc").text = f"https://{CONFIG['domain']}/posts/{post['filename']}.html"
+        encoded_filename = urllib.parse.quote(post['filename'])
+        ET.SubElement(url_node, "loc").text = f"https://{CONFIG['domain']}/posts/{encoded_filename}.html"
         ET.SubElement(url_node, "lastmod").text = f"{post['date']}T00:00:00+09:00"
         ET.SubElement(url_node, "changefreq").text = "weekly"
         ET.SubElement(url_node, "priority").text = "0.8"

@@ -2,84 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-06-06T16:57:14+09:00</lastmod>
+        <lastmod>2026-06-06T17:14:00+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-06-복잡한-기획서를-명쾌하게-꿰뚫는-전략-XMind와-옵시디언-결합-워크플로우.html</loc>
+        <loc>https://infoloomia.com/about.html</loc>
+        <lastmod>2026-06-06T17:14:00+09:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/contact.html</loc>
+        <lastmod>2026-06-06T17:14:00+09:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/privacy-policy.html</loc>
+        <lastmod>2026-06-06T17:14:00+09:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/posts/2026-06-06-%EB%B3%B5%EC%9E%A1%ED%95%9C-%EA%B8%B0%ED%9A%8D%EC%84%9C%EB%A5%BC-%EB%AA%85%EC%BE%8C%ED%95%98%EA%B2%8C-%EA%BF%B0%EB%9A%AB%EB%8A%94-%EC%A0%84%EB%9E%B5-XMind%EC%99%80-%EC%98%B5%EC%8B%9C%EB%94%94%EC%96%B8-%EA%B2%B0%ED%95%A9-%EC%9B%8C%ED%81%AC%ED%94%8C%EB%A1%9C%EC%9A%B0.html</loc>
         <lastmod>2026-06-06T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-05-시간-지옥에서-탈출-뽀모도로-기법과-시간-기록-앱으로-생산성을-극대화하는-완벽-가이드.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-05-%EC%8B%9C%EA%B0%84-%EC%A7%80%EC%98%A5%EC%97%90%EC%84%9C-%ED%83%88%EC%B6%9C-%EB%BD%80%EB%AA%A8%EB%8F%84%EB%A1%9C-%EA%B8%B0%EB%B2%95%EA%B3%BC-%EC%8B%9C%EA%B0%84-%EA%B8%B0%EB%A1%9D-%EC%95%B1%EC%9C%BC%EB%A1%9C-%EC%83%9D%EC%82%B0%EC%84%B1%EC%9D%84-%EA%B7%B9%EB%8C%80%ED%99%94%ED%95%98%EB%8A%94-%EC%99%84%EB%B2%BD-%EA%B0%80%EC%9D%B4%EB%93%9C.html</loc>
         <lastmod>2026-06-05T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-04-슬랙Slack으로-업무-효율-200-올리기-깃허브GitHub-노션Notion-연동-완벽-가이드.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-04-%EC%8A%AC%EB%9E%99Slack%EC%9C%BC%EB%A1%9C-%EC%97%85%EB%AC%B4-%ED%9A%A8%EC%9C%A8-200-%EC%98%AC%EB%A6%AC%EA%B8%B0-%EA%B9%83%ED%97%88%EB%B8%8CGitHub-%EB%85%B8%EC%85%98Notion-%EC%97%B0%EB%8F%99-%EC%99%84%EB%B2%BD-%EA%B0%80%EC%9D%B4%EB%93%9C.html</loc>
         <lastmod>2026-06-04T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-03-맥북-초고수-되는-비법-공개-생산성-200-폭발시키는-필수-앱--단축키-총정리.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-03-%EB%A7%A5%EB%B6%81-%EC%B4%88%EA%B3%A0%EC%88%98-%EB%90%98%EB%8A%94-%EB%B9%84%EB%B2%95-%EA%B3%B5%EA%B0%9C-%EC%83%9D%EC%82%B0%EC%84%B1-200-%ED%8F%AD%EB%B0%9C%EC%8B%9C%ED%82%A4%EB%8A%94-%ED%95%84%EC%88%98-%EC%95%B1--%EB%8B%A8%EC%B6%95%ED%82%A4-%EC%B4%9D%EC%A0%95%EB%A6%AC.html</loc>
         <lastmod>2026-06-03T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-03-지옥에서-온-속도-FastAPI로-파이썬-초고속-웹-API-서버-개발-완전-정복-가이드.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-03-%EC%A7%80%EC%98%A5%EC%97%90%EC%84%9C-%EC%98%A8-%EC%86%8D%EB%8F%84-FastAPI%EB%A1%9C-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EC%B4%88%EA%B3%A0%EC%86%8D-%EC%9B%B9-API-%EC%84%9C%EB%B2%84-%EA%B0%9C%EB%B0%9C-%EC%99%84%EC%A0%84-%EC%A0%95%EB%B3%B5-%EA%B0%80%EC%9D%B4%EB%93%9C.html</loc>
         <lastmod>2026-06-03T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-02-초보-개발자-헷갈리는-데이터베이스-정규화1NF-2NF-3NF와-비정규화-이제는-확실히-이해하자.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-02-%EC%B4%88%EB%B3%B4-%EA%B0%9C%EB%B0%9C%EC%9E%90-%ED%97%B7%EA%B0%88%EB%A6%AC%EB%8A%94-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A0%95%EA%B7%9C%ED%99%941NF-2NF-3NF%EC%99%80-%EB%B9%84%EC%A0%95%EA%B7%9C%ED%99%94-%EC%9D%B4%EC%A0%9C%EB%8A%94-%ED%99%95%EC%8B%A4%ED%9E%88-%EC%9D%B4%ED%95%B4%ED%95%98%EC%9E%90.html</loc>
         <lastmod>2026-06-02T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-06-01-웹의-문을-지키는-방패-OWASP-Top-10-완전-정복과-철벽-방어-전략.html</loc>
+        <loc>https://infoloomia.com/posts/2026-06-01-%EC%9B%B9%EC%9D%98-%EB%AC%B8%EC%9D%84-%EC%A7%80%ED%82%A4%EB%8A%94-%EB%B0%A9%ED%8C%A8-OWASP-Top-10-%EC%99%84%EC%A0%84-%EC%A0%95%EB%B3%B5%EA%B3%BC-%EC%B2%A0%EB%B2%BD-%EB%B0%A9%EC%96%B4-%EC%A0%84%EB%9E%B5.html</loc>
         <lastmod>2026-06-01T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-31-Git-브랜치-전략의-표준-Git-Flow-vs-GitHub-Flow-완벽-비교-분석-feat-어떤-전략이-우리-팀에-맞을까.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-31-Git-%EB%B8%8C%EB%9E%9C%EC%B9%98-%EC%A0%84%EB%9E%B5%EC%9D%98-%ED%91%9C%EC%A4%80-Git-Flow-vs-GitHub-Flow-%EC%99%84%EB%B2%BD-%EB%B9%84%EA%B5%90-%EB%B6%84%EC%84%9D-feat-%EC%96%B4%EB%96%A4-%EC%A0%84%EB%9E%B5%EC%9D%B4-%EC%9A%B0%EB%A6%AC-%ED%8C%80%EC%97%90-%EB%A7%9E%EC%9D%84%EA%B9%8C.html</loc>
         <lastmod>2026-05-31T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-30-데이터-과학-입문자를-위한-필수-도구-파이썬-Pandas로-데이터-정제부터-분석까지-마스터하기.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-30-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EA%B3%BC%ED%95%99-%EC%9E%85%EB%AC%B8%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-%ED%95%84%EC%88%98-%EB%8F%84%EA%B5%AC-%ED%8C%8C%EC%9D%B4%EC%8D%AC-Pandas%EB%A1%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%A0%95%EC%A0%9C%EB%B6%80%ED%84%B0-%EB%B6%84%EC%84%9D%EA%B9%8C%EC%A7%80-%EB%A7%88%EC%8A%A4%ED%84%B0%ED%95%98%EA%B8%B0.html</loc>
         <lastmod>2026-05-30T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-29-RESTful-API-예술로-승화하는-설계-규칙과-우아한-예외-처리-전략.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-29-RESTful-API-%EC%98%88%EC%88%A0%EB%A1%9C-%EC%8A%B9%ED%99%94%ED%95%98%EB%8A%94-%EC%84%A4%EA%B3%84-%EA%B7%9C%EC%B9%99%EA%B3%BC-%EC%9A%B0%EC%95%84%ED%95%9C-%EC%98%88%EC%99%B8-%EC%B2%98%EB%A6%AC-%EC%A0%84%EB%9E%B5.html</loc>
         <lastmod>2026-05-29T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-28-개발-효율-200-UP-Docker-컨테이너의-핵심-개념부터-초보자를-위한-Dockerfile-작성까지.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-28-%EA%B0%9C%EB%B0%9C-%ED%9A%A8%EC%9C%A8-200-UP-Docker-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EC%9D%98-%ED%95%B5%EC%8B%AC-%EA%B0%9C%EB%85%90%EB%B6%80%ED%84%B0-%EC%B4%88%EB%B3%B4%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-Dockerfile-%EC%9E%91%EC%84%B1%EA%B9%8C%EC%A7%80.html</loc>
         <lastmod>2026-05-28T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-27-브라우저-렌더링-마스터하기-LCP-점수-수직-상승시키는-웹-성능-최적화-가이드.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-27-%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80-%EB%A0%8C%EB%8D%94%EB%A7%81-%EB%A7%88%EC%8A%A4%ED%84%B0%ED%95%98%EA%B8%B0-LCP-%EC%A0%90%EC%88%98-%EC%88%98%EC%A7%81-%EC%83%81%EC%8A%B9%EC%8B%9C%ED%82%A4%EB%8A%94-%EC%9B%B9-%EC%84%B1%EB%8A%A5-%EC%B5%9C%EC%A0%81%ED%99%94-%EA%B0%80%EC%9D%B4%EB%93%9C.html</loc>
         <lastmod>2026-05-27T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-26-파이썬-비동기-프로그래밍-마스터하기-Asyncio-기초부터-실전-최적화까지.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-26-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%EB%B9%84%EB%8F%99%EA%B8%B0-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%EB%A7%88%EC%8A%A4%ED%84%B0%ED%95%98%EA%B8%B0-Asyncio-%EA%B8%B0%EC%B4%88%EB%B6%80%ED%84%B0-%EC%8B%A4%EC%A0%84-%EC%B5%9C%EC%A0%81%ED%99%94%EA%B9%8C%EC%A7%80.html</loc>
         <lastmod>2026-05-26T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -91,7 +109,7 @@
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://infoloomia.com/posts/2026-05-25-머신러닝-초보자를-위한-필독서-지도학습과-비지도학습-이보다-쉬울-순-없다.html</loc>
+        <loc>https://infoloomia.com/posts/2026-05-25-%EB%A8%B8%EC%8B%A0%EB%9F%AC%EB%8B%9D-%EC%B4%88%EB%B3%B4%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-%ED%95%84%EB%8F%85%EC%84%9C-%EC%A7%80%EB%8F%84%ED%95%99%EC%8A%B5%EA%B3%BC-%EB%B9%84%EC%A7%80%EB%8F%84%ED%95%99%EC%8A%B5-%EC%9D%B4%EB%B3%B4%EB%8B%A4-%EC%89%AC%EC%9A%B8-%EC%88%9C-%EC%97%86%EB%8B%A4.html</loc>
         <lastmod>2026-05-25T00:00:00+09:00</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
