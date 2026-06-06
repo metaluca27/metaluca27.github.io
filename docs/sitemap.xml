@@ -2,9 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-06-05T03:57:03+09:00</lastmod>
+        <lastmod>2026-06-06T03:39:14+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/posts/2026-06-06-복잡한-기획서를-명쾌하게-꿰뚫는-전략-XMind와-옵시디언-결합-워크플로우.html</loc>
+        <lastmod>2026-06-06T00:00:00+09:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/posts/2026-06-05-시간-지옥에서-탈출-뽀모도로-기법과-시간-기록-앱으로-생산성을-극대화하는-완벽-가이드.html</loc>
