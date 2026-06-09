@@ -3,6 +3,7 @@ import os
 import sys
 import json
 import re
+import time
 import argparse
 import urllib.request
 import urllib.parse
@@ -153,31 +154,38 @@ category: "테크"
             headers={"Content-Type": "application/json"}
         )
         
-        try:
-            with urllib.request.urlopen(req, timeout=90) as response:
-                res = json.loads(response.read().decode("utf-8"))
-                # 제미니 응답 구조 파싱
-                text = res['candidates'][0]['content']['parts'][0]['text']
-                
-                # 제미니가 종종 마크다운 펜스(```markdown ... ```)로 본문을 감싸서 주는 경우가 있어 제거해 줌
-                if text.startswith("```markdown"):
-                    text = text[11:].strip()
-                elif text.startswith("```"):
-                    text = text[3:].strip()
-                if text.endswith("```"):
-                    text = text[:-3].strip()
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                print(f"[*] Gemini API 호출 시도 {attempt + 1}/{max_retries}...")
+                with urllib.request.urlopen(req, timeout=90) as response:
+                    res = json.loads(response.read().decode("utf-8"))
+                    # 제미니 응답 구조 파싱
+                    text = res['candidates'][0]['content']['parts'][0]['text']
                     
-                return text.strip()
-        except Exception as e:
-            print(f"[ERROR] Gemini API 호출 실패: {e}")
-            # 구글 서버가 돌려준 자세한 에러 바디 파싱 시도 및 출력
-            if hasattr(e, "read"):
-                try:
-                    error_body = e.read().decode("utf-8")
-                    print(f"[ERROR] Gemini API 응답 상세: {error_body}")
-                except Exception:
-                    pass
-            return None
+                    # 제미니가 종종 마크다운 펜스(```markdown ... ```)로 본문을 감싸서 주는 경우가 있어 제거해 줌
+                    if text.startswith("```markdown"):
+                        text = text[11:].strip()
+                    elif text.startswith("```"):
+                        text = text[3:].strip()
+                    if text.endswith("```"):
+                        text = text[:-3].strip()
+                        
+                    return text.strip()
+            except Exception as e:
+                print(f"[WARNING] Gemini API 호출 실패 (시도 {attempt + 1}/{max_retries}): {e}")
+                # 구글 서버가 돌려준 자세한 에러 바디 파싱 시도 및 출력
+                if hasattr(e, "read"):
+                    try:
+                        error_body = e.read().decode("utf-8")
+                        print(f"[ERROR] Gemini API 응답 상세: {error_body}")
+                    except Exception:
+                        pass
+                if attempt < max_retries - 1:
+                    sleep_time = 15 * (attempt + 1)
+                    print(f"[*] {sleep_time}초 후 재시도합니다...")
+                    time.sleep(sleep_time)
+        return None
 
 
 def create_post_file(content):
@@ -265,7 +273,7 @@ def main():
             create_post_file(post_content)
         else:
             print("[ERROR] 글 생성에 실패하여 다음 단계를 진행하지 않습니다.")
-            return
+            sys.exit(1)
 
     # 2단계: 블로그 사이트 빌드 (Markdown -> HTML)
     build.main()
