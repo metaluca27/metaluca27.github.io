@@ -1,9 +1,9 @@
-name: Auto Daily Publish
+name: Auto Publish (Mon/Thu)
 
 on:
   schedule:
-    # 매일 UTC 00:00 (한국 시간 오전 9시)에 자동으로 실행
-    - cron: '0 0 * * *'
+    # 매주 월요일, 목요일 UTC 00:00 (한국 시간 오전 9시)에 실행 — 애드센스 저가치 콘텐츠 판정 대응으로 발행 빈도 축소
+    - cron: '0 0 * * 1,4'
   workflow_dispatch: # 깃허브 웹 UI에서 수동으로 실행 가능하게 설정
 
 permissions:
