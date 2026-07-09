@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>에지 컴퓨팅, 단순한 유행일까? 클라우드와 함께 써보니 알게 된 진짜 시너지 - InfoLoomia</title>
+    <meta name="description" content="개발자가 직접 겪은 에지 컴퓨팅 도입기. 클라우드와 에지의 상호 보완성을 실제 프로젝트 경험과 구체적인 수치로 풀어냅니다.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>에지 컴퓨팅, 단순한 유행일까? 클라우드와 함께 써보니 알게 된 진짜 시너지</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-07-09</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, IT와 테크 지식을 공부하고 기록하는 루카(Luka)입니다. 최근 몇 년간 '에지 컴퓨팅'이라는 단어가 제 주변에서 자주 들렸습니다. 처음에는 또 하나의 IT 버즈워드겠거니 했죠. 하지만 제가 담당하던 스마트 팩토리 프로젝트에서 데이터 지연 문제와 막대한 클라우드 전송 비용에 부딪히면서, 에지 컴퓨팅을 진지하게 탐구하게 되었습니다. 직접 시스템을 설계하고 구축하며 겪었던 시행착오와 그 과정에서 깨달은 점들을 여러분과 공유하고자 합니다.</p>
+<h2>에지 컴퓨팅, 왜 필요한가? (문제 인식)</h2>
+<p>제가 맡았던 스마트 팩토리 프로젝트는 공장 내 수백 개의 롤러에 부착된 진동, 온도, 압력 센서 데이터를 실시간으로 수집하여 클라우드로 전송하고, AI 모델로 롤러의 이상 상태를 감지하는 시스템이었습니다. 처음에는 모든 데이터를 클라우드로 보내 처리하는 구조로 설계했죠. 하지만 얼마 지나지 않아 심각한 문제에 직면했습니다.</p>
+<p>첫째, <strong>지연 시간</strong> 문제였습니다. 롤러의 이상 징후가 감지되면 즉각적으로 설비를 멈추거나 관리자에게 알림을 보내야 하는데, 센서 데이터가 클라우드에 도달하여 AI 모델 추론을 거쳐 결과가 나오기까지 평균 <strong>300ms 이상의 지연</strong>이 발생했습니다. 이 짧은 찰나의 순간에도 생산 라인은 계속 가동되고, 자칫하면 대형 사고나 제품 불량으로 이어질 수 있었죠.</p>
+<p>둘째, <strong>막대한 비용</strong>과 <strong>네트워크 대역폭</strong> 문제였습니다. 수백 개의 센서가 초당 수십 개의 데이터를 쏟아내니, 하루에 클라우드로 전송되는 원시 데이터의 양이 <strong>20GB</strong>를 훌쩍 넘었습니다. 클라우드 데이터 전송 비용과 저장 비용이 눈덩이처럼 불어났고, 공장 내 제한된 네트워크 대역폭에도 부담을 주었습니다.</p>
+<p>이러한 문제들을 해결하기 위해 저는 데이터를 클라우드로 보내기 전에 '어딘가에서' 먼저 처리해야겠다는 결론에 도달했고, 그 '어딘가'가 바로 에지 컴퓨팅 환경이었습니다.</p>
+<h2>클라우드와 에지, 무엇이 다르고 어떻게 보완하는가?</h2>
+<p>에지 컴퓨팅을 도입하기로 결정하면서, 저는 클라우드 컴퓨팅과 에지 컴퓨팅의 역할 분담을 명확히 하는 것이 중요하다고 생각했습니다. 둘은 경쟁 관계가 아니라, 서로의 약점을 보완하며 시너지를 내는 '상호 보완적' 관계에 있기 때문입니다.</p>
+<p><strong>클라우드 컴퓨팅</strong>은 대규모 데이터를 저장하고, 복잡한 인공지능 모델을 학습시키며, 글로벌 서비스를 확장하는 데 최적화된 중앙 집중식의 강력한 데이터센터입니다. 무한대에 가까운 컴퓨팅 자원과 저장 공간, 그리고 고성능 네트워크를 제공하죠.</p>
+<p>반면, <strong>에지 컴퓨팅</strong>은 데이터가 생성되는 원천(센서, 디바이스)에 최대한 가깝게 컴퓨팅 자원을 배치하여 실시간으로 데이터를 처리하는 분산형 환경입니다. 제한된 자원으로 특정 목적의 작업을 수행하는 데 강점을 가집니다.</p>
+<p>저희 프로젝트에서는 에지를 클라우드의 '팔다리' 역할로 활용하기로 했습니다. 에지에서 센서 데이터를 실시간으로 수집하고, 경량 AI 모델로 1차 이상 감지 추론을 수행하며, 중요한 데이터만 필터링하여 클라우드로 전송하는 것이죠. 클라우드는 에지에서 정제된 데이터들을 모아 전체적인 트렌드 분석, 장기 보관, 그리고 AI 모델의 재학습 및 업데이트를 담당하는 '두뇌' 역할을 하도록 했습니다.</p>
+<h3>클라우드 vs. 에지 컴퓨팅 비교</h3>
+<p>두 기술의 핵심적인 차이점과 강점을 표로 비교해보면 그 상호 보완성이 더욱 명확해집니다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">특징</th>
+<th style="text-align: left;">클라우드 컴퓨팅</th>
+<th style="text-align: left;">에지 컴퓨팅</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>위치</strong></td>
+<td style="text-align: left;">중앙 데이터센터, 원격</td>
+<td style="text-align: left;">데이터 소스(장치, 센서)와 물리적으로 가깝게</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>지연 시간</strong></td>
+<td style="text-align: left;">네트워크 왕복 시간에 따라 상대적으로 높음 (수십~수백 ms)</td>
+<td style="text-align: left;">매우 낮음 (밀리초 이하)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>대역폭</strong></td>
+<td style="text-align: left;">고대역폭 요구, 데이터 전송 비용 발생</td>
+<td style="text-align: left;">저대역폭으로 효율적 운영 가능, 전송량 감소</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>처리 능력</strong></td>
+<td style="text-align: left;">무제한에 가까운 고성능, 복잡한 분석 및 학습</td>
+<td style="text-align: left;">제한적, 특정 목적에 최적화된 경량 처리 및 추론</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>데이터 처리</strong></td>
+<td style="text-align: left;">대량 데이터 저장, 복잡한 ML 학습 및 글로벌 분석</td>
+<td style="text-align: left;">실시간 필터링, 전처리, 경량 ML 추론, 즉각적인 반응</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>비용</strong></td>
+<td style="text-align: left;">데이터 전송/저장/처리량에 비례하여 증가</td>
+<td style="text-align: left;">초기 장비 설치 비용, 이후 운영비 및 전송 비용 절감</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>주요 활용</strong></td>
+<td style="text-align: left;">빅데이터 분석, ML 학습, 장기 보관, 글로벌 서비스</td>
+<td style="text-align: left;">실시간 제어, IoT 기기 관리, 즉각적인 응답 요구 서비스</td>
+</tr>
+</tbody>
+</table>
+<h2>제가 직접 에지 환경을 구축해본 이야기</h2>
+<p>저희 팀은 '스마트 팩토리 이상 감지 시스템' 고도화를 위해 에지 컴퓨팅 도입을 결정했습니다.</p>
+<p><strong>기존 문제:</strong> 롤러 진동 센서 데이터 -&gt; 클라우드 MQTT -&gt; AWS Lambda (이상 감지 모델 추론) -&gt; AWS SNS (알림). 총 지연 시간 평균 300ms. 일일 클라우드 데이터 전송량 20GB.
+<strong>에지 도입 목표:</strong> 이상 감지 알림 지연 시간 50ms 이하로 단축, 클라우드 데이터 전송량 90% 이상 감소.</p>
+<p><strong>하드웨어 선택:</strong>
+*   <strong>Raspberry Pi 4 (4GB RAM) 1대:</strong> 센서 데이터 수집, 데이터 전처리, 경량 ML 모델 추론 (제어 로직 담당).
+*   <strong>NVIDIA Jetson Nano 1대:</strong> 좀 더 복잡한 ML 모델의 추론 가속 (향후 고도화 시 활용).</p>
+<p><strong>소프트웨어 스택:</strong>
+*   <strong>OS:</strong> Raspberry Pi OS / JetPack
+*   <strong>컨테이너:</strong> Docker (환경 격리 및 배포 표준화)
+*   <strong>메시지 브로커:</strong> Mosquitto (경량 MQTT 브로커, 에지 디바이스 내/외부 통신)
+*   <strong>추론 엔진:</strong> TensorFlow Lite (Raspberry Pi), TensorRT (Jetson Nano)
+*   <strong>데이터베이스:</strong> SQLite (에지 로컬 저장용, 가끔 발생하는 네트워크 단절 시 임시 저장소)
+*   <strong>언어:</strong> Python (대부분의 서비스 로직 구현)</p>
+<h3>1. 에지 디바이스에 경량 모델 배포 및 실시간 추론</h3>
+<p>클라우드에서 학습된 Float32 모델을 TensorFlow Lite (TFLite)로 변환한 후, Int8 양자화(quantization)를 거쳐 <strong>120MB에서 15MB로 크기를 줄였습니다.</strong> 이 최적화된 모델을 라즈베리 파이에 배포했습니다. Docker를 사용해 Python 기반의 추론 환경을 격리하고 배포 과정을 표준화한 것이 큰 도움이 되었습니다.</p>
+<pre class="codehilite"><code class="language-bash"># 라즈베리 파이에서 Docker 이미지 빌드 및 실행
+# Dockerfile (~/edge_sensor_processor/Dockerfile) 내용 예시:
+# FROM python:3.9-slim-buster
+# WORKDIR /app
+# COPY requirements.txt .
+# RUN pip install --no-cache-dir -r requirements.txt
+# COPY . .
+# CMD [&quot;python&quot;, &quot;edge_inference_app.py&quot;]
+
+# 1. edge_sensor_processor 디렉토리로 이동
+cd ~/edge_sensor_processor
+
+# 2. Docker 이미지 빌드
+#   -t edge-inference-app:v1.0: 이미지 태그 지정 (버전 관리에 용이)
+#   .: 현재 디렉토리의 Dockerfile 사용
+docker build -t edge-inference-app:v1.0 .
+
+# 3. 기존 컨테이너 중지 및 삭제 (이전 버전이 실행 중일 경우)
+docker stop edge_processor &amp;&amp; docker rm edge_processor
+
+# 4. 새 컨테이너 실행
+#   -d: 백그라운드에서 실행
+#   --name edge_processor: 컨테이너 이름 지정
+#   --restart always: 항상 재시작 (예: 재부팅 시 자동 실행)
+#   -p 1883:1883: 호스트 포트 1883을 컨테이너 포트 1883에 연결 (MQTT 통신용)
+#   -v /var/log/edge_app:/app/logs: 호스트 볼륨을 컨테이너에 마운트 (로그 저장용)
+docker run -d --name edge_processor --restart always \
+  -p 1883:1883 \
+  -v /var/log/edge_app:/app/logs \
+  edge-inference-app:v1.0
+</code></pre>
+
+<p><strong>실행 결과 및 수치:</strong>
+컨테이너가 성공적으로 실행되고, <code>docker logs edge_processor</code> 명령으로 로그를 확인해보니 "Edge inference service started, listening on MQTT topic 'sensors/vibration'" 메시지가 보였습니다. 이전에는 클라우드까지 데이터를 보내 추론하던 과정이 이제는 라즈베리 파이 내부에서 <strong>20ms 내외</strong>로 처리되었습니다. 결과적으로 이상 감지 알림의 전체 응답 지연 시간은 <strong>평균 300ms에서 45ms로 획기적으로 단축</strong>되었습니다. 이 수치는 공장 운영에 있어 실시간 대응이 가능함을 의미하며, 프로젝트의 가장 큰 목표를 달성했습니다.</p>
+<h3>2. 필터링된 데이터만 클라우드로 전송</h3>
+<p>에지에서 10초마다 수집되는 데이터 중 '이상 감지'가 발생했거나, 중요하다고 판단된 요약 데이터(예: 1시간 평균값, 최대/최소값)만 클라우드로 전송하도록 로직을 구현했습니다. 일반 상태의 원시 데이터는 에지 로컬 SQLite DB에 저장 후 주기적으로 삭제했습니다. 이 방식을 통해 클라우드 전송 데이터 양을 극적으로 줄일 수 있었습니다.</p>
+<pre class="codehilite"><code class="language-python"># Python 예시: MQTT 메시지 필터링 및 클라우드 전송 로직 (edge_cloud_connector.py)
+import paho.mqtt.client as mqtt
+import json
+import time
+import requests # 클라우드 API 호출 라이브러리 (pip install requests)
+
+EDGE_MQTT_BROKER = &quot;localhost&quot; # 에지 디바이스 내 Mosquitto 브로커
+EDGE_MQTT_PORT = 1883
+CLOUD_API_ENDPOINT = &quot;https://your-cloud-api.com/data&quot; # 실제 클라우드 API 엔드포인트
+
+def on_connect(client, userdata, flags, rc):
+    print(f&quot;Connected to Edge MQTT Broker with result code {rc}&quot;)
+    # 에지에서 처리된 (예: 이상 감지 여부가 포함된) 데이터를 구독
+    client.subscribe(&quot;sensors/vibration/processed&quot;) 
+
+def on_message(client, userdata, msg):
+    payload = json.loads(msg.payload.decode())
+    print(f&quot;Received from edge: {payload['timestamp']} - Anomaly: {payload.get('anomaly_detected', 'N/A')}&quot;)
+
+    # 에지에서 이상 감지된 경우 또는 중요한 요약 데이터(예: 1시간 평균)만 클라우드로 전송
+    if payload.get(&quot;anomaly_detected&quot;, False) or payload.get(&quot;is_summary&quot;, False):
+        try:
+            # 클라우드 API로 데이터 전송
+            response = requests.post(CLOUD_API_ENDPOINT, json=payload, timeout=5)
+            response.raise_for_status() # HTTP 에러 발생 시 예외 처리
+            print(f&quot;Data successfully sent to cloud: {payload['id']}&quot;)
+        except requests.exceptions.RequestException as e:
+            print(f&quot;Failed to send data to cloud: {e}&quot;)
+    else:
+        # 일반 데이터는 로컬에만 저장하거나 무시 (클라우드 전송 안 함)
+        print(f&quot;Normal data, not sending to cloud.&quot;)
+
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+client.connect(EDGE_MQTT_BROKER, EDGE_MQTT_PORT, 60) # MQTT 브로커에 연결
+client.loop_forever() # 메시지를 계속 수신 대기
+</code></pre>
+
+<p><strong>실측 결과 및 수치:</strong>
+이전에는 하루에 약 <strong>20GB</strong>의 원시 센서 데이터가 클라우드로 전송되었지만, 에지에서 전처리 및 필터링 후에는 하루 전송량이 <strong>1.5GB 미만</strong>으로 줄어들었습니다. 이는 클라우드 전송 비용을 약 90% 이상 절감하는 효과를 가져왔습니다. 실제로 AWS 청구서를 확인했을 때, 데이터 전송 및 처리 비용이 월 <strong>50만원 이상 절감</strong>되는 것을 보고 그동안의 고생이 주마등처럼 스쳐 지나갔습니다. 또한, 네트워크 대역폭 부담도 크게 줄어들어 다른 중요한 통신에 영향을 주지 않게 되었습니다.</p>
+<h2>자주 겪는 문제와 해결법</h2>
+<p>에지 컴퓨팅 환경을 구축하면서 저를 가장 힘들게 했던 부분은 디바이스의 제한된 리소스와 불안정한 네트워크 환경, 그리고 예상치 못한 환경 종속성 문제였습니다. 몇 가지 대표적인 문제와 그 해결책을 공유합니다.</p>
+<h3>1. "MemoryError: Not enough memory for operation" (리소스 제약)</h3>
+<ul>
+<li>
+<p><strong>문제:</strong> 라즈베리 파이 4 (4GB RAM) 같은 저사양 에지 디바이스에서 클라우드에서 학습된 그대로의 ML 모델을 실행하거나, 여러 서비스를 동시에 돌릴 때 메모리 부족 에러가 빈번하게 발생했습니다. 특히 Python 기반의 애플리케이션에서 자주 겪는 문제였습니다.</p>
+</li>
+<li>
+<p><strong>원인:</strong> 모델 자체가 너무 크거나, 여러 프로세스가 동시에 많은 메모리를 요구하는 경우 발생합니다. 저희 초기 모델은 Float32 기반으로 약 400MB의 메모리를 사용했습니다.</p>
+</li>
+<li>
+<p><strong>해결법:</strong></p>
+<ul>
+<li><strong>모델 최적화:</strong> TensorFlow Lite (TFLite)나 OpenVINO 같은 경량화 프레임워크를 사용해 모델 크기를 줄이는 것이 핵심입니다. Float32 대신 Float16 또는 Quantized Int8 모델을 사용하면 메모리 사용량과 추론 속도를 크게 개선할 수 있습니다. 위에서 언급했듯이, 제가 사용하던 모델은 TFLite 변환 후 <strong>120MB에서 Int8 양자화를 통해 15MB로 크기가 줄었고</strong>, 이로 인해 메모리 사용량도 <strong>400MB에서 80MB로 극적으로 감소</strong>했습니다.</li>
+<li><strong>서비스 분리 및 최적화:</strong> 불필요한 라이브러리를 제거하고, 각 서비스를 별도의 Docker 컨테이너로 분리하여 리소스 사용량을 모니터링하고 최적화했습니다. <code>docker stats</code> 명령으로 각 컨테이너의 실시간 메모리/CPU 사용량을 확인하며 병목 지점을 찾아 튜닝했습니다.</li>
+<li><strong>스왑 공간 확보:</strong> 임시 방편으로 SD 카드에 스왑 공간을 늘려 메모리 부족으로 인한 크래시를 방지할 수 있습니다. (하지만 SD 카드의 수명 단축과 성능 저하를 야기할 수 있으므로 근본적인 해결책은 아닙니다.)</li>
+</ul>
+<p>```bash</p>
+<h1>스왑 공간 설정 (예시: 1GB 스왑 파일 생성)</h1>
+<p>sudo fallocate -l 1G /swapfile   # 1GB 크기의 스왑 파일 생성
+sudo chmod 600 /swapfile         # 파일 권한 설정 (소유자만 읽기/쓰기 가능)
+sudo mkswap /swapfile            # 스왑 파일 시스템 생성
+sudo swapon /swapfile            # 스왑 활성화
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab # 재부팅 시 자동 활성화 설정
+```</p>
+</li>
+</ul>
+<h3>2. "MQTT Connection Refused: not authorised" (네트워크 및 보안 설정)</h3>
+<ul>
+<li>
+<p><strong>문제:</strong> 에지 디바이스와 클라우드 간, 혹은 에지 디바이스 내 서비스 간 통신 시 MQTT 브로커 연결이 거부되는 문제가 종종 발생했습니다. 에지 환경은 클라우드처럼 안정적인 네트워크 환경을 보장하기 어려울 때가 많습니다.</p>
+</li>
+<li>
+<p><strong>원인:</strong> 방화벽, 인증 정보 오류, 잘못된 포트 설정, 혹은 불안정한 네트워크 연결 등이 원인이었습니다.</p>
+</li>
+<li>
+<p><strong>해결법:</strong></p>
+<ul>
+<li><strong>방화벽 확인:</strong> 에지 디바이스의 방화벽(ufw)이 MQTT 포트(기본 1883)를 차단하고 있는지 확인하고 허용합니다.
+    <code>bash
+    sudo ufw status # 방화벽 상태 확인
+    sudo ufw allow 1883/tcp # MQTT 기본 포트 허용
+    sudo ufw enable # 방화벽 활성화 (필요시)</code></li>
+<li><strong>인증 설정:</strong> Mosquitto 브로커를 사용할 경우, <code>/etc/mosquitto/mosquitto.conf</code> 파일에 <code>allow_anonymous true</code> (테스트용) 또는 <code>password_file /etc/mosquitto/passwd</code>를 설정하여 사용자 인증을 활성화해야 합니다. 실제 운영 환경에서는 반드시 인증을 사용하여 보안을 강화해야 합니다.</li>
+<li><strong>클라이언트 설정:</strong> 클라이언트 코드에서 올바른 사용자 이름과 비밀번호를 사용하여 연결하도록 합니다.</li>
+<li><strong>네트워크 안정성:</strong> 공장 환경처럼 Wi-Fi 신호가 불안정한 곳에서는 이더넷 연결을 우선하거나, 메시지 큐에 QoS(Quality of Service) 레벨을 1 이상으로 설정하여 네트워크 단절 시에도 메시지 유실을 방지했습니다. (QoS 1은 최소 한 번 전달, QoS 2는 정확히 한 번 전달을 보장합니다.)</li>
+</ul>
+</li>
+</ul>
+<h3>3. "ModuleNotFoundError: No module named 'tensorflow'" (환경 종속성)</h3>
+<ul>
+<li>
+<p><strong>문제:</strong> 에지 디바이스에 배포된 애플리케이션에서 필요한 라이브러리나 모듈을 찾지 못해 애플리케이션이 실행되지 않는 경우가 많았습니다. 특히 ARM 아키텍처 기반의 라즈베리 파이와 x86 기반의 개발PC 사이의 빌드된 바이너리 호환성 문제가 자주 발생했습니다.</p>
+</li>
+<li>
+<p><strong>원인:</strong> <code>pip install</code> 시 특정 아키텍처용 패키지가 설치되지 않았거나, <code>requirements.txt</code>에 필요한 의존성이 누락된 경우입니다. 특히 TensorFlow나 NumPy 같은 C/C++ 바인딩을 가진 라이브러리는 아키텍처에 매우 민감합니다.</p>
+</li>
+<li>
+<p><strong>해결법:</strong></p>
+<ul>
+<li><strong>Docker 사용:</strong> 위에서 언급했듯이 Docker를 사용하면 이러한 환경 종속성 문제를 크게 줄일 수 있습니다. <code>Dockerfile</code> 내에서 필요한 패키지를 명확히 지정하고, 특정 아키텍처에 맞는 기본 이미지를 사용합니다 (예: <code>arm64v8/python:3.9-slim-buster</code>). Docker 빌드 시 <code>platform</code> 인자를 지정하여 교차 빌드하는 방법도 있습니다.</li>
+<li><strong>가상 환경:</strong> <code>venv</code>나 <code>conda</code> 같은 가상 환경을 사용해 프로젝트별로 의존성을 격리하고, <code>requirements.txt</code>를 철저히 관리합니다.</li>
+<li><strong>패키지 수동 빌드:</strong> 필요한 경우, 해당 에지 디바이스에서 직접 소스 코드를 다운로드하여 빌드해야 할 때도 있습니다. 특히 CUDA나 OpenVINO 같은 특정 하드웨어 가속 라이브러리 또는 C++ 기반 라이브러리에서 이런 경우가 많았습니다. 저는 Jetson Nano에 TensorRT를 설치할 때 공식 문서에 따라 수동으로 빌드하고 환경 변수를 설정해야 했습니다.</li>
+</ul>
+</li>
+</ul>
+<h2>에지 컴퓨팅, 단순한 유행이 아닌 필수 전략</h2>
+<p>제가 직접 에지 컴퓨팅을 도입하고 운영해보니, 이는 단순히 새로운 유행어가 아니라 특정 비즈니스 요구사항(저지연, 데이터 주권, 비용 절감)을 해결하기 위한 필수 전략임을 깨달았습니다. 클라우드 컴퓨팅이 거대한 두뇌라면, 에지 컴퓨팅은 수많은 센서와 액추에이터에 연결된 민첩한 신경망입니다. 이 둘의 시너지는 우리가 상상하는 것 이상의 가치를 창출할 수 있습니다.</p>
+<p>특히, 데이터의 양이 기하급수적으로 늘어나고 실시간 의사결정의 중요성이 커지는 IoT, 스마트 팩토리, 자율 주행, 스마트 시티 같은 분야에서는 에지 컴퓨팅 없이는 지속 가능한 성장을 기대하기 어려울 것입니다. 에지 컴퓨팅은 데이터의 가치를 가장 빠르게 포착하고, 가장 효율적으로 전달하며, 가장 적절한 시점에 행동하게 만드는 핵심 열쇠입니다.</p>
+<h3>핵심 요약 3줄</h3>
+<ul>
+<li>에지 컴퓨팅은 데이터 소스 근처에서 실시간 처리를 가능하게 하여 지연 시간을 획기적으로 줄이고 클라우드 데이터 전송 비용을 절감하는 핵심 기술입니다.</li>
+<li>클라우드는 에지에서 정제된 데이터의 종합 분석과 모델 학습/배포를 담당하며, 에지와 상호 보완적으로 강력한 시너지를 발휘합니다.</li>
+<li>리소스 제약, 네트워크 안정성, 환경 종속성 같은 에지 특유의 문제들은 모델 최적화와 Docker 컨테이너 활용, 그리고 네트워크 QoS 설정 등으로 효과적으로 해결할 수 있습니다.</li>
+</ul>
+<h3>FAQ</h3>
+<h3>Q1: 에지 컴퓨팅은 클라우드 컴퓨팅을 완전히 대체할까요?</h3>
+<p>아닙니다. 에지 컴퓨팅은 클라우드의 기능을 보완하고 확장하는 역할을 합니다. 모든 데이터를 에지에서 처리할 수는 없으며, 대규모 ML 모델 학습, 빅데이터 분석, 장기 보관, 글로벌 서비스 제공 등은 여전히 클라우드의 독보적인 강점입니다. 이 둘은 서로 다른 목적과 강점을 가지고 있어 상호 보완적인 관계에 있습니다.</p>
+<h3>Q2: 에지 디바이스로 라즈베리 파이 외에 어떤 것들을 사용할 수 있나요?</h3>
+<p>필요한 처리 능력, 전력 소비, 비용, 환경 요구사항(내구성, 온도 등)에 따라 매우 다양한 하드웨어를 에지 디바이스로 사용할 수 있습니다. 산업용 PC, NVIDIA Jetson 시리즈 (GPU 가속 필요 시), Google Coral (TPU 가속), Intel NUC, 혹은 더 경량화된 저전력 마이크로컨트롤러 (예: ESP32)까지 목적에 맞게 선택할 수 있습니다.</p>
+<h3>Q3: 에지 컴퓨팅 도입 시 가장 먼저 고려해야 할 사항은 무엇인가요?</h3>
+<p>가장 먼저 '무엇을 위해 에지를 도입하는가?'에 대한 명확한 목적을 설정해야 합니다. 즉, 해결하고자 하는 지연 시간 문제, 클라우드 비용 문제, 네트워크 대역폭 제약 등이 무엇인지 정의하고, 어떤 데이터를 에지에서 처리할지, 그리고 클라우드로 어떤 데이터를 보낼지 데이터 흐름을 명확하게 설계하는 것이 중요합니다. 이 설계가 명확해야 올바른 하드웨어와 소프트웨어 스택을 선택할 수 있습니다.</p>
+<hr />
+<p>오늘 제가 공유한 경험들이 에지 컴퓨팅에 대한 여러분의 이해를 돕고, 실제 프로젝트에 영감을 주었으면 좋겠습니다. 기술은 결국 문제를 해결하는 도구이고, 에지 컴퓨팅은 그 강력한 도구 중 하나입니다. 다음 포스팅에서도 흥미로운 테크 이야기로 찾아뵙겠습니다. 루카였습니다!</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-07-09-에지-컴퓨팅-단순한-유행일까-클라우드와-함께-써보니-알게-된-진짜-시너지.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">에지 컴퓨팅, 단순한 유행일까? 클라우드와 함께 써보니 알게 된 진짜 시너지</a></li>
+        <li><a href="/posts/2026-07-06-현직-개발자-루카가-직접-써보니-쿠버네티스-복잡함-너머의-강력함-컨테이너-오케스트레이션-개념부터-실전-아키텍처까지.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">현직 개발자 루카가 직접 써보니: 쿠버네티스, 복잡함 너머의 강력함 (컨테이너 오케스트레이션 개념부터 실전 아키텍처까지)</a></li>
+        <li><a href="/posts/2026-07-02-클라우드-보안-누구-책임인가요-개발자가-겪은-공유-책임-모델의-진짜-현실.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">클라우드 보안, 누구 책임인가요? 개발자가 겪은 '공유 책임 모델'의 진짜 현실</a></li>
+        <li><a href="/posts/2026-06-29-현직-개발자가-겪은-메타버스-기술-트렌드와-현실-비즈니스-모델-탐구.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">현직 개발자가 겪은 메타버스, 기술 트렌드와 현실 비즈니스 모델 탐구</a></li>
+        <li><a href="/posts/2026-06-25-현직-개발자의-블록체인-입문-가이드-불변의-기록과-스마트-계약-직접-다뤄본-경험.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">현직 개발자의 블록체인 입문 가이드: 불변의 기록과 스마트 계약, 직접 다뤄본 경험</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
