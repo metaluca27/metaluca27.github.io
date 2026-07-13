@@ -2,27 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://infoloomia.com/</loc>
-        <lastmod>2026-07-09T03:42:18+09:00</lastmod>
+        <lastmod>2026-07-13T03:26:13+09:00</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/about.html</loc>
-        <lastmod>2026-07-09T03:42:18+09:00</lastmod>
+        <lastmod>2026-07-13T03:26:13+09:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/contact.html</loc>
-        <lastmod>2026-07-09T03:42:18+09:00</lastmod>
+        <lastmod>2026-07-13T03:26:13+09:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/privacy-policy.html</loc>
-        <lastmod>2026-07-09T03:42:18+09:00</lastmod>
+        <lastmod>2026-07-13T03:26:13+09:00</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://infoloomia.com/posts/2026-07-13-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%B5%9C%EC%8B%A0-SSD-%EA%B0%80%EC%9D%B4%EB%93%9C-SATA%EB%B6%80%ED%84%B0-NVMe-PCIe-50%EA%B9%8C%EC%A7%80-%EB%A3%A8%EC%B9%B4%EC%9D%98-%EC%8B%A4%EC%A0%84-%EA%B5%AC%EB%A7%A4%ED%8C%81.html</loc>
+        <lastmod>2026-07-13T00:00:00+09:00</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
     </url>
     <url>
         <loc>https://infoloomia.com/posts/2026-07-09-%EC%97%90%EC%A7%80-%EC%BB%B4%ED%93%A8%ED%8C%85-%EB%8B%A8%EC%88%9C%ED%95%9C-%EC%9C%A0%ED%96%89%EC%9D%BC%EA%B9%8C-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C%EC%99%80-%ED%95%A8%EA%BB%98-%EC%8D%A8%EB%B3%B4%EB%8B%88-%EC%95%8C%EA%B2%8C-%EB%90%9C-%EC%A7%84%EC%A7%9C-%EC%8B%9C%EB%84%88%EC%A7%80.html</loc>
