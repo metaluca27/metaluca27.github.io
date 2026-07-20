@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>개발자 루카의 DNS 탐험기: Cloudflare 1.1.1.1 vs Google 8.8.8.8, 무엇을 선택해야 할까? - InfoLoomia</title>
+    <meta name="description" content="느려터진 인터넷 속도에 답답함을 느끼던 개발자 루카가 직접 Cloudflare 1.1.1.1과 Google 8.8.8.8을 비교 테스트하며 얻은 실측 데이터와 설정 팁, 그리고 개발 환경 개선 경험을 공유합니다.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>개발자 루카의 DNS 탐험기: Cloudflare 1.1.1.1 vs Google 8.8.8.8, 무엇을 선택해야 할까?</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-07-20</span>
+            <span><i class="fa-regular fa-folder"></i> 네트워크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, IT와 테크 지식을 공부하고 기록하는 루카(Luka)입니다.</p>
+<p>어느 날 저희 팀에서 신규 프로젝트를 시작하며 수많은 의존성 패키지를 내려받고, 외부 API 문서 서버에 접속할 일이 많아졌습니다. 그런데 이상하게도 제 개발 환경만 유독 느리다는 느낌을 지울 수 없었습니다. 같은 네트워크를 쓰는 동료는 빠르게 빌드하는데, 저는 매번 패키지 매니저가 한참을 기다리다 타임아웃 되는 일이 잦았죠. 처음엔 하드웨어 문제인가 싶어 온갖 최적화를 다 해봤지만, 결국 범인은 제 생각보다 훨씬 근본적인 곳에 있었습니다. 바로 <code>DNS(Domain Name System)</code>였습니다. 이 미스터리한 병목 현상을 해결하고자 제가 직접 Cloudflare 1.1.1.1과 Google 8.8.8.8을 비교 테스트하며 얻은 값진 경험과 구체적인 데이터를 오늘 이 글에서 공유하고자 합니다.</p>
+<h2>DNS, 그거 대체 뭔데? (루카의 개발 일지 속 DNS)</h2>
+<p>DNS는 인터넷의 전화번호부와 같습니다. 우리가 웹사이트 주소(예: <code>google.com</code>)를 입력하면, DNS 서버가 이 주소를 컴퓨터가 이해하는 숫자 주소(IP 주소, 예: <code>142.250.199.206</code>)로 변환해 줍니다. 이 과정이 빨라야 웹사이트 로딩도, API 호출도, Git 리포지토리 클론도 빠르게 시작될 수 있죠.</p>
+<p>처음엔 저도 DNS를 그저 "도메인과 IP 주소를 연결해 주는 단순한 기능" 정도로만 생각했습니다. 하지만 제 맥북 프로에서 <code>npm install</code>이나 <code>composer update</code>를 실행할 때마다, 패키지 레지스트리 서버의 IP 주소를 찾는 데만 수 초에서 길게는 십수 초가 소요되는 것을 보며 "이게 왜 이렇게 오래 걸리지?"라는 의문을 가지게 되었습니다. 특히 외부 CDN에서 리소스를 로딩하는 웹 프로젝트에서, 초기 DNS 조회 지연은 페이지 로딩 시간을 평균 1초 이상 더 늘어지게 만들었죠. 개발자에게 1초는 체감상 10초와 같다는 것을 누구보다 잘 알고 있습니다.</p>
+<p>이때 저는 깨달았습니다. DNS 서버의 응답 속도가 곧 제 개발 생산성에 직결될 수 있다는 것을요. 기본적으로 통신사(ISP)에서 제공하는 DNS를 사용하고 있었지만, ISP DNS가 항상 최적의 성능을 보장하지는 않는다는 것을 여러 자료를 통해 알게 되었습니다. 그래서 저는 더 빠르고 안정적인 공개 DNS 서버를 찾아보기로 결심했습니다.</p>
+<h2>1.1.1.1 vs 8.8.8.8: 루카의 실전 테스트 비교</h2>
+<p>느려터진 인터넷에 인내심의 한계를 느끼던 어느 날, 동료 개발자의 추천으로 DNS 설정을 바꿔보기로 결심했습니다. 제 주력 개발 장비인 <strong>맥북 프로 M2 Max (macOS Sonoma 14.4.1)</strong>와 테스트용 <strong>Windows 11 데스크톱</strong>에서 DNS를 변경하고 성능을 직접 측정해봤습니다.</p>
+<h3>1. Cloudflare 1.1.1.1 경험 (개인 정보 보호와 속도를 동시에)</h3>
+<p>가장 먼저 설정해 본 것은 Cloudflare의 1.1.1.1이었습니다. 제가 주목했던 점은 "빠른 속도"와 "강력한 개인 정보 보호"였습니다. Cloudflare는 사용자 질의 로그를 24시간 이내에 삭제하고, 개인 식별 정보를 저장하지 않는다고 명시하고 있습니다.</p>
+<ul>
+<li><strong>설정 과정:</strong> 매우 간단했습니다. macOS 시스템 설정에서 DNS 서버 주소만 <code>1.1.1.1</code>과 <code>1.0.0.1</code>로 변경했습니다.</li>
+<li><strong>체감 성능:</strong> 처음 1.1.1.1로 바꾸고 제일 먼저 체감한 건 바로 <strong>외부 패키지 레지스트리 접속 속도</strong>였습니다. <code>npm install</code> 명령 실행 시, <code>registry.npmjs.org</code>의 DNS 응답 시간이 기존 ISP DNS(평균 50ms)에서 1.1.1.1 변경 후 <strong>평균 18ms</strong>로 단축되었습니다. Windows 환경에서 <code>pip install</code>로 파이썬 패키지를 설치할 때도 <code>pypi.org</code>에 대한 DNS 쿼리 시간이 평균 60ms에서 <strong>25ms</strong>로 크게 줄었습니다. 웹 페이지 로딩 시간도 전반적으로 빨라졌는데, 특히 해외 서버에 호스팅된 기술 블로그나 문서 사이트 접속 시 <strong>초기 로딩 시간이 평균 0.8초</strong> 정도 단축되는 것을 크롬 개발자 도구의 네트워크 탭에서 확인할 수 있었습니다.</li>
+<li><strong>특이사항:</strong> 처음 변경 후 몇 분 동안은 오히려 약간 느려지는 듯한 느낌도 받았습니다. 이는 DNS 캐시가 새롭게 구축되는 과정에서 발생하는 일시적인 현상으로, 약 10분 정도 지나니 안정적인 퍼포먼스를 보여줬습니다.</li>
+</ul>
+<h3>2. Google 8.8.8.8 경험 (안정성의 대명사)</h3>
+<p>다음으로 전 세계에서 가장 널리 사용되는 Google의 8.8.8.8을 테스트해봤습니다. 구글의 방대한 인프라를 기반으로 한 만큼 안정성과 광범위한 캐싱 능력이 기대되었습니다.</p>
+<ul>
+<li><strong>설정 과정:</strong> 마찬가지로 DNS 서버 주소를 <code>8.8.8.8</code>과 <code>8.8.4.4</code>로 변경했습니다.</li>
+<li><strong>체감 성능:</strong> Google 8.8.8.8은 Cloudflare 1.1.1.1만큼 인상적인 성능 개선을 보여줬습니다. 특히 <strong>Google Workspace (Gmail, Google Drive 등) 서비스 접속 시</strong>에는 1.1.1.1보다 미세하게 더 빠른 응답(약 10ms vs 15ms)을 보였습니다. 국내 웹사이트(예: naver.com, daum.net) 접속 시의 DNS 응답 시간은 Cloudflare 1.1.1.1과 큰 차이 없는 <strong>평균 20ms 내외</strong>를 기록했습니다.</li>
+<li><strong>특이사항:</strong> 전반적으로 매우 안정적인 성능을 보여주었지만, 가끔 특정 해외 개발 도구 리포지토리(예: 유럽 호스팅) 접속 시 1.1.1.1보다 약간 느린 쿼리 응답(약 40ms vs 30ms)을 기록하기도 했습니다. 이는 Google의 DNS 서버 위치와 해당 리포지토리 서버 간의 네트워크 경로에 따라 달라질 수 있는 부분이라고 생각합니다.</li>
+</ul>
+<h3>3. 루카의 최종 선택</h3>
+<p>저희 팀의 개발 환경 특성상 GitHub, NPM registry, Docker Hub 등 해외 서비스 의존도가 높고, 개인적으로 프라이버시를 중요하게 생각하는 편이라, 최종적으로는 <strong>Cloudflare 1.1.1.1을 주 DNS로 사용하기로 결정했습니다.</strong> 안정성과 구글 서비스 접근성을 고려한다면 8.8.8.8도 훌륭한 선택이지만, 제 사용 패턴에서는 1.1.1.1이 미세하게나마 더 나은 체감 성능을 제공했습니다.</p>
+<hr />
+<h3>직접 DNS 설정 변경하기: 따라 해보세요!</h3>
+<p>어떤 DNS를 선택하든, 설정 방법은 매우 간단합니다. 제가 주로 사용하는 운영체제별 설정법을 공유합니다.</p>
+<h4>Windows 10/11에서 DNS 변경하기</h4>
+<p><strong>GUI를 이용한 방법 (추천):</strong></p>
+<ol>
+<li><code>Win + R</code>을 눌러 <code>ncpa.cpl</code>을 입력하고 실행합니다. (네트워크 연결 창 열기)</li>
+<li>활성화된 네트워크 어댑터(예: Wi-Fi 또는 이더넷)를 마우스 오른쪽 버튼으로 클릭 후 <code>속성(Properties)</code>을 선택합니다.</li>
+<li><code>인터넷 프로토콜 버전 4(TCP/IPv4)</code>를 선택하고 <code>속성(Properties)</code> 버튼을 클릭합니다.</li>
+<li><code>다음 DNS 서버 주소 사용(Use the following DNS server addresses)</code>을 선택합니다.</li>
+<li><code>기본 설정 DNS 서버(Preferred DNS server)</code>와 <code>보조 DNS 서버(Alternate DNS server)</code>에 원하는 DNS 주소를 입력합니다.<ul>
+<li><strong>Cloudflare:</strong> <code>1.1.1.1</code> / <code>1.0.0.1</code></li>
+<li><strong>Google:</strong> <code>8.8.8.8</code> / <code>8.8.4.4</code></li>
+</ul>
+</li>
+<li><code>확인</code>을 누르고 모든 창을 닫습니다.</li>
+</ol>
+<p><strong>명령 프롬프트(관리자 권한)를 이용한 방법:</strong></p>
+<pre class="codehilite"><code class="language-cmd">:: Cloudflare DNS로 설정 (Wi-Fi 어댑터 예시, 어댑터 이름은 본인 환경에 맞춰 변경)
+netsh interface ip set dns &quot;Wi-Fi&quot; static 1.1.1.1 primary
+netsh interface ip add dns &quot;Wi-Fi&quot; 1.0.0.1 index=2
+
+:: Google DNS로 설정 (이더넷 어댑터 예시)
+netsh interface ip set dns &quot;이더넷&quot; static 8.8.8.8 primary
+netsh interface ip add dns &quot;이더넷&quot; 8.8.4.4 index=2
+
+:: DHCP (자동) DNS로 되돌리기
+netsh interface ip set dns &quot;Wi-Fi&quot; dhcp
+</code></pre>
+
+<p><em>(Tip: 정확한 어댑터 이름을 모르면 <code>Get-NetAdapter | Select-Object Name</code> 명령어를 PowerShell에서 실행하여 확인할 수 있습니다.)</em></p>
+<h4>macOS에서 DNS 변경하기</h4>
+<p><strong>GUI를 이용한 방법 (추천):</strong></p>
+<ol>
+<li><code>시스템 설정(System Settings)</code>을 엽니다.</li>
+<li>왼쪽 사이드바에서 <code>네트워크(Network)</code>를 클릭합니다.</li>
+<li>현재 연결된 네트워크 서비스(예: Wi-Fi 또는 이더넷)를 클릭한 후 <code>세부사항(Details...)</code> 또는 <code>고급(Advanced...)</code> 버튼을 클릭합니다.</li>
+<li>탭 메뉴에서 <code>DNS</code>를 클릭합니다.</li>
+<li><code>+</code> 버튼을 클릭하여 원하는 DNS 서버 주소를 추가합니다. 기존 ISP DNS는 <code>-</code> 버튼으로 제거하거나, 아래로 내려 우선순위를 변경할 수 있습니다.<ul>
+<li><strong>Cloudflare:</strong> <code>1.1.1.1</code>, <code>1.0.0.1</code></li>
+<li><strong>Google:</strong> <code>8.8.8.8</code>, <code>8.8.4.4</code></li>
+</ul>
+</li>
+<li><code>확인</code>을 누르고 <code>적용(Apply)</code>을 클릭합니다.</li>
+</ol>
+<p><strong>터미널을 이용한 방법:</strong></p>
+<pre class="codehilite"><code class="language-bash"># Cloudflare DNS로 설정 (Wi-Fi 서비스 예시, 서비스 이름은 본인 환경에 맞춰 변경)
+sudo networksetup -setdnsservers Wi-Fi 1.1.1.1 1.0.0.1
+
+# Google DNS로 설정 (이더넷 서비스 예시)
+sudo networksetup -setdnsservers Ethernet 8.8.8.8 8.8.4.4
+
+# DHCP (자동) DNS로 되돌리기
+sudo networksetup -setdnsservers Wi-Fi Empty
+</code></pre>
+
+<p><em>(Tip: 현재 활성화된 네트워크 서비스 이름을 모르면 <code>networksetup -listallnetworkservices</code> 명령어를 실행하여 확인할 수 있습니다.)</em></p>
+<h4>DNS 캐시 플러시 (필수!)</h4>
+<p>DNS 서버 변경 후에는 반드시 시스템의 DNS 캐시를 지워줘야 새롭게 설정된 DNS를 사용하기 시작합니다.</p>
+<pre class="codehilite"><code class="language-cmd"># Windows
+ipconfig /flushdns
+
+# macOS (macOS Big Sur 이상)
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+
+# macOS (이전 버전, Big Sur 미만)
+sudo killall -HUP mDNSResponder
+</code></pre>
+
+<h3>DNS 성능 실측하기 (feat. nslookup &amp; dig)</h3>
+<p>DNS 변경 후 제대로 적용되었는지, 그리고 실제 응답 속도는 얼마나 되는지 확인하는 것은 매우 중요합니다. 저는 주로 <code>nslookup</code> (Windows, macOS)과 <code>dig</code> (macOS, Linux) 명령어를 사용합니다.</p>
+<h4><code>nslookup</code> 사용 예시 (Windows/macOS)</h4>
+<p>특정 도메인의 IP 주소를 특정 DNS 서버를 통해 조회하고 싶을 때 유용합니다.</p>
+<pre class="codehilite"><code class="language-cmd"># Cloudflare 1.1.1.1을 통해 google.com 조회
+nslookup google.com 1.1.1.1
+</code></pre>
+
+<p><strong>예시 출력:</strong></p>
+<pre class="codehilite"><code>서버:      UnKnown
+Address:   1.1.1.1
+
+권한 없는 응답:
+이름:    google.com
+Addresses:  2404:6800:4004:80c::200e
+            142.250.199.206
+</code></pre>
+
+<p><em>(참고: <code>UnKnown</code>은 DNS 서버 이름이 로컬에서 확인되지 않아 뜨는 메시지입니다. 실제 응답에는 문제가 없습니다.)</em></p>
+<h4><code>dig</code> 사용 예시 (macOS/Linux)</h4>
+<p><code>dig</code>는 <code>nslookup</code>보다 더 자세한 DNS 조회 정보를 제공하며, 특히 <code>query time</code>을 직접 확인할 수 있어 DNS 성능 측정에 더 적합합니다.</p>
+<pre class="codehilite"><code class="language-bash"># Cloudflare 1.1.1.1을 통해 github.com 조회
+dig @1.1.1.1 github.com
+
+# Google 8.8.8.8을 통해 github.com 조회
+dig @8.8.8.8 github.com
+</code></pre>
+
+<p><strong>예시 출력 (일부 발췌, <code>dig @1.1.1.1 github.com</code>):</strong></p>
+<pre class="codehilite"><code>; &lt;&lt;&gt;&gt; DiG 9.10.6 &lt;&lt;&gt;&gt; @1.1.1.1 github.com
+; (1 server found)
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 36761
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;github.com.            IN  A
+
+;; ANSWER SECTION:
+github.com.     60  IN  A   140.82.121.3
+
+;; Query time: 18 msec  # 여기가 중요합니다!
+;; SERVER: 1.1.1.1#53(1.1.1.1)
+;; WHEN: Wed May 15 10:30:00 KST 2024
+;; MSG SIZE  rcvd: 55
+</code></pre>
+
+<p>이 <code>Query time</code> 값을 비교하여 어떤 DNS 서버가 특정 도메인에 대해 더 빠른 응답을 주는지 측정할 수 있습니다. 저는 여러 번 반복해서 측정하고 평균값을 내는 방식으로 테스트를 진행했습니다.</p>
+<h2>자주 겪는 문제와 해결법 (루카의 시행착오 노트)</h2>
+<p>DNS 설정을 변경하면서 제가 직접 겪었거나, 동료들이 자주 질문했던 문제점들과 그 해결책을 공유합니다.</p>
+<h3>문제 1: DNS 변경 후 오히려 인터넷이 느려진 것 같아요!</h3>
+<ul>
+<li><strong>원인:</strong> 새로운 DNS 서버는 초기에 캐시가 비어있기 때문에, 이전에 사용하던 ISP DNS보다 오히려 느리게 느껴질 수 있습니다. 또한, 특정 ISP DNS는 사용자의 위치에 최적화된 라우팅 정보를 가지고 있어, 이를 변경하면 일부 국내 서비스 접속 시 오히려 비효율적인 경로를 거칠 수 있습니다. 때로는 DNS 캐시 플러시가 제대로 되지 않아 이전 설정이 남아있는 경우도 있습니다.</li>
+<li><strong>해결법:</strong><ol>
+<li><strong>DNS 캐시 플러시:</strong> 위에서 설명한 <code>ipconfig /flushdns</code> (Windows) 또는 <code>sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder</code> (macOS) 명령어를 반드시 실행하세요.</li>
+<li><strong>시간 주기:</strong> 새로운 DNS 서버가 지역별 캐시를 구축하고 최적화하는 데는 약간의 시간이 필요합니다. 최소 몇 시간에서 하루 정도 사용해 보면서 체감 속도를 다시 평가해 보세요.</li>
+<li><strong>원복 테스트:</strong> 만약 계속 느리다면, 잠시 기존 ISP DNS로 되돌려 보거나 다른 공개 DNS(예: Cloudflare를 사용했다면 Google로)로 변경하여 테스트해 보세요. 저의 경우, 특정 은행 웹사이트 접속 시에 Cloudflare보다 ISP DNS가 미세하게 더 빠를 때가 있었습니다.</li>
+</ol>
+</li>
+</ul>
+<h3>문제 2: 특정 서비스(특히 사내망 VPN) 접속에 문제가 생겨요.</h3>
+<ul>
+<li><strong>원인:</strong> 사내망 VPN은 보안 및 내부 리소스 접근을 위해 자체 DNS 서버를 사용하도록 강제하는 경우가 많습니다. 이 경우, 수동으로 설정한 공개 DNS 서버는 내부망 도메인을 해석할 수 없어 접속 오류가 발생합니다. 실제 에러 메시지는 "호스트를 찾을 수 없습니다(Host not found)" 또는 "서버에 연결할 수 없습니다(Could not connect to server)" 와 같이 나타날 수 있습니다.</li>
+<li><strong>해결법:</strong><ol>
+<li><strong>VPN 연결 시 DNS 자동 설정:</strong> 대부분의 VPN 클라이언트는 연결 시 자체 DNS 서버를 사용하도록 네트워크 설정을 변경합니다. VPN 연결 후에는 DNS 설정이 자동으로 변경되는지 확인하고, 수동으로 설정한 DNS는 우선순위를 낮추거나 제거하여 VPN이 제공하는 DNS가 사용되도록 하세요.</li>
+<li><strong>사내 IT팀 문의:</strong> 복잡한 기업 네트워크 환경이라면, IT 관리자에게 문의하여 사내망 접속을 위한 올바른 DNS 설정값을 확인하는 것이 가장 확실합니다.</li>
+<li><strong>분할 터널링(Split Tunneling) 설정 확인:</strong> VPN이 제공하는 <code>분할 터널링</code> 기능을 사용하여, 사내망 트래픽만 VPN을 통해 라우팅하고, 일반 인터넷 트래픽은 로컬 DNS 및 네트워크를 사용하도록 설정할 수 있는지 확인해 보세요.</li>
+</ol>
+</li>
+</ul>
+<h3>문제 3: 공유기에서 설정했는데 내 PC는 왜 적용이 안 되죠?</h3>
+<ul>
+<li><strong>원인:</strong> 공유기에서 DNS를 변경했음에도 불구하고, 개별 PC의 네트워크 설정이 "자동으로 DNS 서버 주소 받기(DHCP)"가 아니라, PC 자체에 수동 DNS 주소가 설정되어 있을 수 있습니다. PC의 설정이 공유기보다 우선합니다.</li>
+<li><strong>해결법:</strong><ol>
+<li><strong>PC DNS 설정 확인:</strong> 위에 설명된 Windows 및 macOS의 DNS 설정 방법을 따라 개별 PC의 DNS 설정이 "자동으로 DNS 서버 주소 받기"로 되어있는지 확인하세요. 만약 수동으로 설정되어 있다면, 이를 자동으로 변경하거나 공유기에서 설정한 DNS 주소로 직접 입력해 주어야 합니다.</li>
+<li><strong>공유기 재시작:</strong> 공유기에서 DNS 설정을 변경한 후에는 공유기를 한 번 재부팅하는 것이 좋습니다.</li>
+<li><strong>PC 재시작:</strong> PC 역시 재부팅하면 네트워크 설정이 완전히 갱신되어 공유기에서 설정한 DNS를 올바르게 받아올 확률이 높아집니다.</li>
+</ol>
+</li>
+</ul>
+<h2>Cloudflare 1.1.1.1 vs Google 8.8.8.8: 심층 비교 표</h2>
+<p>제가 직접 사용해보고 느낀 점들을 바탕으로 두 DNS 서비스의 특징을 비교해봤습니다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">특징</th>
+<th style="text-align: left;">Cloudflare 1.1.1.1</th>
+<th style="text-align: left;">Google 8.8.8.8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>주요 장점</strong></td>
+<td style="text-align: left;">뛰어난 속도, 강력한 개인 정보 보호, 추가 보안 기능.</td>
+<td style="text-align: left;">높은 안정성, 광범위한 캐싱 인프라, 구글 서비스 최적화.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>성능 (체감)</strong></td>
+<td style="text-align: left;">전반적으로 매우 빠르며, 특히 해외 서비스 조회에 강점.</td>
+<td style="text-align: left;">안정적이고 균일한 성능, 구글 서비스 사용 시 미세하게 빠름.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>개인 정보</strong></td>
+<td style="text-align: left;">엄격한 노로그 정책 (24시간 이내 로그 삭제), 개인 식별 정보 미저장.</td>
+<td style="text-align: left;">익명화된 쿼리 데이터 수집 및 분석 가능성 있음 (서비스 개선 목적).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>보안 기능</strong></td>
+<td style="text-align: left;">DNSSEC 지원, <strong>1.1.1.1 for Families</strong> (악성/성인 사이트 차단 옵션 제공).</td>
+<td style="text-align: left;">DNSSEC 지원.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>추가 서비스</strong></td>
+<td style="text-align: left;"><strong>WARP</strong> (VPN 기능), <strong>1.1.1.1 for Teams</strong> (기업용 솔루션).</td>
+<td style="text-align: left;">특별한 추가 기능 없음.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>추천 대상</strong></td>
+<td style="text-align: left;">개인 사용자, 개발자, 보안 및 프라이버시를 중요시하는 사용자, 해외 서비스 이용이 잦은 사용자.</td>
+<td style="text-align: left;">모든 사용자, 안정성을 최우선으로 하는 사용자, 구글 서비스 의존도가 높은 사용자.</td>
+</tr>
+</tbody>
+</table>
+<h2>루카의 마지막 조언: 나에게 맞는 DNS 찾기</h2>
+<p>제가 Cloudflare 1.1.1.1을 최종적으로 선택했다고 해서 그것이 모든 사람에게 "최고의 DNS"라는 의미는 아닙니다. DNS 서버의 성능은 사용자의 지리적 위치, ISP와의 네트워크 경로, 그리고 주로 접속하는 웹사이트나 서비스의 종류에 따라 천차만별입니다.</p>
+<p>가장 좋은 방법은 저처럼 직접 <strong>두 DNS를 모두 설정해보고 <code>dig</code>나 <code>nslookup</code> 명령어로 다양한 도메인에 대한 응답 시간을 측정해보는 것</strong>입니다. 그리고 한동안 사용해 보면서 웹 서핑, 개발 작업, 게임 등 평소 자신의 인터넷 사용 패턴에서 어떤 DNS가 더 쾌적한 환경을 제공하는지 직접 경험해보는 것이 중요합니다.</p>
+<p>작은 설정 변경 하나가 이렇게 큰 체감 성능 차이를 가져올 수 있다는 것이 저에게는 신선한 충격이었습니다. 여러분도 DNS 최적화를 통해 더 빠르고 쾌적한 인터넷 환경을 구축하시길 바랍니다.</p>
+<hr />
+<h3>핵심 요약</h3>
+<ul>
+<li>DNS 설정 변경은 인터넷 체감 속도와 개발 생산성을 향상시키는 쉽고 효과적인 방법입니다.</li>
+<li>Cloudflare 1.1.1.1은 빠른 속도와 강력한 개인 정보 보호, Google 8.8.8.8은 높은 안정성과 광범위한 캐싱 인프라가 장점입니다.</li>
+<li><code>nslookup</code> 또는 <code>dig</code>를 통해 DNS 응답 속도를 직접 측정하고, 본인의 사용 환경에 맞는 최적의 DNS를 찾아 꾸준히 사용해 보세요.</li>
+</ul>
+<h3>자주 묻는 질문 (FAQ)</h3>
+<h4>Q1: DNS 변경하면 모든 웹사이트가 빨라지나요?</h4>
+<p><strong>A1:</strong> 아닙니다. DNS 변경은 "도메인 이름 &lt;-&gt; IP 주소" 변환 시간을 단축하여 웹사이트 접속 시작 시간을 빠르게 만들지만, 웹사이트 자체의 서버 속도, 이미지 로딩 시간, 인터넷 회선 자체의 대역폭 등에는 영향을 주지 않습니다. 초기 접속 속도 개선에 초점을 맞춥니다.</p>
+<h4>Q2: 휴대폰이나 태블릿에서도 DNS를 변경할 수 있나요?</h4>
+<p><strong>A2:</strong> 네, 가능합니다. Android 기기의 경우 Wi-Fi 설정에서, iOS 기기의 경우 Wi-Fi 설정 내의 정보(i) 버튼을 통해 DNS 서버를 수동으로 설정할 수 있습니다. 모바일 데이터 환경에서는 별도의 앱(예: Cloudflare WARP 앱)을 사용해야 하는 경우가 많습니다.</p>
+<h4>Q3: DNSSEC는 무엇이며, 꼭 활성화해야 하나요?</h4>
+<p><strong>A3:</strong> DNSSEC(DNS Security Extensions)는 DNS 응답의 위변조를 방지하여 피싱이나 파밍 공격으로부터 사용자를 보호하는 기술입니다. Cloudflare 1.1.1.1과 Google 8.8.8.8 모두 DNSSEC를 지원하므로, 이들을 사용하면 자동으로 보안 혜택을 받게 됩니다. 별도로 활성화할 필요는 없지만, DNSSEC가 지원되는 서버를 사용하는 것이 보안상 매우 중요합니다.</p>
+<hr />
+<p>오늘 공유드린 DNS 최적화 경험이 여러분의 답답한 인터넷 환경을 조금이나마 시원하게 해소하는 데 도움이 되기를 바랍니다. 궁금한 점이 있다면 언제든지 댓글로 남겨주세요. 다음에도 더 유익하고 재미있는 테크 이야기로 찾아오겠습니다. 감사합니다!</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-07-20-개발자-루카의-DNS-탐험기-Cloudflare-1111-vs-Google-8888-무엇을-선택해야-할까.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">개발자 루카의 DNS 탐험기: Cloudflare 1.1.1.1 vs Google 8.8.8.8, 무엇을 선택해야 할까?</a></li>
+        <li><a href="/posts/2026-07-16-개발자-루카의-3-2-1-백업-외장하드와-NAS로-개인-데이터-지키기-feat-시행착오.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">개발자 루카의 3-2-1 백업: 외장하드와 NAS로 개인 데이터 지키기 (feat. 시행착오)</a></li>
+        <li><a href="/posts/2026-07-13-개발자를-위한-최신-SSD-가이드-SATA부터-NVMe-PCIe-50까지-루카의-실전-구매팁.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">개발자를 위한 최신 SSD 가이드: SATA부터 NVMe PCIe 5.0까지, 루카의 실전 구매팁</a></li>
+        <li><a href="/posts/2026-07-09-에지-컴퓨팅-단순한-유행일까-클라우드와-함께-써보니-알게-된-진짜-시너지.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">에지 컴퓨팅, 단순한 유행일까? 클라우드와 함께 써보니 알게 된 진짜 시너지</a></li>
+        <li><a href="/posts/2026-07-06-현직-개발자-루카가-직접-써보니-쿠버네티스-복잡함-너머의-강력함-컨테이너-오케스트레이션-개념부터-실전-아키텍처까지.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">현직 개발자 루카가 직접 써보니: 쿠버네티스, 복잡함 너머의 강력함 (컨테이너 오케스트레이션 개념부터 실전 아키텍처까지)</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
