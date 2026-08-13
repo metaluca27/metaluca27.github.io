@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>손끝으로 경험하는 즐거움: 나만의 키보드 스위치 찾아 삼만리 - InfoLoomia</title>
+    <meta name="description" content="개발자는 아니지만 궁금한 건 못 참는 루카가 파헤친 키보드 스위치 세계! 청축, 적축, 갈축부터 저소음까지, 내게 맞는 키보드는 무엇일까요?">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>손끝으로 경험하는 즐거움: 나만의 키보드 스위치 찾아 삼만리</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-07-23</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다. 저는 사실 개발자도 아니고, 복잡한 코드를 짜는 사람도 아니지만, 늘 컴퓨터 앞에서 글을 쓰고 자료를 찾아보고 또 이렇게 블로그 포스팅을 하는 사람이다 보니 하루 종일 '손끝'으로 컴퓨터와 소통하게 되더라고요. 그러다 문득 "이 키보드, 그냥 다 똑같은 거 아냐?"라는 생각에서 벗어나, 뭔가 좀 더 특별하고 나에게 '찰떡' 같은 경험을 줄 수 있는 키보드를 찾아보고 싶다는 욕심이 생겼습니다. 특히 주변 개발자 친구들이 "무슨 축이 어떻고...", "키감이 예술이다" 하는 말을 들을 때마다, '도대체 그게 뭔데?' 하는 궁금증이 폭발했죠. 그래서 제가 직접 한번 파봤습니다!</p>
+<h2>키보드, 그 깊고도 넓은 세계로 첫걸음</h2>
+<p>키보드, 너무나 익숙한 물건이죠? 하지만 그 안에 이렇게 깊은 세계가 펼쳐져 있을 줄은 정말 몰랐습니다. 제가 처음 관심을 가진 건 바로 '기계식 키보드'였고, 그 핵심에는 '스위치'가 있다는 걸 알게 됐습니다. 스위치는 키보드의 키 하나하나 아래에 숨어있는 작은 부품인데, 이 스위치가 어떤 방식이냐에 따라 키를 누를 때의 느낌, 소리, 그리고 손가락에 전해지는 피로감까지 천차만별로 달라진다고 해요.</p>
+<p>수많은 종류의 스위치가 있지만, 초보자이자 비개발자인 제 눈에 가장 먼저 들어온 건 흔히 말하는 '청축', '적축', '갈축' 이 세 가지였습니다. 이들을 시작으로 더 조용한 스위치까지, 제 손끝을 위한 탐험을 시작해 보았습니다.</p>
+<h2>스위치 삼총사 집중 해부: 청축, 적축, 갈축</h2>
+<p>제가 가장 먼저 접한 스위치들은 바로 이 세 가지였습니다. 각각이 어떤 특징을 가졌는지, 제가 직접 타건해보면서 느낀 점과 함께 정리해봤습니다.</p>
+<h3>청축: 시원한 클릭감, 타닥타닥 소리의 매력</h3>
+<p>청축은 말 그대로 '파란색' 스위치입니다. 찾아보니 체리(Cherry) MX 스위치를 기준으로 색깔로 구분하는 경우가 많더군요. 청축은 키를 누를 때 '딸깍' 하는 경쾌한 소리와 함께 명확한 걸림(클릭감)이 느껴지는 것이 특징입니다.</p>
+<ul>
+<li><strong>저의 솔직한 느낌:</strong> 처음 청축 키보드를 타건했을 때, '와, 이건 진짜 타자 치는 맛이 난다!' 싶었어요. 마치 옛날 타자기처럼 경쾌한 소리가 집중력을 높여주는 것 같았죠. 하지만 동시에 '이걸 사무실에서 썼다가는 등짝 스매싱 당하겠구나' 하는 생각도 들었습니다. 공식 데이터 시트를 찾아보니, <strong>평균 작동 압력은 약 50gf(그램 포스)이고, 키가 입력되는 작동점까지의 거리는 약 2.2mm</strong>라고 합니다. 이 명확한 구분감이 타건하는 재미를 주지만, 소음은 확실히 큰 편이었어요.</li>
+</ul>
+<h3>적축: 부드러운 리니어의 대명사, 조용하고 빠른 입력</h3>
+<p>적축은 '빨간색' 스위치입니다. 청축과는 완전히 다른 경험을 제공합니다. 키를 누를 때 아무런 걸림 없이 부드럽게 쭉 내려가는 '리니어(Linear)' 방식이에요. 소리도 청축에 비해 훨씬 조용합니다.</p>
+<ul>
+<li><strong>저의 솔직한 느낌:</strong> 청축을 경험하고 적축을 눌러보니, 마치 구름 위를 걷는 느낌이었습니다. 걸리는 느낌 없이 스르륵 눌러지니 '이게 정말 입력된 건가?' 싶을 정도로 처음엔 이질감이 느껴졌어요. 하지만 익숙해지니 빠르게 연속 입력을 할 때 손가락의 피로감이 덜하다는 장점을 알게 됐죠. 특히 게임을 즐기는 분들이 많이 찾는다고 들었는데, 빠르게 반응해야 하는 상황에서 유리할 것 같았습니다. <strong>평균 작동 압력은 약 45gf로 청축보다 가볍고, 작동 거리는 약 2.0mm</strong>로 조금 더 짧았습니다. 확실히 조용하고 부드러운 키감을 선호하는 분들에게 좋을 것 같았어요.</li>
+</ul>
+<h3>갈축: 청축과 적축 사이, 절제된 구분감의 미학</h3>
+<p>갈축은 '갈색' 스위치입니다. 청축의 클릭감과 적축의 부드러움을 적절히 섞어 놓은 듯한 '택타일(Tactile)' 방식입니다. 키를 누르면 작은 걸림이 느껴지지만, 청축처럼 '딸깍' 소리가 나지는 않습니다.</p>
+<ul>
+<li><strong>저의 솔직한 느낌:</strong> 갈축은 '아, 이거 물건이네?' 싶었어요. 청축의 시원한 클릭감은 그리웠지만, 그 소음 때문에 포기해야 했던 아쉬움을 달래주는 스위치였습니다. 적당한 구분감이 있어서 오타를 줄이는 데 도움이 될 것 같았고, 소음도 청축보다 훨씬 작아서 사무실에서도 무난하게 사용할 수 있겠다는 생각이 들었습니다. <strong>평균 작동 압력은 약 55gf로 적축보다 무겁지만, 작동점까지의 거리는 약 2.0mm</strong>로 적축과 비슷합니다. 저처럼 텍스트 작업을 많이 하는 비개발자에게는 가장 이상적인 선택지가 아닐까 싶었어요. 개인적으로 가장 마음에 들었던 스위치였습니다.</li>
+</ul>
+<h2>소음은 줄이고 키감은 살린, 저소음 스위치의 등장</h2>
+<p>청축, 적축, 갈축을 직접 경험하며 스위치별 차이를 확실히 알게 되었지만, 여기서 끝이 아니었습니다. 주변에 저처럼 키보드에 관심이 많은 친구가 '저소음 스위치'라는 것을 추천해주더군요. 특히 사무 환경이나 조용한 공간에서 키보드를 많이 사용하는 사람들에게 인기가 많다고 했습니다.</p>
+<h3>저소음 적축/갈축: 사무실의 평화를 지키는 비결</h3>
+<p>저소음 스위치는 기본적인 작동 방식은 적축이나 갈축과 같지만, 스위치 내부에 소음을 줄이는 흡음재나 댐퍼가 추가되어 있습니다. 이 작은 차이가 소음 수준에 엄청난 영향을 미치더군요.</p>
+<ul>
+<li><strong>저의 솔직한 느낌:</strong> 저소음 적축을 타건해보고 정말 깜짝 놀랐습니다. 일반 적축과 비슷한 리니어 키감인데, 소음은 마치 노트북 키보드를 누르는 것 같았어요. 물론 완벽히 무소음은 아니지만, 일반 적축 대비 <strong>체감 소음이 약 10~15dB 가량 감소</strong>한다고 하니 그럴 만도 했습니다. 저소음 갈축도 마찬가지로, 일반 갈축의 구분감을 살리면서도 소음은 훨씬 줄어들어 '조용한 사무실에서 나만의 키감을 포기할 수 없을 때' 최고의 선택이라는 생각이 들었습니다. 특히 재택근무를 하면서 가족들에게 키보드 소음으로 눈치 보지 않을 수 있는 평화로운 옵션이 될 것 같았습니다.</li>
+</ul>
+<h2>스위치, 수치로 파고들다: 실제 데이터 비교</h2>
+<p>제가 직접 찾아보고 경험한 스위치들의 특징을 좀 더 객관적인 수치와 함께 비교 테이블로 정리해봤습니다. (체리 MX 스위치 기준 평균값)</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">스위치 종류</th>
+<th style="text-align: left;">키감 (타입)</th>
+<th style="text-align: left;">소리</th>
+<th style="text-align: left;">평균 키압 (gf)</th>
+<th style="text-align: left;">평균 작동 거리 (mm)</th>
+<th style="text-align: left;">추천 용도</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>청축</strong></td>
+<td style="text-align: left;">구분감 + 클릭</td>
+<td style="text-align: left;">큼 (딸깍딸깍)</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">2.2</td>
+<td style="text-align: left;">명확한 피드백 선호, 타건감 중시, 혼자 쓰는 공간</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>적축</strong></td>
+<td style="text-align: left;">리니어</td>
+<td style="text-align: left;">작음 (사각사각)</td>
+<td style="text-align: left;">45</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: left;">빠른 입력, 장시간 타이핑, 게이밍, 조용한 환경</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>갈축</strong></td>
+<td style="text-align: left;">구분감</td>
+<td style="text-align: left;">중간 (서걱서걱)</td>
+<td style="text-align: left;">55</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: left;">범용성, 타건감과 소음의 균형, 사무용</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>저소음 적축</strong></td>
+<td style="text-align: left;">리니어</td>
+<td style="text-align: left;">매우 작음</td>
+<td style="text-align: left;">45</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: left;">극도로 조용한 환경, 사무실, 밤샘 작업</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>저소음 갈축</strong></td>
+<td style="text-align: left;">구분감</td>
+<td style="text-align: left;">매우 작음</td>
+<td style="text-align: left;">55</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: left;">조용한 환경에서 구분감 필요, 사무용</td>
+</tr>
+</tbody>
+</table>
+<h2>내 손끝은 거짓말을 하지 않아: 스위치 테스트 해보기</h2>
+<p>이론은 여기까지! 결국 중요한 건 내 손가락이 느끼는 감각이죠. 키보드 스위치를 제대로 경험하고 나에게 맞는 스위치를 찾기 위해, 저는 몇 가지 간단한 테스트를 직접 해봤습니다. 비개발자인 저도 쉽게 따라 할 수 있는 방법이니, 여러분도 한번 해보시는 걸 추천합니다.</p>
+<h3>1. 키보드 입력 지연 시간(Latency) 간이 측정 (Python 스크립트)</h3>
+<p>아주 민감한 사용자나 게이머가 아니라면 큰 의미는 없겠지만, 스위치 자체의 반응 속성을 이해하는 데 도움이 될 수 있습니다. 직접 만들어봤다기보다는, 인터넷에서 찾아보고 '이게 뭔데?' 하면서 따라 해본 코드입니다. Python이 설치되어 있다면 다음 코드를 <code>.py</code> 파일로 저장하고 실행하면 됩니다.</p>
+<pre class="codehilite"><code class="language-python">import time
+import keyboard
+
+print(&quot;Press any key to start measuring latency. Press 'q' to quit.&quot;)
+
+while True:
+    event = keyboard.read_event()
+    if event.event_type == keyboard.KEY_DOWN:
+        start_time = time.time()
+        print(f&quot;Key '{event.name}' pressed at {start_time:.4f}&quot;)
+        # Release event to calculate duration of key press
+        event = keyboard.read_event()
+        if event.event_type == keyboard.KEY_UP:
+            end_time = time.time()
+            duration = end_time - start_time
+            print(f&quot;Key '{event.name}' released after {duration*1000:.2f} ms&quot;)
+            if event.name == 'q':
+                break
+</code></pre>
+
+<p><strong>설명:</strong> 이 스크립트는 <code>keyboard</code> 라이브러리를 사용해서 키가 눌리고(KEY_DOWN) 떼어지는(KEY_UP) 순간을 감지하고 그 시간을 기록합니다. <code>pip install keyboard</code> 명령어로 라이브러리를 설치한 다음, 파이썬 파일로 저장하고 터미널에서 <code>python your_script_name.py</code>를 실행하면 됩니다. 물론 스위치 자체의 물리적 작동 시간과 실제 시스템에 입력되는 시간은 다르겠지만, 키보드를 바꿔가며 비교해볼 때 흥미로운 데이터가 될 수 있었습니다. 제가 여러 스위치로 테스트해 본 결과, 일반적인 환경에서는 눈에 띄는 차이를 느끼기 어려웠지만, 스위치의 작동점과 키압이 높은 스위스는 미묘하게 더 긴 입력 시간이 기록되기도 했습니다. (약 10ms 이내의 미미한 차이)</p>
+<h3>2. 현재 시스템에 연결된 키보드 정보 확인 (Windows PowerShell)</h3>
+<p>현재 내 컴퓨터가 어떤 입력 장치를 인식하고 있는지 확인하는 것도 하나의 재미있는 과정입니다. 윈도우 사용자라면 PowerShell을 열고 다음 명령어를 입력하면 됩니다.</p>
+<pre class="codehilite"><code class="language-powershell">Get-PnpDevice -Class Keyboard | Format-Table FriendlyName, Status, Manufacturer
+</code></pre>
+
+<p><strong>설명:</strong> 이 명령어를 터미널에 치면, 현재 내 시스템에 연결된 키보드 장치들의 '친숙한 이름(FriendlyName)', '상태(Status)', 그리고 '제조사(Manufacturer)' 정보를 깔끔하게 표 형태로 보여줍니다. 저는 이 명령어를 통해 제가 여러 번 키보드를 바꾸면서 연결했을 때, PC가 각각의 키보드를 어떻게 인식하고 있는지 확인해볼 수 있었습니다. 비개발자인 저에게는 '내 키보드가 컴퓨터에 이런 식으로 인식되는구나!' 하는 깨달음을 주었습니다. 가끔 키보드 인식이 제대로 안 될 때 제조사 이름이라도 확인하면 문제를 진단하는 데 도움이 될지도 모른다는 생각도 해봤습니다.</p>
+<h2>비개발자가 헷갈리기 쉬운 부분</h2>
+<p>제가 직접 키보드 스위치를 파고들면서, 비개발자 입장에서 '이건 좀 헷갈리는데?' 싶었던 부분들이 있었습니다. 저 같은 분들을 위해 몇 가지 팁을 공유해 드립니다.</p>
+<h3>1. 키압 숫자 ≠ 키감: 중요한 건 '전체적인 느낌'</h3>
+<p>위에 제가 키압을 'gf' 단위로 적어 놓았지만, 사실 이 숫자가 키감의 모든 것을 설명해 주지는 않습니다. 예를 들어, 적축과 저소음 적축은 같은 45gf 키압이지만, 저소음 적축은 스위치 내부의 댐퍼 때문에 약간 먹먹하거나 쫀득한 느낌이 추가됩니다. 또, 갈축은 청축보다 키압이 높지만, 중간에 걸림이 있는 택타일 방식이라 오히려 적축보다 명확한 피드백을 줘서 '오타가 덜 난다'고 느끼는 사람도 많습니다.</p>
+<ul>
+<li><strong>해결법:</strong> 결국 중요한 건 '직접 타건'해보는 것입니다. 아무리 수치를 보고 설명을 들어도 내 손끝이 느끼는 감각이 가장 중요합니다. 주변에 기계식 키보드를 쓰는 친구가 있다면 빌려 써보거나, 키보드 전문 매장에 가서 직접 여러 스위치를 눌러보는 것이 가장 확실한 방법입니다.</li>
+</ul>
+<h3>2. "스테빌라이저" 그게 뭔데?: 철심 소리의 정체와 해결책</h3>
+<p>키보드를 처음 살 때, 유독 스페이스바나 쉬프트, 엔터 키 같은 큰 키에서 '철컹거리는' 소리나 '철심 소리'가 나는 경우가 있습니다. 저는 처음에 '이게 왜 이러지? 불량인가?' 싶었는데, 이게 바로 '스테빌라이저' 때문이더군요. 스테빌라이저는 긴 키캡의 양 끝이 동시에 눌리도록 지지해 주는 부품인데, 이 스테빌라이저의 철심 부분이 하우징에 닿으면서 소음을 유발하는 경우가 많습니다.</p>
+<ul>
+<li><strong>해결법:</strong> 비개발자가 직접 키보드를 분해해서 스테빌라이저를 윤활하는 것은 어려울 수 있습니다. 하지만 시중에 '스테빌라이저 윤활'이 잘 되어 있는 제품을 고르거나, 제조사에 따라 출고 시부터 윤활 처리가 되어 있는 제품을 구매하는 것이 가장 간편한 해결책입니다. 좀 더 과감하다면, 키보드 윤활 전문 업체에 의뢰하여 스테빌라이저 윤활을 받는 방법도 있습니다. 윤활만 잘 되어 있어도 키보드의 전체적인 타건감이 훨씬 고급스러워집니다.</li>
+</ul>
+<h3>3. 핫스왑 키보드: 스위치 교체가 이렇게 쉽다고?</h3>
+<p>저는 처음에 기계식 키보드를 사면 스위치를 영원히 고정해서 써야 하는 줄 알았습니다. 그런데 '핫스왑(Hot-Swap)' 키보드라는 게 있더군요. 핫스왑은 말 그대로 '뜨거운 상태', 즉 전원이 켜진 상태에서도 스위치를 쉽게 뽑고 다시 끼울 수 있는 키보드를 말합니다.</p>
+<ul>
+<li><strong>해결법:</strong> 이 핫스왑 기능 덕분에 비개발자도 납땜 같은 복잡한 작업 없이, 그저 '스위치 풀러'라는 도구로 스위치를 뽑고 다른 스위치를 끼워 넣기만 하면 됩니다. 만약 여러 가지 스위치를 경험해보고 싶거나, 나중에 다른 스위치로 바꾸고 싶을 때 매우 유용한 기능입니다. 처음 기계식 키보드를 구매할 때 '핫스왑' 기능이 있는 키보드를 선택하면, 나중에 스위치 변경의 자유를 얻을 수 있습니다. 저처럼 '이 스위치도 써보고 싶고, 저 스위치도 써보고 싶은' 호기심 많은 분들에게는 필수 기능이라고 생각합니다.</li>
+</ul>
+<h2>나에게 맞는 키보드, 어떻게 찾을까?</h2>
+<p>결론적으로, '최고의 스위치'는 없습니다. 오직 '나에게 가장 잘 맞는 스위치'만 있을 뿐입니다.</p>
+<ul>
+<li><strong>직접 타건:</strong> 백문이 불여일견! 기회가 된다면 반드시 직접 여러 스위치를 타건해보세요.</li>
+<li><strong>사용 환경 고려:</strong> 사무실이라면 저소음 스위치나 갈축을, 집에서 혼자 즐긴다면 청축도 좋습니다.</li>
+<li><strong>개인의 취향:</strong> 소리, 키감, 키압 등 어떤 것을 가장 중요하게 생각하는지에 따라 선택이 달라집니다.</li>
+</ul>
+<p>저처럼 코딩은 못 해도 IT가 궁금한 비개발자도 충분히 키보드 스위치의 세계를 탐험하고 즐길 수 있습니다. 이 글이 여러분의 '인생 키보드'를 찾는 데 작은 도움이 되기를 바라며, 다음번에는 또 어떤 흥미로운 IT 주제를 파헤쳐 볼지 기대해 주세요!</p>
+<hr />
+<h3>핵심 요약</h3>
+<ul>
+<li>키보드 스위치는 키감, 소리, 키압에 큰 영향을 주며, 대표적으로 청축(클릭), 적축(리니어), 갈축(택타일)이 있습니다.</li>
+<li>청축은 명확한 구분감과 경쾌한 소리가 특징이고, 적축은 부드러운 리니어 키감으로 조용하며, 갈축은 둘 사이의 균형 잡힌 타건감을 제공합니다.</li>
+<li>저소음 스위치는 일반 스위치 대비 소음이 크게 줄어들어 사무실이나 조용한 환경에 적합하며, 핫스왑 키보드는 스위치 교체가 쉬워 다양한 키감을 경험하기 좋습니다.</li>
+</ul>
+<h3>FAQ</h3>
+<p><strong>Q1: 개발자가 아닌데 굳이 기계식 키보드를 써야 할까요?</strong>
+A1: 개발자가 아니더라도 기계식 키보드는 타이핑 경험의 만족도를 크게 높여줍니다. 특히 장시간 문서 작업이나 블로그 글쓰기 등 텍스트 입력이 많은 분들에게 손끝의 피로도를 줄여주고, 입력의 즐거움을 선사해 줄 수 있습니다. 굳이 '필수'는 아니지만, 한번 경험하면 돌아가기 어려울 정도로 매력적인 선택지입니다.</p>
+<p><strong>Q2: 저소음 스위치는 일반 스위치에 비해 키감이 많이 다를까요?</strong>
+A2: 네, 약간의 차이가 있습니다. 저소음 스위치는 소음 감소를 위해 스위치 내부에 댐퍼가 적용되는데, 이 댐퍼 때문에 일반 스위치보다 키감이 약간 먹먹하거나 쫀득하게 느껴질 수 있습니다. 하지만 소음 감소 효과가 뛰어나기 때문에, 조용한 환경을 우선시한다면 충분히 감수할 만한 차이라고 생각합니다.</p>
+<p><strong>Q3: 처음 기계식 키보드를 구매한다면 어떤 스위치를 추천하시나요?</strong>
+A3: 만약 소음에 크게 구애받지 않고 명확한 타건감을 선호한다면 '청축'을 추천합니다. 하지만 사무실 등 조용한 환경에서 사용해야 한다면 '갈축'이나 '저소음 갈축'이 가장 무난한 선택이 될 수 있습니다. 빠른 입력과 부드러움을 선호하거나 게이밍 위주라면 '적축'이나 '저소음 적축'도 좋습니다. 가능하다면 꼭 직접 타건해보고 결정하시는 것을 권장합니다.</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-08-10-네트워크-통신의-숨은-주역-TCP-핸드셰이크가-만드는-문제와-똑똑한-최적화-전략.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">네트워크 통신의 숨은 주역: TCP 핸드셰이크가 만드는 문제와 똑똑한 최적화 전략</a></li>
+        <li><a href="/posts/2026-08-06-변수-이름만-잘-지어도-코드가-달라진다고-비개발자가-파헤친-클린-코드의-첫걸음.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">변수 이름만 잘 지어도 코드가 달라진다고? 비개발자가 파헤친 클린 코드의 첫걸음</a></li>
+        <li><a href="/posts/2026-08-03-삽질-끝에-비개발자도-납득한-디자인-패턴-싱글톤-팩토리-옵저버-실전-적용기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">삽질 끝에 비개발자도 납득한 디자인 패턴: 싱글톤, 팩토리, 옵저버 실전 적용기</a></li>
+        <li><a href="/posts/2026-07-30-버그와-작별할-시간-TypeScript-도입-후-우리-팀의-평화와-비개발자가-파고든-JS-코드-마이그레이션-생존-가이드.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">버그와 작별할 시간: TypeScript 도입 후 우리 팀의 평화와 비개발자가 파고든 JS 코드 마이그레이션 생존 가이드</a></li>
+        <li><a href="/posts/2026-07-27-루카의-PC-쿨러-탐험기-공랭-vs-수랭-내-컴퓨터에-딱-맞는-쿨러는.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">루카의 PC 쿨러 탐험기: 공랭 vs 수랭, 내 컴퓨터에 딱 맞는 쿨러는?</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>

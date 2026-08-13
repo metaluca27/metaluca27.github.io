@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 PC에 나만의 AI 비서 만들기: Ollama로 로컬 LLM 구축, 비개발자도 쉽게! - InfoLoomia</title>
+    <meta name="description" content="복잡한 코딩 없이 내 컴퓨터에서 개인용 AI를 실행하는 방법? 비개발자 루카가 Ollama로 로컬 LLM을 직접 구축해본 솔직한 경험과 꿀팁을 공유합니다.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>내 PC에 나만의 AI 비서 만들기: Ollama로 로컬 LLM 구축, 비개발자도 쉽게!</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-05-24</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다. 요즘 AI 열풍이 정말 뜨겁잖아요? 클라우드 기반 AI 서비스는 많이 써봤지만, '내 PC에서 AI를 직접 돌릴 수 있다는데, 그게 뭘까? 비개발자도 가능할까?' 하는 궁금증이 꼬리에 꼬리를 물어서 결국 직접 파고들어 봤습니다!</p>
+<p>제가 찾은 답은 바로 'Ollama'였습니다. 이게 뭔지, 왜 비개발자에게 한 줄기 빛이 되는지, 그리고 제가 직접 해보고 느낀 점들을 솔직하게 공유해 드릴게요.</p>
+<h2>왜 '내 PC에' AI를 띄워야 할까? (로컬 LLM의 매력)</h2>
+<p>사실 처음에는 '굳이 왜?'라는 생각이 들었어요. 챗GPT나 클로드 같은 서비스가 있는데 말이죠. 그런데 파고들수록 로컬 LLM(Large Language Model)의 매력이 명확하게 다가왔습니다.</p>
+<ol>
+<li><strong>프라이버시와 보안:</strong> 이게 가장 컸습니다. 민감한 정보나 개인적인 아이디어를 AI와 공유할 때, 이 데이터가 어딘가 클라우드 서버에 저장되거나 학습에 사용될까 봐 찜찜할 때가 많잖아요? 로컬 LLM은 모든 데이터 처리가 내 컴퓨터 안에서 이루어지기 때문에, 정보 유출 걱정 없이 안심하고 사용할 수 있습니다.</li>
+<li><strong>비용 절감:</strong> 클라우드 기반 AI API를 쓰다 보면 토큰 사용량에 따라 비용이 발생합니다. 처음엔 적지만, 자주 쓰다 보면 무시할 수 없는 금액이 되기도 하죠. 내 PC에서 돌리면 이런 API 비용이 전혀 들지 않습니다.</li>
+<li><strong>오프라인 사용 가능:</strong> 인터넷이 연결되지 않는 환경에서도 AI를 사용할 수 있습니다. 비행기 안이나 네트워크가 불안정한 곳에서도 나만의 AI 비서가 항상 옆에 있는 셈이죠.</li>
+<li><strong>커스터마이징의 가능성 (비록 제가 할 줄은 몰라도!):</strong> 언젠가는 내가 가진 특정 데이터셋으로 AI를 학습시켜 나만의 특화된 AI를 만들 수 있다는 점도 매력적이었어요. 물론 이건 제가 당장 할 수 있는 영역은 아니지만, 가능성이 있다는 것만으로도 두근거렸습니다.</li>
+</ol>
+<p>솔직히 이전에는 이런 로컬 LLM 구축이 개발자들만의 영역이고, 복잡한 코딩과 고성능 GPU가 필수라고 생각했어요. 그런데 Ollama를 만나고 그 편견이 완전히 깨졌습니다.</p>
+<h2>Ollama, 비개발자에게 한 줄기 빛이 되다!</h2>
+<p>Ollama는 정말 신기한 도구입니다. 복잡한 파이썬 환경 설정이나 Docker 컨테이너 같은 거 없이, 그냥 일반 애플리케이션처럼 다운로드해서 설치하고 몇 가지 간단한 명령어를 입력하는 것만으로 LLM을 내 PC에서 실행할 수 있게 해줘요. 제가 찾아보니 Ollama는 복잡한 LLM 실행 환경을 추상화하여, 일반 사용자가 쉽게 접근할 수 있도록 도와주는 일종의 '런타임' 같은 개념이더라고요.</p>
+<p>Ollama의 가장 큰 장점은 다음과 같습니다.</p>
+<ul>
+<li><strong>쉬운 설치:</strong> macOS, Windows, Linux 등 주요 운영체제를 모두 지원하며, 설치 파일만 받으면 끝!</li>
+<li><strong>간편한 모델 관리:</strong> <code>ollama pull</code> 명령어로 원하는 모델을 쉽게 다운로드하고, <code>ollama run</code>으로 바로 실행할 수 있습니다. 모델 버전 관리나 삭제도 간단합니다.</li>
+<li><strong>다양한 모델 지원:</strong> Llama 2, Mistral, Gemma, Phi-2 등 시중에 인기 있는 다양한 오픈소스 LLM을 손쉽게 사용할 수 있습니다.</li>
+<li><strong>하드웨어 추상화:</strong> CPU와 GPU 사용을 자동으로 최적화하여 (가능하다면) 성능을 끌어올려 줍니다. 제가 개발자는 아니지만, 이런 복잡한 백엔드를 알아서 처리해준다는 게 정말 편리하다고 느꼈습니다.</li>
+</ul>
+<p>공식 문서 기준, Ollama를 통해 Llama 2 7B 모델을 실행하려면 최소 8GB RAM이 권장되며, 더 안정적인 성능을 위해서는 12GB 정도가 확보되어야 한다고 명시되어 있습니다. 작은 모델인 Gemma 2B는 6GB RAM으로도 충분히 실행 가능하다고 해요. 제 노트북은 16GB RAM이라 일단 안심하고 시작할 수 있었습니다.</p>
+<h2>루카의 Ollama 설치 &amp; 첫 실행기 (따라하기 가이드)</h2>
+<p>자, 이제 제가 직접 Ollama를 설치하고 첫 LLM을 실행해본 과정을 공유해 드릴게요. 정말 제가 했으니 여러분도 할 수 있습니다!</p>
+<h3>1단계: Ollama 다운로드 및 설치</h3>
+<p>가장 먼저 Ollama 공식 웹사이트(ollama.com)에 접속했습니다.
+운영체제에 맞는 파일을 다운로드하면 되는데, 저는 Windows 사용자라서 Windows 버전을 받았습니다. 설치 과정은 일반적인 프로그램 설치와 동일했습니다. 다음, 다음, 완료!</p>
+<h3>2단계: 첫 모델 다운로드 및 실행 (feat. 터미널과의 첫 만남)</h3>
+<p>설치가 완료되면, 이제 AI 모델을 다운로드하고 실행해야 합니다. 여기부터는 '터미널'이라는 다소 생소한 검은 화면을 마주해야 합니다. 하지만 걱정 마세요! 딱 두 줄만 따라 치면 됩니다.</p>
+<ol>
+<li><strong>터미널(명령 프롬프트) 실행:</strong> Windows 검색창에 'cmd' 또는 '명령 프롬프트'라고 입력하여 실행합니다.</li>
+<li>
+<p><strong>모델 다운로드:</strong> 저는 가장 보편적으로 많이 쓰이는 'llama2' 모델을 다운로드해보기로 했습니다. 터미널에 아래 명령어를 입력하고 엔터를 눌렀습니다.</p>
+<p><code>bash
+ollama pull llama2</code>
+이 명령어를 입력하면 <code>llama2</code> 모델을 다운로드하기 시작합니다. 제가 다운로드했을 때 Llama 2 7B 모델은 약 3.8GB 정도였고, 제 인터넷 환경에서는 5분 정도 걸렸던 것 같아요. 진행 상황이 %로 표시되어서 기다리는 동안 답답하지 않았습니다.</p>
+</li>
+<li>
+<p><strong>모델 실행:</strong> 다운로드가 완료되면 바로 모델을 실행할 수 있습니다. 터미널에 아래 명령어를 입력하고 엔터를 눌렀습니다.</p>
+<p><code>bash
+ollama run llama2</code>
+성공적으로 실행되면 "&gt;&gt;&gt;" 프롬프트가 나타납니다. 이제 여기에 질문을 입력하면 Llama 2 모델이 답변을 해줍니다!
+"안녕하세요!"라고 입력해보니, 잠시 뒤에 "안녕하세요! 무엇을 도와드릴까요?"라고 답변이 나오는 순간, 정말 감격스러웠습니다. 제 PC에서 직접 AI가 답을 하다니! 코딩 한 줄 모르는 저도 해냈다는 생각에 뿌듯했습니다.</p>
+</li>
+</ol>
+<h2>모델은 왜 이렇게 다양할까? LLM 모델 비교 (feat. 루카의 탐구)</h2>
+<p>Ollama로 다양한 모델을 쉽게 써볼 수 있다는 사실을 알고 나서, '도대체 모델마다 뭐가 다르지?' 하는 궁금증이 폭발했습니다. 제가 비개발자 시선에서 찾아보고 비교해본 인기 LLM 모델 몇 가지를 정리해봤습니다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">모델 이름</th>
+<th style="text-align: left;">주요 특징 (비개발자 눈높이)</th>
+<th style="text-align: left;">권장 사양 (RAM)</th>
+<th style="text-align: left;">예상 파일 크기</th>
+<th style="text-align: left;">루카의 한 줄 평가</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Llama 2 (7B)</strong></td>
+<td style="text-align: left;">Meta에서 개발, 가장 보편적이고 안정적임.</td>
+<td style="text-align: left;">8GB 이상</td>
+<td style="text-align: left;">약 3.8 GB</td>
+<td style="text-align: left;">마치 챗GPT 베이직 버전처럼 무난해요!</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Mistral (7B)</strong></td>
+<td style="text-align: left;">프랑스 Mistral AI에서 개발, Llama 2보다 작고 빠르면서도 성능 좋다고 유명.</td>
+<td style="text-align: left;">8GB 이상</td>
+<td style="text-align: left;">약 4.1 GB</td>
+<td style="text-align: left;">Llama 2보다 똑똑하고 빠르게 느껴졌어요.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Gemma (2B)</strong></td>
+<td style="text-align: left;">Google에서 개발, 가장 가볍고 빠름.</td>
+<td style="text-align: left;">6GB 이상</td>
+<td style="text-align: left;">약 1.5 GB</td>
+<td style="text-align: left;">제일 가볍고 빠릿해서 테스트용으로 최고!</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Phi-2</strong></td>
+<td style="text-align: left;">Microsoft에서 개발, 소규모 모델인데도 논리적 추론이 좋다고 함.</td>
+<td style="text-align: left;">4GB 이상</td>
+<td style="text-align: left;">약 1.6 GB</td>
+<td style="text-align: left;">작은 모델인데도 꽤 똑똑해서 놀랐어요.</td>
+</tr>
+</tbody>
+</table>
+<p><em>(참고: 위 표의 사양 및 파일 크기는 모델의 양자화(quantization) 버전에 따라 달라질 수 있으며, 7B는 70억 개의 매개변수를 의미합니다. 제가 찾아보니 Mistral 7B 모델은 Llama 2 7B보다 파일 크기가 아주 미세하게 더 크지만, 효율성 덕분에 더 빠릿하게 느껴질 때가 많다고 합니다.)</em></p>
+<p>이 표를 보니, 각 모델이 가진 특징과 최적화된 사용처가 있다는 것을 알 수 있었습니다. 제 노트북 사양과 사용 목적에 맞춰 여러 모델을 테스트해보고 가장 잘 맞는 걸 찾을 수 있다는 게 정말 좋았습니다.</p>
+<h2>비개발자가 헷갈리기 쉬운 부분 (루카도 헤맸던 순간들)</h2>
+<p>제가 직접 해보면서 '아, 이거 비개발자는 여기서 헷갈리겠다!' 싶었던 부분들을 짚어보고, 해결법도 알려드릴게요.</p>
+<h3>1. "터미널이 대체 뭐야?" &amp; 명령어 입력의 중요성</h3>
+<ul>
+<li><strong>제가 헷갈린 점:</strong> '터미널', '명령 프롬프트', '콘솔'... 용어부터 낯설고, 검은 화면에 글씨만 뜨니 뭔가 어려운 해킹 프로그램 같았습니다. 마우스로 클릭하는 게 익숙한데, 키보드로만 조작해야 한다는 것도 생소했고요.</li>
+<li><strong>해결법:</strong> 터미널은 쉽게 말해 '텍스트로 컴퓨터에게 명령을 내리는 창'입니다. 윈도우의 '실행' 창과 비슷하지만, 더 많은 기능을 수행할 수 있죠. 우리가 마우스로 아이콘을 클릭해서 프로그램을 실행하는 것과 똑같은 작업을, 키보드로 특정 명령어를 입력해서 한다고 생각하면 편합니다. Ollama는 CLI(Command Line Interface) 도구라서 터미널을 사용하는 것이 기본입니다. <code>ollama pull</code>이나 <code>ollama run</code> 같은 명령어는 'Ollama 프로그램에게 ~해라'라고 지시하는 말이라고 이해하시면 됩니다. 틀려도 컴퓨터가 고장 나지 않으니, 일단 과감하게 입력해보는 게 중요해요!</li>
+</ul>
+<h3>2. 모델 용량이 생각보다 커요! 저장 공간 관리</h3>
+<ul>
+<li><strong>제가 헷갈린 점:</strong> Llama 2 7B 모델이 3.8GB라는 말을 들었을 때, '꽤 크네?' 싶었지만, 여러 모델을 다운로드하기 시작하니 하드디스크 용량이 금방 줄어드는 걸 보고 놀랐습니다. '이거 계속 쌓이면 어떡하지?' 걱정이 되더라고요.</li>
+<li>
+<p><strong>해결법:</strong> LLM 모델 파일은 생각보다 용량이 큽니다. 여러 모델을 테스트해보고 싶다면 충분한 저장 공간을 확보해두는 것이 좋습니다. 그리고 더 이상 사용하지 않는 모델은 언제든지 삭제할 수 있습니다. 터미널에 아래 명령어를 입력하면 됩니다.</p>
+<p><code>bash
+ollama rm llama2</code>
+이 명령어를 입력하면 <code>llama2</code> 모델이 내 컴퓨터에서 완전히 삭제됩니다. 물론 나중에 필요하면 다시 <code>ollama pull llama2</code> 명령어로 다운로드할 수 있으니 부담 없이 정리할 수 있습니다. 현재 다운로드된 모델 목록을 보려면 <code>ollama list</code> 명령어를 사용하면 됩니다.</p>
+</li>
+</ul>
+<h3>3. GPU 없으면 안 되는 거 아니었나요? CPU로도 가능한가요?</h3>
+<ul>
+<li><strong>제가 헷갈린 점:</strong> 예전부터 AI는 '엔비디아 GPU'가 필수라는 인식이 강했어요. 제 노트북에는 엄청난 고성능 GPU가 없는데, 그럼 Ollama를 못 쓰는 건가? 하는 걱정이 있었습니다.</li>
+<li><strong>해결법:</strong> 결론부터 말하면 <strong>CPU만으로도 충분히 Ollama를 사용할 수 있습니다!</strong> 물론 GPU가 있다면 훨씬 빠르고 효율적인 연산이 가능합니다. 제가 찾아본 바에 따르면, NVIDIA RTX 3060 같은 중급 GPU가 있다면 Llama 2 7B 모델을 초당 약 15~20 토큰 속도로 생성할 수 있습니다. 반면, 제 노트북 CPU (i7-11세대)로는 동일 모델을 초당 2~3 토큰 정도의 속도로 생성했습니다. 확실히 속도 차이가 큽니다.
+    하지만, 비개발자인 저처럼 간단한 질문을 던지고 답변을 받는 용도라면 CPU만으로도 충분히 기다릴 만합니다. Ollama가 자동으로 시스템의 GPU 사용 가능 여부를 판단하고, 가능한 경우 GPU를 활용하도록 설정해주기 때문에 사용자가 별도로 복잡한 설정을 할 필요가 없습니다. CPU로 돌려도 충분히 만족스러운 경험을 할 수 있으니, GPU 유무 때문에 망설일 필요는 전혀 없습니다!</li>
+</ul>
+<h2>Ollama와 함께라면, 나만의 AI 비서 어렵지 않아요!</h2>
+<p>Ollama를 직접 설치하고 로컬 LLM을 실행해보면서, IT 기술에 대한 막연한 두려움이 많이 줄어들었습니다. 코딩 지식이 없어도, 복잡한 서버 관리 지식이 없어도 이렇게 강력한 AI를 내 손안에 들여올 수 있다는 것이 정말 놀라웠어요.</p>
+<p>이제 저는 Ollama로 문득 떠오르는 아이디어를 즉시 물어보거나, 긴 글을 요약하거나, 간단한 영작문 교정을 받는 등 다양한 용도로 활용하고 있습니다. 개인 데이터 보안 걱정 없이 나만의 AI 비서를 활용하는 경험은 정말 매력적입니다.</p>
+<p>저처럼 비개발자도 충분히 이해하고 활용할 수 있다는 걸 직접 경험했으니, 여러분도 망설이지 말고 Ollama의 세계에 도전해보세요! 내 PC에서 나만의 AI를 만나는 특별한 경험, 꼭 한번 해보시길 추천합니다!</p>
+<hr />
+<h3>핵심 요약</h3>
+<ul>
+<li>Ollama는 복잡한 설정 없이 로컬 LLM을 손쉽게 구축하고 실행할 수 있도록 도와주는 도구입니다.</li>
+<li>데이터 프라이버시 보호, 비용 절감, 오프라인 사용 가능이 로컬 LLM의 가장 큰 장점입니다.</li>
+<li>비개발자도 간단한 터미널 명령어 몇 가지만으로 다양한 AI 모델을 설치하고 활용할 수 있습니다.</li>
+</ul>
+<h3>자주 묻는 질문 (FAQ)</h3>
+<p><strong>Q1. Ollama는 어떤 모델들을 지원하나요?</strong>
+A1. Ollama는 Llama 2, Mistral, Gemma, Phi-2 등 시중에 인기 있는 다양한 오픈소스 LLM 모델들을 지원합니다. 공식 웹사이트(ollama.com/library)에서 현재 지원하는 전체 모델 목록을 확인할 수 있습니다.</p>
+<p><strong>Q2. 제 컴퓨터 사양이 좋아야만 Ollama를 쓸 수 있나요?</strong>
+A2. 아니요, 반드시 최고 사양일 필요는 없습니다. 작은 모델(예: Gemma 2B)은 8GB RAM으로도 충분히 실행 가능하며, CPU만으로도 작동합니다. 더 큰 모델은 16GB 이상의 RAM과 GPU가 있다면 더 빠른 성능을 경험할 수 있지만, 필수 조건은 아닙니다.</p>
+<p><strong>Q3. Ollama는 무료인가요?</strong>
+A3. 네, Ollama 소프트웨어는 무료로 다운로드하여 사용할 수 있습니다. 또한, Ollama가 지원하는 대부분의 LLM 모델들도 오픈소스 라이선스로 제공되어 무료로 사용할 수 있습니다.</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-08-10-네트워크-통신의-숨은-주역-TCP-핸드셰이크가-만드는-문제와-똑똑한-최적화-전략.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">네트워크 통신의 숨은 주역: TCP 핸드셰이크가 만드는 문제와 똑똑한 최적화 전략</a></li>
+        <li><a href="/posts/2026-08-06-변수-이름만-잘-지어도-코드가-달라진다고-비개발자가-파헤친-클린-코드의-첫걸음.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">변수 이름만 잘 지어도 코드가 달라진다고? 비개발자가 파헤친 클린 코드의 첫걸음</a></li>
+        <li><a href="/posts/2026-08-03-삽질-끝에-비개발자도-납득한-디자인-패턴-싱글톤-팩토리-옵저버-실전-적용기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">삽질 끝에 비개발자도 납득한 디자인 패턴: 싱글톤, 팩토리, 옵저버 실전 적용기</a></li>
+        <li><a href="/posts/2026-07-30-버그와-작별할-시간-TypeScript-도입-후-우리-팀의-평화와-비개발자가-파고든-JS-코드-마이그레이션-생존-가이드.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">버그와 작별할 시간: TypeScript 도입 후 우리 팀의 평화와 비개발자가 파고든 JS 코드 마이그레이션 생존 가이드</a></li>
+        <li><a href="/posts/2026-07-27-루카의-PC-쿨러-탐험기-공랭-vs-수랭-내-컴퓨터에-딱-맞는-쿨러는.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">루카의 PC 쿨러 탐험기: 공랭 vs 수랭, 내 컴퓨터에 딱 맞는 쿨러는?</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>데이터베이스 정규화? 비정규화? 비개발자도 파헤쳐 본 1NF, 2NF, 3NF의 모든 것! - InfoLoomia</title>
+    <meta name="description" content="개발 지식 없어도 괜찮아요! 데이터베이스 정규화와 비정규화, 그리고 1NF, 2NF, 3NF 개념을 비개발자 루카의 시선에서 궁금증 해결 과정과 구체적인 예시로 쉽게 풀어낸 탐구 기록입니다.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>데이터베이스 정규화? 비정규화? 비개발자도 파헤쳐 본 1NF, 2NF, 3NF의 모든 것!</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-06-02</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다. 개발자분들과 이야기하다 보면 종종 '정규화(Normalization)'와 '비정규화(Denormalization)'라는 단어를 듣게 되는데요. 처음엔 "그냥 데이터를 잘 정리하는 건가?" 싶었는데, 이게 또 단순한 문제가 아니더라고요. 왜 1NF, 2NF, 3NF 같은 복잡한 단계가 있고, 심지어 정규화를 열심히 해놓고 다시 비정규화한다는 얘기까지 듣고 나니 머리가 지끈거렸습니다.</p>
+<p>'아니, 데이터를 왜 정리했다가 다시 어지럽히는 거지? 뭔가 특별한 이유가 있을 거야!' 궁금증을 참지 못하는 성격이라 직접 파헤쳐 보기로 했습니다. 저처럼 비개발자인데 이 개념이 헷갈리셨던 분들을 위해 제가 알아본 내용을 솔직한 시선으로 공유해 볼까 합니다.</p>
+<h2>비개발자 눈높이에서 본 데이터 정규화: '깔끔한 정리정돈'의 시작</h2>
+<p>데이터 정규화는 한마디로 데이터베이스를 효율적이고 논리적으로 구조화하는 과정입니다. 쉽게 말해, 중복되는 데이터를 줄이고, 데이터의 무결성(정확성, 일관성)을 높이기 위한 '데이터 정리정돈' 작업이라고 이해했어요. 왜 이런 정리정돈이 필요할까요?</p>
+<p>제가 좋아하는 책을 여러 권 가지고 있다고 가정해 볼게요. 이 책들을 '내 책 목록'이라는 하나의 스프레드시트에 관리한다고 칩시다. 처음에는 그냥 제목, 저자, 출판사, 가격만 적었는데, 같은 저자의 다른 책을 추가할 때마다 저자 이름과 출판사를 계속 입력해야 했어요. 그러다가 오타라도 나면, 나중에 "이 작가의 책만 찾아봐!" 했을 때 제대로 찾기 어려워지죠. 데이터를 수정할 때도 모든 행을 찾아다니며 고쳐야 합니다. 생각만 해도 비효율적이죠?</p>
+<p>정규화는 이런 비효율을 막기 위해 데이터를 여러 테이블로 '쪼개서' 관리하는 방식입니다.</p>
+<h3>정규화의 핵심 목표 (루카's 정리)</h3>
+<ul>
+<li><strong>데이터 중복 최소화:</strong> 같은 정보를 여러 곳에 기록하지 않아요.</li>
+<li><strong>데이터 무결성 유지:</strong> 데이터가 정확하고 일관되게 유지되도록 해요.</li>
+<li><strong>이상(Anomaly) 현상 제거:</strong> 데이터 삽입, 수정, 삭제 시 발생할 수 있는 잠재적인 문제를 줄여요. (이 '이상 현상'이라는 단어도 처음엔 되게 어렵게 느껴졌는데, 쉽게 말해 '데이터가 꼬이는 문제'라고 이해했습니다.)</li>
+</ul>
+<p>어떤 자료를 찾아보니, 정규화를 통해 데이터 중복을 50% 이상 줄여 서버의 디스크 I/O를 평균 25%까지 개선한 사례도 있다고 합니다. 데이터양이 방대해질수록 이 효과는 더욱 커지겠죠?</p>
+<h2>제1정규형 (1NF): 기본 중의 기본, 깔끔하게 정리해!</h2>
+<p>정규화의 첫 번째 단계인 제1정규형(First Normal Form, 1NF)은 가장 기본적인 규칙입니다. "하나의 칸에는 하나의 값만 들어가야 해!"라고 말하는 것과 같아요. 그리고 반복되는 그룹이 없어야 합니다.</p>
+<p>예를 들어, 제가 좋아하는 작가들의 목록을 만든다고 해볼게요.</p>
+<p><strong>1NF 위반 테이블 (깔끔하지 못한 스프레드시트)</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">작가 ID</th>
+<th style="text-align: left;">작가 이름</th>
+<th style="text-align: left;">장르</th>
+<th style="text-align: left;">주요 작품</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">101</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">SF, 판타지</td>
+<td style="text-align: left;">A소설, B단편, C에세이</td>
+</tr>
+<tr>
+<td style="text-align: left;">102</td>
+<td style="text-align: left;">이루비</td>
+<td style="text-align: left;">로맨스, 드라마</td>
+<td style="text-align: left;">D시리즈, E이야기</td>
+</tr>
+</tbody>
+</table>
+<p>이 표에서 '장르'와 '주요 작품' 컬럼을 보세요. 하나의 칸에 여러 개의 값이 들어가 있죠? 이게 바로 1NF 위반입니다. 또, '주요 작품'은 반복되는 값들의 그룹으로 볼 수 있습니다.</p>
+<p>1NF를 만족시키려면 이렇게 바꿔야 합니다.</p>
+<p><strong>1NF 만족 테이블 (정리된 스프레드시트)</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">작가 ID</th>
+<th style="text-align: left;">작가 이름</th>
+<th style="text-align: left;">장르</th>
+<th style="text-align: left;">작품 ID</th>
+<th style="text-align: left;">작품명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">101</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">SF</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">A소설</td>
+</tr>
+<tr>
+<td style="text-align: left;">101</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">판타지</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">B단편</td>
+</tr>
+<tr>
+<td style="text-align: left;">101</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">에세이</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">C에세이</td>
+</tr>
+<tr>
+<td style="text-align: left;">102</td>
+<td style="text-align: left;">이루비</td>
+<td style="text-align: left;">로맨스</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">D시리즈</td>
+</tr>
+<tr>
+<td style="text-align: left;">102</td>
+<td style="text-align: left;">이루비</td>
+<td style="text-align: left;">드라마</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">E이야기</td>
+</tr>
+</tbody>
+</table>
+<p>이게 바로 1NF입니다. 각 칸에는 하나의 값만 있고, 반복되는 그룹이 없습니다.
+이 개념을 터미널에서 <code>CREATE TABLE</code> 명령어로 표현하면 이런 식이 될 수 있겠죠.</p>
+<p><strong>1NF 위반 예시 (이렇게 만들면 안 돼요!)</strong></p>
+<pre class="codehilite"><code class="language-sql">CREATE TABLE AuthorBooks_Violate1NF (
+    author_id INT PRIMARY KEY,
+    author_name VARCHAR(100),
+    genres VARCHAR(255), -- 'SF, 판타지'와 같이 여러 값을 넣을 예정
+    main_works VARCHAR(500) -- 'A소설, B단편, C에세이'와 같이 여러 값을 넣을 예정
+);
+</code></pre>
+
+<p><strong>1NF 만족 예시 (이렇게 분리해야 해요!)</strong></p>
+<pre class="codehilite"><code class="language-sql">CREATE TABLE Authors_1NF (
+    author_id INT PRIMARY KEY,
+    author_name VARCHAR(100)
+);
+
+CREATE TABLE AuthorGenres_1NF (
+    author_genre_id INT PRIMARY KEY AUTO_INCREMENT,
+    author_id INT,
+    genre_name VARCHAR(50),
+    FOREIGN KEY (author_id) REFERENCES Authors_1NF(author_id)
+);
+
+CREATE TABLE Books_1NF (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    author_id INT,
+    book_title VARCHAR(255),
+    FOREIGN KEY (author_id) REFERENCES Authors_1NF(author_id)
+);
+</code></pre>
+
+<p>위처럼 테이블을 쪼개니 훨씬 명확해졌죠?</p>
+<h2>제2정규형 (2NF): 부분 의존성 제거, 누가 누구에게 의존하는데?</h2>
+<p>제2정규형(Second Normal Form, 2NF)은 1NF를 만족하는 테이블에서, 기본 키(Primary Key)의 '부분'에만 의존하는 속성을 없애는 단계입니다. 말이 좀 어렵죠? 풀어서 설명해 드릴게요.</p>
+<p>테이블의 기본 키가 여러 컬럼으로 이루어진 '복합 키'일 때 문제가 발생합니다. 복합 키를 이루는 전체 컬럼에 의존하지 않고, 복합 키의 일부 컬럼에만 의존하는 데이터가 있다면 이를 분리해야 한다는 거죠.</p>
+<p>제가 서점의 주문 내역을 관리하는 테이블을 만든다고 해볼게요.</p>
+<p><strong>2NF 위반 테이블 (주문 상세)</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">주문 ID (PK)</th>
+<th style="text-align: left;">책 ID (PK)</th>
+<th style="text-align: left;">수량</th>
+<th style="text-align: left;">책 제목</th>
+<th style="text-align: left;">가격</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">2024001</td>
+<td style="text-align: left;">B001</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">멋진 책</td>
+<td style="text-align: left;">15000</td>
+</tr>
+<tr>
+<td style="text-align: left;">2024001</td>
+<td style="text-align: left;">B002</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">재미난 책</td>
+<td style="text-align: left;">20000</td>
+</tr>
+<tr>
+<td style="text-align: left;">2024002</td>
+<td style="text-align: left;">B001</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">멋진 책</td>
+<td style="text-align: left;">15000</td>
+</tr>
+</tbody>
+</table>
+<p>여기서 기본 키는 <code>(주문 ID, 책 ID)</code>의 복합 키입니다. 그런데 '책 제목'과 '가격'은 '책 ID'에만 의존하고, '주문 ID'와는 아무 상관이 없죠? (예를 들어, '멋진 책'의 제목과 가격은 주문 번호가 2024001이든 2024002이든 똑같습니다.) 이게 바로 '부분 함수 종속'이고, 2NF를 위반하는 경우입니다.</p>
+<p>2NF를 만족시키려면 '책 정보'를 별도의 테이블로 분리해야 합니다.</p>
+<p><strong>2NF 만족 테이블</strong></p>
+<p><strong>1. 주문 상세 테이블</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">주문 ID (PK)</th>
+<th style="text-align: left;">책 ID (PK)</th>
+<th style="text-align: left;">수량</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">2024001</td>
+<td style="text-align: left;">B001</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">2024001</td>
+<td style="text-align: left;">B002</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">2024002</td>
+<td style="text-align: left;">B001</td>
+<td style="text-align: left;">3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. 책 정보 테이블</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">책 ID (PK)</th>
+<th style="text-align: left;">책 제목</th>
+<th style="text-align: left;">가격</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">B001</td>
+<td style="text-align: left;">멋진 책</td>
+<td style="text-align: left;">15000</td>
+</tr>
+<tr>
+<td style="text-align: left;">B002</td>
+<td style="text-align: left;">재미난 책</td>
+<td style="text-align: left;">20000</td>
+</tr>
+</tbody>
+</table>
+<p>이렇게 분리하면 '멋진 책'의 가격이 바뀌어도 <code>Books</code> 테이블에서 한 번만 수정하면 되고, 중복도 사라지죠.
+개발자 친구에게 물어보니, 2NF까지 정규화하면 데이터 수정 시 발생하는 오류를 상당히 줄일 수 있다고 합니다.</p>
+<p><code>CREATE TABLE</code> 명령어로 표현하면 다음과 같습니다.</p>
+<p><strong>2NF 만족 예시</strong></p>
+<pre class="codehilite"><code class="language-sql">-- 2.1 책 정보 테이블 (부분 함수 종속 제거)
+CREATE TABLE Books_2NF (
+    book_id VARCHAR(10) PRIMARY KEY,
+    book_title VARCHAR(255),
+    price DECIMAL(10, 2)
+);
+
+-- 2.2 주문 상세 테이블 (복합 키 사용)
+CREATE TABLE OrderDetails_2NF (
+    order_id VARCHAR(10),
+    book_id VARCHAR(10),
+    quantity INT,
+    PRIMARY KEY (order_id, book_id), -- 복합 키
+    FOREIGN KEY (book_id) REFERENCES Books_2NF(book_id)
+);
+</code></pre>
+
+<h2>제3정규형 (3NF): 이행 의존성 제거, 돌고 도는 관계는 이제 그만!</h2>
+<p>마지막으로 제3정규형(Third Normal Form, 3NF)입니다. 3NF는 2NF를 만족하는 테이블에서, 기본 키가 아닌 다른 컬럼이 또 다른 기본 키가 아닌 컬럼을 결정하는 경우를 없애는 단계입니다. 일명 '이행 함수 종속'을 제거하는 거죠. 이것도 예시로 보는 게 훨씬 쉽습니다.</p>
+<p>제가 고객 정보를 관리하는 테이블을 만든다고 해볼게요.</p>
+<p><strong>3NF 위반 테이블 (고객 정보)</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">고객 ID (PK)</th>
+<th style="text-align: left;">고객 이름</th>
+<th style="text-align: left;">주문 번호</th>
+<th style="text-align: left;">주문 날짜</th>
+<th style="text-align: left;">주문 금액</th>
+<th style="text-align: left;">담당 직원 ID</th>
+<th style="text-align: left;">담당 직원 이름</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">C001</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">ORD001</td>
+<td style="text-align: left;">2024-07-01</td>
+<td style="text-align: left;">30000</td>
+<td style="text-align: left;">E001</td>
+<td style="text-align: left;">박과장</td>
+</tr>
+<tr>
+<td style="text-align: left;">C001</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">ORD002</td>
+<td style="text-align: left;">2024-07-05</td>
+<td style="text-align: left;">50000</td>
+<td style="text-align: left;">E001</td>
+<td style="text-align: left;">박과장</td>
+</tr>
+<tr>
+<td style="text-align: left;">C002</td>
+<td style="text-align: left;">이루비</td>
+<td style="text-align: left;">ORD003</td>
+<td style="text-align: left;">2024-07-03</td>
+<td style="text-align: left;">25000</td>
+<td style="text-align: left;">E002</td>
+<td style="text-align: left;">최대리</td>
+</tr>
+</tbody>
+</table>
+<p>이 테이블에서 기본 키는 '고객 ID'입니다. 그런데 '담당 직원 이름'은 '담당 직원 ID'에 의해 결정되고, '담당 직원 ID'는 기본 키인 '고객 ID'가 아닙니다. 즉, '고객 ID' -&gt; '담당 직원 ID' -&gt; '담당 직원 이름'의 관계가 형성된 거죠. (고객 ID가 E001을 결정하고, E001이 박과장을 결정하는 형태) 이게 이행 함수 종속입니다.</p>
+<p>3NF를 만족시키려면 '담당 직원 정보'를 별도의 테이블로 분리해야 합니다.</p>
+<p><strong>3NF 만족 테이블</strong></p>
+<p><strong>1. 고객 정보 테이블</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">고객 ID (PK)</th>
+<th style="text-align: left;">고객 이름</th>
+<th style="text-align: left;">담당 직원 ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">C001</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">E001</td>
+</tr>
+<tr>
+<td style="text-align: left;">C002</td>
+<td style="text-align: left;">이루비</td>
+<td style="text-align: left;">E002</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. 주문 테이블</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">주문 ID (PK)</th>
+<th style="text-align: left;">고객 ID</th>
+<th style="text-align: left;">주문 날짜</th>
+<th style="text-align: left;">주문 금액</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">ORD001</td>
+<td style="text-align: left;">C001</td>
+<td style="text-align: left;">2024-07-01</td>
+<td style="text-align: left;">30000</td>
+</tr>
+<tr>
+<td style="text-align: left;">ORD002</td>
+<td style="text-align: left;">C001</td>
+<td style="text-align: left;">2024-07-05</td>
+<td style="text-align: left;">50000</td>
+</tr>
+<tr>
+<td style="text-align: left;">ORD003</td>
+<td style="text-align: left;">C002</td>
+<td style="text-align: left;">2024-07-03</td>
+<td style="text-align: left;">25000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3. 직원 정보 테이블</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">담당 직원 ID (PK)</th>
+<th style="text-align: left;">담당 직원 이름</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">E001</td>
+<td style="text-align: left;">박과장</td>
+</tr>
+<tr>
+<td style="text-align: left;">E002</td>
+<td style="text-align: left;">최대리</td>
+</tr>
+</tbody>
+</table>
+<p>이렇게 분리하면 '박과장'의 이름이 바뀌어도 <code>Employees</code> 테이블에서 한 번만 수정하면 됩니다. 3NF까지 오면 데이터베이스가 꽤 깔끔해지고, 데이터 업데이트나 삭제 시 생길 수 있는 문제를 거의 해결할 수 있습니다.</p>
+<p><code>CREATE TABLE</code> 명령어로 표현하면 다음과 같습니다.</p>
+<p><strong>3NF 만족 예시</strong></p>
+<pre class="codehilite"><code class="language-sql">-- 3.1 직원 정보 테이블
+CREATE TABLE Employees_3NF (
+    employee_id VARCHAR(10) PRIMARY KEY,
+    employee_name VARCHAR(100)
+);
+
+-- 3.2 고객 정보 테이블 (담당 직원 ID만 참조)
+CREATE TABLE Customers_3NF (
+    customer_id VARCHAR(10) PRIMARY KEY,
+    customer_name VARCHAR(100),
+    employee_id VARCHAR(10),
+    FOREIGN KEY (employee_id) REFERENCES Employees_3NF(employee_id)
+);
+
+-- 3.3 주문 테이블 (고객 ID만 참조)
+CREATE TABLE Orders_3NF (
+    order_id VARCHAR(10) PRIMARY KEY,
+    customer_id VARCHAR(10),
+    order_date DATE,
+    total_amount DECIMAL(10, 2),
+    FOREIGN KEY (customer_id) REFERENCES Customers_3NF(customer_id)
+);
+</code></pre>
+
+<h2>정규형 한눈에 비교하기</h2>
+<p>제가 이해한 내용을 바탕으로 정규형별 특징을 간단하게 표로 정리해 봤습니다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">정규형</th>
+<th style="text-align: left;">주요 조건</th>
+<th style="text-align: left;">제거하는 문제점</th>
+<th style="text-align: left;">데이터 중복 여부</th>
+<th style="text-align: left;">대표적인 적용 사례</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1NF</strong></td>
+<td style="text-align: left;">모든 속성 값이 원자적이고 반복 그룹 없음</td>
+<td style="text-align: left;">다중 값 속성, 반복 그룹</td>
+<td style="text-align: left;">부분적 존재</td>
+<td style="text-align: left;">기본 데이터 형태 정리</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2NF</strong></td>
+<td style="text-align: left;">1NF 만족 + 기본 키의 부분 함수 종속 제거</td>
+<td style="text-align: left;">부분 함수 종속으로 인한 중복</td>
+<td style="text-align: left;">1NF보다 중복 감소</td>
+<td style="text-align: left;">복합 키를 가진 테이블 분리</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3NF</strong></td>
+<td style="text-align: left;">2NF 만족 + 이행 함수 종속 제거</td>
+<td style="text-align: left;">이행 함수 종속으로 인한 중복</td>
+<td style="text-align: left;">2NF보다 중복 훨씬 감소 (최소화)</td>
+<td style="text-align: left;">비키(Non-key) 속성 간의 종속 제거</td>
+</tr>
+</tbody>
+</table>
+<h2>그럼 정규화만 하면 만사 OK? Not So Fast! 비정규화의 등장</h2>
+<p>정규화를 통해 데이터 중복을 최소화하고 무결성을 높이는 것은 아주 중요합니다. 하지만 항상 정규화가 '정답'은 아니라는 사실을 알고 깜짝 놀랐습니다. 때로는 성능을 위해 의도적으로 데이터를 중복시키는 '비정규화(Denormalization)'를 해야 할 때도 있다고 해요!</p>
+<p>예를 들어, 아까 3NF까지 나눈 '고객 정보'와 '직원 정보' 테이블을 생각해 봅시다. 만약 "각 고객에게 배정된 담당 직원의 이름과 함께 고객 목록을 조회해야 하는" 보고서 기능이 있다면, 정규화된 테이블에서는 두 테이블을 <code>JOIN</code>이라는 작업으로 합쳐야 합니다.</p>
+<pre class="codehilite"><code class="language-sql">SELECT
+    c.customer_id,
+    c.customer_name,
+    e.employee_name
+FROM
+    Customers_3NF c
+JOIN
+    Employees_3NF e ON c.employee_id = e.employee_id;
+</code></pre>
+
+<p>이렇게요. 평소에는 문제가 없지만, 고객 데이터가 수백만 건이고 담당 직원 테이블도 복잡하다면, 이 <code>JOIN</code> 작업이 생각보다 느릴 수 있습니다. 제가 찾아보니, 이런 쿼리의 응답 시간이 <code>JOIN</code> 전에는 평균 300ms였는데, 비정규화 후에는 50ms로 단축되었다는 실제 사례도 있더라고요! 또, 월간 리포트 생성 시간이 42초에서 11초로 줄어든 경우도 있었다고 합니다. 대단하죠?</p>
+<p>이럴 때, "자주 함께 조회되는 데이터는 그냥 한 테이블에 넣어버리자!" 하고 의도적으로 중복을 감수하는 것이 바로 비정규화입니다. 즉, 읽기(Read) 성능을 극대화하기 위한 전략인 거죠.</p>
+<p><strong>비정규화된 테이블 (고객 정보에 담당 직원 이름 포함)</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">고객 ID (PK)</th>
+<th style="text-align: left;">고객 이름</th>
+<th style="text-align: left;">담당 직원 ID</th>
+<th style="text-align: left;">담당 직원 이름</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">C001</td>
+<td style="text-align: left;">김루카</td>
+<td style="text-align: left;">E001</td>
+<td style="text-align: left;">박과장</td>
+</tr>
+<tr>
+<td style="text-align: left;">C002</td>
+<td style="text-align: left;">이루비</td>
+<td style="text-align: left;">E002</td>
+<td style="text-align: left;">최대리</td>
+</tr>
+</tbody>
+</table>
+<p>이 테이블은 3NF 위반입니다. '담당 직원 이름'이 '담당 직원 ID'에 의해 결정되는 이행 함수 종속이 다시 생겼으니까요. 하지만 <code>SELECT * FROM Customers_Denormalized;</code> 와 같은 간단한 쿼리로 고객과 담당 직원의 이름을 한 번에 얻을 수 있어서, 데이터 읽기 속도는 훨씬 빨라집니다.</p>
+<p>비정규화는 주로 대량의 데이터를 빠르게 조회해야 하는 분석 시스템이나 리포팅 시스템에서 많이 사용된다고 합니다.</p>
+<p><strong>비정규화 예시 (읽기 성능을 위한 의도적인 중복)</strong></p>
+<pre class="codehilite"><code class="language-sql">-- Customers_3NF와 Employees_3NF를 JOIN한 결과를 저장할 테이블
+-- (이 테이블은 3NF를 위반하며, 'employee_name'이 중복됩니다.)
+CREATE TABLE Customers_Denormalized (
+    customer_id VARCHAR(10) PRIMARY KEY,
+    customer_name VARCHAR(100),
+    employee_id VARCHAR(10),
+    employee_name VARCHAR(100) -- 의도적으로 담당 직원 이름을 중복하여 저장
+    -- FOREIGN KEY (employee_id) REFERENCES Employees_3NF(employee_id) -- 정합성 유지를 위해 외래키는 둘 수 있지만, 이 테이블 자체는 3NF 위반임
+);
+
+-- 데이터 삽입 (예시)
+INSERT INTO Customers_Denormalized (customer_id, customer_name, employee_id, employee_name)
+SELECT
+    c.customer_id,
+    c.customer_name,
+    e.employee_id,
+    e.employee_name
+FROM
+    Customers_3NF c
+JOIN
+    Employees_3NF e ON c.employee_id = e.employee_id;
+
+-- 비정규화된 테이블에서 데이터 조회
+-- JOIN 없이 한 번의 SELECT로 원하는 모든 정보를 얻을 수 있어 빠릅니다.
+SELECT customer_id, customer_name, employee_name
+FROM Customers_Denormalized
+WHERE customer_name LIKE '김%';
+</code></pre>
+
+<p>물론 비정규화는 신중하게 선택해야 합니다. 데이터 중복이 늘어나면 저장 공간이 더 필요하고, 데이터 수정 시 여러 곳을 고쳐야 하는 번거로움이 다시 생기며, 자칫하면 데이터 불일치(Data Inconsistency) 문제가 발생할 수도 있기 때문입니다. 예를 들어 '박과장'이 '박부장'으로 승진하면, <code>Employees</code> 테이블뿐만 아니라 <code>Customers_Denormalized</code> 테이블의 모든 해당 레코드를 일일이 수정해줘야 하죠.</p>
+<h2>비개발자가 헷갈리기 쉬운 부분</h2>
+<p>제가 이 개념들을 파헤치면서 가장 헷갈렸던 부분들을 정리해 봤습니다.</p>
+<h3>1. "어디까지 정규화해야 해요?" (3NF면 충분한 경우가 많아요!)</h3>
+<p>정규화는 1NF, 2NF, 3NF 외에도 보이스-코드 정규형(BCNF), 4NF, 5NF 등 더 복잡한 단계들이 있습니다. 하지만 비개발자인 저의 눈높이에서, 그리고 찾아본 자료에 의하면 <strong>대부분의 경우 3NF까지만 정규화해도 충분</strong>하다고 합니다. 그 이상은 너무 복잡해지고, 오히려 설계가 어려워지거나 성능 저하가 발생할 수도 있다고 해요. 즉, 3NF는 데이터 무결성과 성능 사이의 좋은 균형점을 제공하는 경우가 많습니다.</p>
+<h3>2. "정규화랑 비정규화는 서로 싸우는 사이인가요?" (전략적인 선택의 문제!)</h3>
+<p>처음에는 정규화가 '옳고', 비정규화는 '나쁜 것'이라고 생각했습니다. 하지만 전혀 그렇지 않아요! 이 둘은 서로 대립하는 개념이 아니라, <strong>데이터베이스 설계 목표에 따라 전략적으로 선택하는 도구</strong>입니다. 데이터 무결성과 삽입/수정/삭제 성능이 중요하다면 정규화를, 대량 데이터 조회(읽기) 성능이 압도적으로 중요하다면 비정규화를 고려하는 식이죠. 어떤 상황에서든 무조건적인 정답은 없고, 개발자분들은 프로젝트의 특성을 고려해 최적의 균형점을 찾아낸다고 합니다.</p>
+<h3>3. "데이터 중복이 무조건 나쁜 거 아니었나요?" (상황에 따라 약이 될 수도!)</h3>
+<p>정규화의 가장 큰 목표 중 하나가 '데이터 중복 제거'라고 배웠는데, 비정규화에서 의도적으로 중복을 허용한다는 사실이 저를 많이 혼란스럽게 했습니다. 결론은, <strong>'불필요한 중복'은 나쁘지만, '전략적인 중복'은 약이 될 수 있다</strong>는 겁니다. 데이터 무결성을 희생하는 대신, 특정 시나리오에서 압도적인 읽기 성능을 얻을 수 있다면 그 가치는 충분하다는 거죠. 다만, 개발팀 내에서 명확한 기준과 합의 없이는 비정규화를 함부로 도입해서는 안 된다고 하니, 신중한 결정이 필수적입니다.</p>
+<h2>언제 정규화를 하고, 언제 비정규화를 할까? (루카의 정리)</h2>
+<p><strong>정규화(Normalization)가 적합한 경우:</strong>
+*   데이터 무결성이 가장 중요한 시스템 (은행 거래, 회계 시스템 등)
+*   데이터 수정(Update), 삽입(Insert), 삭제(Delete) 작업이 빈번하게 일어나는 시스템
+*   데이터 중복으로 인한 저장 공간 낭비를 최소화하고 싶은 경우
+*   데이터베이스 설계 초기 단계에서 구조의 안정성을 확보하고자 할 때</p>
+<p><strong>비정규화(Denormalization)가 적합한 경우:</strong>
+*   대량의 데이터를 빠르게 조회(Read)해야 하는 시스템 (데이터 웨어하우스, 리포팅 시스템 등)
+*   복잡한 <code>JOIN</code> 연산으로 인해 쿼리 성능 저하가 심각할 때
+*   데이터 구조가 안정적이고, 업데이트가 자주 발생하지 않는 경우
+*   저장 공간 비용보다 쿼리 응답 속도가 훨씬 중요한 경우</p>
+<h2>핵심 요약</h2>
+<ul>
+<li><strong>정규화</strong>는 데이터 중복을 줄이고 무결성을 높여요. 1NF(원자 값), 2NF(부분 의존성 제거), 3NF(이행 의존성 제거) 단계로 진행됩니다.</li>
+<li><strong>비정규화</strong>는 읽기 성능 향상을 위해 의도적으로 데이터 중복을 허용하는 전략이에요. 정규화와는 반대 개념이 아닌, 보완 관계입니다.</li>
+<li>어디까지 정규화할지는 프로젝트의 요구사항과 성능 목표에 따라 신중하게 결정해야 합니다. 3NF가 일반적인 균형점이고, 비정규화는 성능 최적화를 위한 최후의 수단으로 고려됩니다.</li>
+</ul>
+<h3>자주 묻는 질문 (FAQ)</h3>
+<p><strong>Q1: 정규화를 하면 무조건 데이터베이스 성능이 좋아지나요?</strong>
+A1: 아닙니다. 정규화는 데이터 무결성과 쓰기(Write) 성능(삽입, 수정, 삭제)에는 좋지만, 테이블이 많아지면 조회(Read) 시 복잡한 <code>JOIN</code> 때문에 오히려 성능이 저하될 수 있습니다.</p>
+<p><strong>Q2: 비정규화된 테이블을 사용하면 데이터가 꼬일 위험은 없나요?</strong>
+A2: 있습니다. 데이터를 의도적으로 중복시키기 때문에, 원본 데이터가 변경되었을 때 비정규화된 테이블의 중복된 데이터도 함께 수정해주지 않으면 데이터 불일치(Inconsistency)가 발생할 수 있습니다. 그래서 비정규화는 철저한 관리와 전략적인 판단이 필요합니다.</p>
+<p><strong>Q3: 1NF, 2NF, 3NF를 굳이 다 알아야 할까요?</strong>
+A3: 네, 개발자가 아니더라도 이 기본적인 개념을 알면 데이터가 어떻게 정리되고 사용되는지에 대한 이해도를 높일 수 있습니다. 특히, 3NF까지의 개념은 데이터베이스의 기본기를 다지는 데 아주 중요하며, 대부분의 실무에서도 3NF까지의 정규화를 목표로 합니다.</p>
+<p>휴, '정규화'와 '비정규화', 그리고 '1NF, 2NF, 3NF'까지 직접 파보고 나니 머리에 쥐가 나는 것 같으면서도, 뭔가 개운한 느낌입니다. 제가 개발자는 아니지만, 이런 식으로 데이터를 관리하고 효율을 높이는 과정 자체가 정말 흥미롭네요. 기술 용어들이 처음엔 무척 어렵게 느껴지지만, 저처럼 비개발자도 충분히 이해할 수 있다는 용기를 얻으셨기를 바랍니다! 다음엔 또 어떤 신기한 IT 기술을 파헤쳐 볼까요? 기대해주세요!</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-08-10-네트워크-통신의-숨은-주역-TCP-핸드셰이크가-만드는-문제와-똑똑한-최적화-전략.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">네트워크 통신의 숨은 주역: TCP 핸드셰이크가 만드는 문제와 똑똑한 최적화 전략</a></li>
+        <li><a href="/posts/2026-08-06-변수-이름만-잘-지어도-코드가-달라진다고-비개발자가-파헤친-클린-코드의-첫걸음.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">변수 이름만 잘 지어도 코드가 달라진다고? 비개발자가 파헤친 클린 코드의 첫걸음</a></li>
+        <li><a href="/posts/2026-08-03-삽질-끝에-비개발자도-납득한-디자인-패턴-싱글톤-팩토리-옵저버-실전-적용기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">삽질 끝에 비개발자도 납득한 디자인 패턴: 싱글톤, 팩토리, 옵저버 실전 적용기</a></li>
+        <li><a href="/posts/2026-07-30-버그와-작별할-시간-TypeScript-도입-후-우리-팀의-평화와-비개발자가-파고든-JS-코드-마이그레이션-생존-가이드.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">버그와 작별할 시간: TypeScript 도입 후 우리 팀의 평화와 비개발자가 파고든 JS 코드 마이그레이션 생존 가이드</a></li>
+        <li><a href="/posts/2026-07-27-루카의-PC-쿨러-탐험기-공랭-vs-수랭-내-컴퓨터에-딱-맞는-쿨러는.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">루카의 PC 쿨러 탐험기: 공랭 vs 수랭, 내 컴퓨터에 딱 맞는 쿨러는?</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
