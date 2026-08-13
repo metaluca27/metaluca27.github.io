@@ -12,16 +12,16 @@ from google.genai import types
 
 client = genai.Client(api_key=API_KEY)
 
-def generate_thumbnail(topic, filename_slug):
+def generate_thumbnail(topic, filename_slug, overwrite=False):
     img_path = os.path.join(IMAGES_DIR, f"{filename_slug}.png")
-    if os.path.exists(img_path):
+    if os.path.exists(img_path) and not overwrite:
         print(f"  [SKIP] already exists")
         return True
 
     prompt = f"""Generate a clean, modern blog thumbnail illustration.
 Topic: {topic}
 Style: flat design, minimal, vibrant colors, tech-themed.
-NO text or letters in the image. Just visual illustration.
+ABSOLUTELY NO TEXT, NO LETTERS, NO WORDS, NO CHARACTERS, NO WRITING of any kind in the image. Not in any language. No labels, no captions, no watermarks, no speech bubbles with text. Only pure visual illustration with icons, shapes, and graphics.
 Aspect ratio: landscape (16:9).
 The image should feel like a professional tech blog header."""
 
@@ -105,7 +105,7 @@ def main():
         slug = os.path.splitext(filename)[0]
         print(f"[{i+1}/{total}] {title}")
 
-        if generate_thumbnail(title, slug):
+        if generate_thumbnail(title, slug, overwrite=True):
             image_url = f"/images/posts/{slug}.png"
             insert_image_to_post(filepath, image_url)
             success += 1
