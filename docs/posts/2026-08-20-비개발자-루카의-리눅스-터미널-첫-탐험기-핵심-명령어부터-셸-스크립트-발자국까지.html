@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비개발자 루카의 리눅스 터미널 첫 탐험기: 핵심 명령어부터 셸 스크립트 발자국까지 - InfoLoomia</title>
+    <meta name="description" content="코딩은 못 해도 IT가 궁금한 루카가 리눅스 터미널의 세계로 직접 뛰어들어 봤습니다! 자주 쓰는 명령어와 간단한 셸 스크립트 작성법을 비개발자의 시선으로 쉽고 구체적으로 파헤쳐 봅니다.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>비개발자 루카의 리눅스 터미널 첫 탐험기: 핵심 명령어부터 셸 스크립트 발자국까지</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-08-20</span>
+            <span><i class="fa-regular fa-folder"></i> 테크</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다.</p>
+<p>늘 개발자분들이 검은 화면에 흰 글씨를 쳐가며 뭔가 뚝딱 해결하는 모습을 볼 때마다 "저건 뭐지? 대체 왜 저렇게 쓰는 거지?" 궁금증이 폭발하곤 했습니다. 제가 웹 서핑을 하다가 복잡한 파일을 정리하거나, 특정 작업을 반복해야 할 때마다 '저 터미널이라는 걸 쓰면 더 빠를까?' 하는 생각이 들었죠. 그래서 이번엔 마음먹고 리눅스 터미널과 셸 스크립트의 세계로 직접 발을 들여봤습니다. 처음엔 외계어 같았지만, 파고들수록 생각보다 훨씬 유용하다는 걸 깨달았답니다!</p>
+<h2>비개발자의 시선으로 본 리눅스 터미널, 이거 왜 쓰는 거죠?</h2>
+<p>제가 처음 터미널을 접했을 때 가장 의문이었던 건, "이 예쁜 GUI(그래픽 사용자 인터페이스) 두고 왜 굳이 저 검은 창을 쓰지?" 였습니다. 마우스 클릭 한 번이면 되는 걸 일일이 타이핑해야 한다니, 비효율의 극치처럼 보였거든요.</p>
+<p>그런데 막상 제가 직접 몇 가지 명령어를 쳐보니, 그제야 개발자들이 왜 터미널을 사랑하는지 어렴풋이 알 수 있었습니다. 바로 <strong>'효율성'과 '자동화'</strong> 때문이더군요. 특정 파일을 수십 개씩 옮기거나, 특정 패턴의 텍스트를 찾아 변경해야 할 때, GUI로는 하나하나 클릭해야 하지만 터미널에서는 한두 줄 명령어로 순식간에 처리할 수 있었습니다.</p>
+<p>어떤 개발 블로그를 보니, 특정 서버에서 로그 파일을 매일 백업하고 정리하는 작업을 수동으로 처리했을 때는 평균 <strong>2시간 40분</strong>이 걸렸지만, 셸 스크립트로 자동화한 후에는 단 <strong>12초</strong> 만에 끝났다는 사례도 있더군요. (물론 환경에 따라 다르겠지만요!) 이 숫자를 보고 나서 '아, 이건 배워둘 만하다!'는 확신이 들었습니다. 제 PC 자원 관리도 궁금해서 확인해보니, 제가 사용하는 macOS의 터미널 앱(iTerm2)은 평균 <strong>35MB</strong> 미만의 메모리를 사용하는 반면, 제가 자주 쓰는 크롬 브라우저는 여러 탭을 열어두면 쉽게 <strong>2GB</strong>를 넘어가더라고요. 가벼움에서도 큰 차이가 있었습니다.</p>
+<h2>루카가 직접 써본 터미널 핵심 명령어 (feat. 미니 프로젝트)</h2>
+<p>자, 그럼 제가 직접 터미널에 쳐보면서 '아, 이건 정말 자주 쓸 것 같다!'고 느꼈던 핵심 명령어들을 소개해 드릴게요. 저는 비개발자니까, 복잡한 건 빼고 정말 쓸모 있는 것 위주로 추려봤습니다.</p>
+<h3>1. 현재 위치 파악 및 이동: <code>pwd</code>, <code>ls</code>, <code>cd</code></h3>
+<p>터미널을 시작하면 내가 어디에 있는지 아는 게 가장 중요합니다.</p>
+<ul>
+<li><code>pwd</code> (Print Working Directory): 내가 지금 어느 디렉토리(폴더)에 있는지 알려줍니다.</li>
+<li><code>ls</code> (List): 현재 디렉토리 안에 어떤 파일과 폴더들이 있는지 보여줍니다.<ul>
+<li><code>ls -l</code>: 파일 상세 정보를 보여줍니다. (권한, 소유자, 크기, 수정 날짜 등)</li>
+<li><code>ls -a</code>: 숨겨진 파일까지 모두 보여줍니다. (<code>.bashrc</code> 같은 파일은 평소엔 안 보여요!)</li>
+<li><code>ls -al</code> 또는 <code>ls -la</code>: 위 두 옵션을 합쳐서 숨겨진 파일 포함 상세 정보를 보여줍니다. 제가 가장 자주 썼습니다.</li>
+</ul>
+</li>
+<li><code>cd</code> (Change Directory): 원하는 디렉토리로 이동합니다.<ul>
+<li><code>cd ..</code>: 상위 디렉토리로 이동합니다. (점 두 개!)</li>
+<li><code>cd ~</code>: 제 사용자 홈 디렉토리로 바로 이동합니다. (물결표!)</li>
+<li><code>cd -</code>: 방금 전 디렉토리로 돌아갑니다.</li>
+</ul>
+</li>
+</ul>
+<h3>2. 파일 및 디렉토리 생성/관리: <code>mkdir</code>, <code>touch</code>, <code>cp</code>, <code>mv</code>, <code>rm</code></h3>
+<p>이 명령어들은 파일 탐색기에서 마우스로 하던 작업을 터미널로 하는 겁니다.</p>
+<ul>
+<li><code>mkdir</code> (Make Directory): 새 디렉토리를 만듭니다. 예: <code>mkdir Project_Luka</code></li>
+<li><code>touch</code>: 비어있는 새 파일을 만듭니다. 예: <code>touch notes.txt</code></li>
+<li><code>cp</code> (Copy): 파일이나 디렉토리를 복사합니다. 예: <code>cp report.docx backup/report.docx</code><ul>
+<li>디렉토리를 복사할 때는 <code>-r</code> 옵션을 붙여야 합니다. 예: <code>cp -r old_folder new_folder</code></li>
+</ul>
+</li>
+<li><code>mv</code> (Move): 파일이나 디렉토리를 이동하거나 이름을 변경합니다. 예: <code>mv old_name.txt new_name.txt</code> (이름 변경) 또는 <code>mv document.pdf archive/</code> (이동)</li>
+<li><code>rm</code> (Remove): 파일이나 디렉토리를 삭제합니다.<ul>
+<li><strong>주의! 휴지통으로 가는 게 아니라 영구 삭제됩니다.</strong></li>
+<li><code>rm file.txt</code>: 파일 삭제</li>
+<li><code>rm -r folder_name</code>: 디렉토리 삭제 (하위 파일/폴더 모두 삭제)</li>
+<li><code>rm -rf folder_name</code>: <strong>묻지도 따지지도 않고 강제로 삭제합니다.</strong> (정말 신중하게 써야 합니다!)</li>
+</ul>
+</li>
+</ul>
+<h3>직접 해보는 미니 프로젝트: 불필요한 파일 정리!</h3>
+<p>제가 웹 서핑을 하면서 다운로드받았던 임시 파일들을 정리하는 미니 프로젝트를 해봤습니다.</p>
+<pre class="codehilite"><code class="language-bash"># 1. 다운로드 폴더로 이동합니다. (저는 홈 디렉토리 안에 Downloads 폴더가 있습니다)
+cd ~/Downloads
+
+# 2. 임시 파일을 모아둘 폴더를 만듭니다.
+mkdir temp_cleanup_202403
+
+# 3. 특정 확장자(.tmp, .log)의 파일을 찾아서 새로 만든 폴더로 옮깁니다.
+# find . -name &quot;*.tmp&quot; -exec mv {} temp_cleanup_202403/ \;
+# find . -name &quot;*.log&quot; -exec mv {} temp_cleanup_202403/ \;
+# (제가 처음 해봤을 땐 위에처럼 했는데, 이건 셸 스크립트에서 더 유용하더라고요.
+# 더 간단하게는 `mv *.tmp temp_cleanup_202403/` 이렇게도 가능합니다!)
+
+# 제가 직접 써본 명령어는 아래와 같았습니다.
+# 불필요한 zip 파일들을 이동시켜봅니다.
+mv *.zip temp_cleanup_202403/
+
+# 옮겨진 파일들을 확인해봅니다.
+ls temp_cleanup_202403/
+
+# 이제 `temp_cleanup_202403` 폴더는 안전하게 통째로 삭제하면 됩니다.
+# rm -r temp_cleanup_202403/
+# 하지만 아직은 필요할지 모르니 삭제는 하지 않겠습니다! :)
+
+# 다시 원래 홈 디렉토리로 돌아옵니다.
+cd ~
+</code></pre>
+
+<p>이렇게 몇 줄만으로 복잡한 파일을 정리할 수 있다니! 처음엔 손이 느렸지만, 익숙해지니 마우스로 클릭하고 끌어다 놓는 것보다 훨씬 빠르다는 걸 체감했습니다.</p>
+<h2>셸 스크립트, 반복 작업을 자동화하는 마법 지팡이!</h2>
+<p>위에서 배운 명령어들을 하나하나 입력하는 것도 좋지만, 매번 반복하는 작업이라면? 이걸 텍스트 파일 하나에 적어두고 한 번에 실행하면 얼마나 편할까요? 그게 바로 <strong>셸 스크립트</strong>입니다! 저는 간단한 '데일리 보고서 생성' 스크립트를 만들어봤습니다.</p>
+<h3>셸 스크립트 작성 기초: <code>echo</code>, 변수, <code>#</code> (주석)</h3>
+<p>셸 스크립트는 그냥 텍스트 파일입니다. <code>.sh</code> 확장자를 붙여주는 게 일반적이죠.</p>
+<ol>
+<li><strong><code>#!/bin/bash</code> (Shebang):</strong> 스크립트 첫 줄에 이걸 써주면, 이 스크립트를 어떤 프로그램(여기서는 Bash 셸)으로 실행할지 시스템에 알려줍니다. (저는 이걸 '스크립트의 자기소개'라고 이해했습니다.)</li>
+<li><strong><code>echo</code>:</strong> 화면에 글자를 출력합니다. <code>echo "Hello, Luka!"</code></li>
+<li><strong>변수:</strong> 정보를 담아두는 상자입니다. <code>MY_NAME="Luka"</code> 처럼 <code>=</code> 기호로 할당하고, <code>${MY_NAME}</code> 처럼 <code>$</code> 기호를 붙여서 사용합니다.</li>
+<li><strong><code>#</code> (주석):</strong> <code>#</code> 뒤에 오는 내용은 스크립트 실행 시 무시됩니다. 제가 나중에 스크립트를 다시 볼 때 '이 줄은 이런 역할을 하는구나' 하고 알아보기 쉽게 설명을 달아두는 용도입니다.</li>
+</ol>
+<h3>루카의 데일리 보고서 생성 스크립트 만들기</h3>
+<p>제가 매일 특정 폴더의 파일 목록과 제 사용자 정보를 확인하는 작업을 한다고 가정하고, 이걸 자동으로 기록해주는 스크립트를 만들어봤습니다.</p>
+<pre class="codehilite"><code class="language-bash">#!/bin/bash
+
+# 1. 보고서 파일을 저장할 디렉토리 경로를 설정합니다.
+# 제 홈 디렉토리 아래 'reports' 폴더에 저장할 거예요.
+REPORT_DIR=&quot;$HOME/reports&quot;
+
+# 2. 현재 날짜와 시간을 'YYYYMMDD_HHMMSS' 형식으로 가져와서 변수에 저장합니다.
+# 파일 이름에 붙여서 언제 생성된 보고서인지 알 수 있게 합니다.
+TIMESTAMP=$(date +&quot;%Y%m%d_%H%M%S&quot;)
+
+# 3. 최종 보고서 파일 이름을 정의합니다.
+REPORT_FILE=&quot;${REPORT_DIR}/daily_report_${TIMESTAMP}.txt&quot;
+
+# 4. 보고서 디렉토리가 없으면 새로 만듭니다.
+# -p 옵션은 상위 디렉토리가 없으면 함께 생성해줍니다.
+mkdir -p &quot;${REPORT_DIR}&quot;
+
+# 5. 보고서 파일에 내용을 작성합니다.
+# `&gt;` 는 파일을 새로 만들고 내용을 덮어씁니다.
+echo &quot;--- 루카의 일일 시스템 보고서 (${TIMESTAMP}) ---&quot; &gt; &quot;${REPORT_FILE}&quot;
+echo &quot;&quot; &gt;&gt; &quot;${REPORT_FILE}&quot; # 한 줄 띄우기
+
+# `&gt;&gt;` 는 기존 파일에 내용을 이어서 추가합니다.
+echo &quot;1. 현재 사용자 정보:&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+whoami &gt;&gt; &quot;${REPORT_FILE}&quot; # 현재 사용자 이름 출력
+echo &quot;&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+
+echo &quot;2. 현재 작업 디렉토리:&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+pwd &gt;&gt; &quot;${REPORT_FILE}&quot; # 현재 작업 디렉토리 출력
+echo &quot;&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+
+echo &quot;3. 최근 5개 파일 목록 (홈 디렉토리 기준):&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+ls -lt $HOME | head -n 6 | tail -n 5 &gt;&gt; &quot;${REPORT_FILE}&quot; # 홈 디렉토리의 최근 수정 파일 5개
+
+echo &quot;&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+echo &quot;------------------------------------------------&quot; &gt;&gt; &quot;${REPORT_FILE}&quot;
+
+# 6. 보고서가 성공적으로 생성되었음을 사용자에게 알립니다.
+echo &quot;🎉 일일 보고서가 ${REPORT_FILE} 에 성공적으로 생성되었습니다!&quot;
+</code></pre>
+
+<h3>스크립트 실행하기</h3>
+<ol>
+<li><strong>파일 생성:</strong> 위 내용을 텍스트 편집기에 복사해서 <code>generate_report.sh</code> 라는 이름으로 저장합니다. (저는 <code>nano</code>나 <code>vi</code> 대신 VS Code로 만들었습니다!)</li>
+<li><strong>실행 권한 부여:</strong> 터미널에서 스크립트 파일이 있는 디렉토리로 이동한 후, <code>chmod +x generate_report.sh</code> 명령어를 입력합니다. 이 명령어가 스크립트 파일에게 '이 파일은 실행 가능한 파일이야!'라고 알려주는 역할을 합니다. 제가 이걸 몰라서 처음엔 'Permission denied' 에러를 수없이 만났습니다.</li>
+<li><strong>스크립트 실행:</strong> <code>./generate_report.sh</code> 를 입력하고 Enter를 누르면 스크립트가 실행됩니다.</li>
+</ol>
+<p>실행하고 나니, <code>~/reports/</code> 폴더 안에 <code>daily_report_YYYYMMDD_HHMMSS.txt</code> 파일이 뚝딱 생성되어 있더군요! 파일 안에는 제가 원하는 정보들이 깔끔하게 정리되어 있었습니다. 이걸 매일 아침 출근해서 한 번만 눌러주면 된다니, 정말 편리하죠?</p>
+<h2>비개발자가 헷갈리기 쉬운 부분 (루카의 삽질 기록)</h2>
+<p>제가 처음 터미널을 다루면서 가장 헤맸던 몇 가지를 공유합니다. 저 같은 비개발자분들께 도움이 되기를 바라요!</p>
+<h3>1. 경로(Path)의 이해: 절대 경로 vs. 상대 경로 (그리고 <code>~</code>, <code>.</code>, <code>..</code>)</h3>
+<p>처음에는 그냥 폴더 이름만 치면 되는 줄 알았습니다. <code>cd Desktop</code>이라고 쳤는데 'No such file or directory'라고 뜨면 당황스러웠죠.</p>
+<ul>
+<li><strong>절대 경로 (Absolute Path):</strong> 최상위 디렉토리(<code>root</code>, <code>/</code>)부터 시작하는 완전한 경로입니다. 어떤 위치에서든 항상 똑같은 경로를 가리킵니다.<ul>
+<li>예: <code>/Users/Luka/Documents/MyProject</code></li>
+<li>제가 맥북 유저라 <code>User</code> 디렉토리 아래 제 이름으로 된 홈 디렉토리가 있습니다.</li>
+</ul>
+</li>
+<li><strong>상대 경로 (Relative Path):</strong> 현재 작업하고 있는 디렉토리(Current Working Directory)를 기준으로 하는 경로입니다.<ul>
+<li><code>.</code> (점 하나): 현재 디렉토리. <code>cd .</code>는 아무것도 안 하고 현재 위치에 머무는 것과 같습니다. 스크립트 실행 시 <code>./script.sh</code> 처럼 '현재 디렉토리에 있는 script.sh를 실행해' 라는 의미로 자주 사용합니다.</li>
+<li><code>..</code> (점 두 개): 상위 디렉토리. <code>cd ..</code>를 치면 한 단계 위 폴더로 이동합니다.</li>
+<li><code>~</code> (물결표): 사용자 홈 디렉토리. <code>cd ~</code>는 <code>cd /Users/Luka</code>와 같은 의미입니다. 제가 가장 편하게 쓰는 이동 방법입니다.</li>
+</ul>
+</li>
+</ul>
+<p><strong>해결책:</strong> "내가 지금 어디에 있지?" (<code>pwd</code>)를 늘 확인하고, <code>ls</code>로 주변 폴더를 탐색하면서 절대 경로와 상대 경로를 번갈아 사용해보는 연습이 중요합니다. 그리고 <code>~</code>를 활용하면 대부분의 경우 편리합니다!</p>
+<h3>2. 'Permission denied' 오류와 실행 권한 (<code>chmod</code>)</h3>
+<p>셸 스크립트를 만들고 나서 <code>./my_script.sh</code>라고 실행했는데, 'Permission denied'라고 뜨면 또 한 번 멘붕이 왔습니다. "내가 만들었는데 왜 실행이 안 돼?"</p>
+<p>이는 파일에 '실행 권한'이 없기 때문입니다. 리눅스/유닉스 계열 운영체제는 보안을 위해 파일마다 읽기(read), 쓰기(write), 실행(execute) 권한을 다르게 부여합니다. 일반 텍스트 파일은 기본적으로 실행 권한이 없습니다.</p>
+<p><strong>해결책:</strong> <code>chmod</code> 명령어를 사용해서 실행 권한을 부여해야 합니다.
+<code>chmod +x my_script.sh</code>
+여기서 <code>+x</code>는 'eXecute(실행) 권한을 추가한다'는 의미입니다. 이 명령어를 실행한 후 다시 <code>./my_script.sh</code>를 입력하면 정상적으로 실행됩니다.</p>
+<h3>3. 입출력 리다이렉션: <code>&gt;</code> vs <code>&gt;&gt;</code> vs <code>|</code> (루카의 데이터 날아갈 뻔한 경험)</h3>
+<p>제가 특정 명령어의 결과물을 파일로 저장하려다가 중요한 로그 파일을 날려버릴 뻔한 적이 있습니다. <code>&gt;</code>와 <code>&gt;&gt;</code>의 차이를 몰랐기 때문이죠.</p>
+<ul>
+<li><strong><code>&gt;</code> (리다이렉션, 덮어쓰기):</strong> 명령어의 표준 출력(화면에 나오는 결과)을 파일로 보냅니다. <strong>주의할 점은, 해당 파일이 이미 존재하면 그 내용을 모두 지우고 새로 쓴다는 겁니다.</strong> 제가 이걸 몰라서 <code>ls -l &gt; important_log.txt</code>라고 쳤다가 기존 로그 파일 내용이 다 날아갈 뻔했습니다.</li>
+<li><strong><code>&gt;&gt;</code> (리다이렉션, 추가하기):</strong> 명령어의 표준 출력을 파일의 <strong>끝에 이어서 추가</strong>합니다. 파일이 없으면 새로 생성하고, 있으면 내용을 유지한 채 맨 뒤에 붙여 넣습니다. 로그 파일을 만들 때 특히 유용합니다.</li>
+<li><strong><code>|</code> (파이프):</strong> 한 명령어의 출력을 다음 명령어의 입력으로 연결합니다. 여러 명령어를 조합해서 복잡한 작업을 할 때 엄청나게 유용합니다. 예를 들어, <code>ls -l | grep .txt</code>는 현재 디렉토리의 파일 목록을 보여주되, 그중에서 확장자가 <code>.txt</code>인 파일만 걸러서 보여줍니다.</li>
+</ul>
+<p><strong>해결책:</strong> <code>&gt;</code>는 정말 새 파일이 필요하거나 기존 내용을 완전히 덮어써도 되는 경우에만 쓰고, 기존 파일에 내용을 추가하고 싶을 때는 반드시 <code>&gt;&gt;</code>를 사용해야 합니다. 여러 명령어를 조합할 때는 <code>|</code> 파이프를 활용하는 연습을 해보세요.</p>
+<h3>입출력 리다이렉션 비교 표</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">기호</th>
+<th style="text-align: left;">역할</th>
+<th style="text-align: left;">예시 명령어</th>
+<th style="text-align: left;">비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>&gt;</code></td>
+<td style="text-align: left;">표준 출력을 파일로 <strong>덮어쓰기</strong></td>
+<td style="text-align: left;"><code>echo "안녕" &gt; hello.txt</code></td>
+<td style="text-align: left;"><code>hello.txt</code>가 없으면 생성, 있으면 기존 내용 삭제 후 "안녕"만 저장</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>&gt;&gt;</code></td>
+<td style="text-align: left;">표준 출력을 파일에 <strong>추가하기</strong></td>
+<td style="text-align: left;"><code>echo "루카" &gt;&gt; hello.txt</code></td>
+<td style="text-align: left;"><code>hello.txt</code> 내용 유지하며 마지막에 "루카" 추가 (예: "안녕\n루카")</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>|</code> (파이프)</td>
+<td style="text-align: left;">한 명령어의 출력을 다른 명령어의 입력으로 전달</td>
+<td style="text-align: left;"><code>ls -l | grep .txt</code></td>
+<td style="text-align: left;"><code>ls -l</code>의 결과를 <code>grep .txt</code> 명령의 입력으로 전달하여 <code>.txt</code> 포함 라인만 필터링</td>
+</tr>
+</tbody>
+</table>
+<h2>마무리하며: 비개발자도 터미널과 친구가 될 수 있습니다!</h2>
+<p>처음에는 막막하기만 했던 리눅스 터미널과 셸 스크립트. 하지만 이렇게 제가 직접 파보고, 작은 성취를 맛보면서 '아, 이건 개발자들만의 전유물이 아니구나!'라는 확신을 가지게 되었습니다. 복잡한 코딩 지식 없이도, 제가 매일 반복하는 귀찮은 작업들을 훨씬 효율적으로 처리할 수 있는 강력한 도구라는 것을 깨달았습니다.</p>
+<p>물론 아직 모르는 게 훨씬 많지만, "이게 뭔데? 직접 알아봤다"는 저 루카의 탐구는 계속될 겁니다! 저처럼 코딩은 못 하지만 IT가 궁금하고, 조금 더 스마트하게 일하고 싶은 비개발자분들도 충분히 터미널과 셸 스크립트와 친구가 될 수 있다고 생각합니다. 일단 저처럼 한번 시작해보세요!</p>
+<hr />
+<h3>핵심 요약 3줄</h3>
+<ol>
+<li>리눅스 터미널은 마우스 클릭 없이 명령어로 시스템을 제어하여 비개발자도 효율적인 작업 자동화를 위해 배울 수 있는 강력한 도구입니다.</li>
+<li><code>ls</code>, <code>cd</code>, <code>cp</code>, <code>mv</code>, <code>rm</code> 등 핵심 명령어를 익히고 경로, 권한, 입출력 리다이렉션을 이해하는 것이 터미널 활용의 기초입니다.</li>
+<li>간단한 셸 스크립트를 작성하여 반복적인 파일을 정리하거나 보고서를 생성하는 등 작업을 자동화하여 시간을 절약하고 오류를 줄일 수 있습니다.</li>
+</ol>
+<h3>FAQ</h3>
+<p><strong>Q: 터미널 명령어는 외워야 하나요?</strong>
+A: 모든 명령어를 외울 필요는 없습니다. 자주 사용하는 핵심 명령어 위주로 익히고, 나머지는 필요할 때마다 검색하며 익숙해지는 것이 좋습니다. <code>-h</code> 또는 <code>--help</code> 옵션으로 명령어의 도움말을 확인하는 습관을 들이는 것도 좋습니다.</p>
+<p><strong>Q: 윈도우 사용자도 리눅스 터미널을 사용할 수 있나요?</strong>
+A: 네, 윈도우 10 이상 사용자라면 'WSL (Windows Subsystem for Linux)' 기능을 활성화하여 윈도우 내에서 리눅스 환경을 구축하고 터미널을 사용할 수 있습니다. 또한, Git Bash나 PuTTY 같은 프로그램을 통해서도 리눅스 명령어 환경을 경험할 수 있습니다.</p>
+<p><strong>Q: 셸 스크립트는 어떤 언어로 작성되나요?</strong>
+A: 셸 스크립트는 Bash(Bourne-Again SHell) 스크립트가 가장 일반적입니다. 그 외에도 Zsh, csh 등 다양한 셸이 있으며, 각 셸의 문법에 따라 작성됩니다. 대부분 Bash 스크립트로 시작해도 충분합니다.</p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    Luka의 IT 블로그입니다. 유익한 개발 정보와 테크 지식을 공유합니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-08-20-비개발자-루카의-리눅스-터미널-첫-탐험기-핵심-명령어부터-셸-스크립트-발자국까지.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">비개발자 루카의 리눅스 터미널 첫 탐험기: 핵심 명령어부터 셸 스크립트 발자국까지</a></li>
+        <li><a href="/posts/2026-08-17-잠금-아이콘의-비밀-비개발자-루카가-파헤친-HTTPS와-SSLTLS-암호화-통신의-작동-원리.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">잠금 아이콘의 비밀: 비개발자 루카가 파헤친 HTTPS와 SSL/TLS 암호화 통신의 작동 원리</a></li>
+        <li><a href="/posts/2026-08-10-네트워크-통신의-숨은-주역-TCP-핸드셰이크가-만드는-문제와-똑똑한-최적화-전략.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">네트워크 통신의 숨은 주역: TCP 핸드셰이크가 만드는 문제와 똑똑한 최적화 전략</a></li>
+        <li><a href="/posts/2026-08-06-변수-이름만-잘-지어도-코드가-달라진다고-비개발자가-파헤친-클린-코드의-첫걸음.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">변수 이름만 잘 지어도 코드가 달라진다고? 비개발자가 파헤친 클린 코드의 첫걸음</a></li>
+        <li><a href="/posts/2026-08-03-삽질-끝에-비개발자도-납득한-디자인-패턴-싱글톤-팩토리-옵저버-실전-적용기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">삽질 끝에 비개발자도 납득한 디자인 패턴: 싱글톤, 팩토리, 옵저버 실전 적용기</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
