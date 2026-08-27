@@ -316,7 +316,18 @@ def main():
     with open(sitemap_path, "wb") as f:
         f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
         tree.write(f, encoding="utf-8", xml_declaration=False)
-        
+
+        # 7. 고아 파일 정리
+    print("[*] 고아 파일 정리 중...")
+    posts_dir = os.path.join(PUBLIC_DIR, "posts")
+    expected = {f"{post['filename']}.html" for post in posts_metadata}
+    removed = 0
+    for f in os.listdir(posts_dir):
+        if f.endswith(".html") and f not in expected:
+            os.remove(os.path.join(posts_dir, f))
+            print(f"    - 삭제: {f}")
+            removed += 1
+    print(f"[OK] 고아 파일 {removed}개 삭제")
     print("[OK] 블로그 빌드 완료!")
 
 if __name__ == "__main__":
