@@ -5,8 +5,11 @@ import shutil
 import urllib.parse
 import markdown
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from config import CONFIG
+
+# 예약 발행 기준일 — 서버(GitHub Actions)는 UTC라서 한국 시간으로 직접 계산한다.
+TODAY_KST = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d")
 
 # 폴더 경로 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -138,7 +141,13 @@ def main():
                 
             title, date_str, description, category, body = parse_front_matter(raw_content)
             filename = os.path.splitext(file)[0]
-            
+
+            # 예약 발행: front matter의 date가 오늘(한국 시간)보다 미래면 아직 빌드하지 않는다.
+            # 매일 아침 scheduled_publish.yml이 다시 빌드하므로 그날이 되면 자동으로 올라간다.
+            if date_str[:10] > TODAY_KST:
+                print(f"[SKIP] 예약 발행 대기 ({date_str}): {title}")
+                continue
+
             posts_metadata.append({
                 "filename": filename,
                 "title": title,
