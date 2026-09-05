@@ -283,6 +283,38 @@ def main():
         f.write(f"Sitemap: https://{CONFIG['domain']}/sitemap.xml\n")
     print("[OK] robots.txt 생성 완료")
 
+    # 5-1. 주소 변경 리다이렉트 페이지 생성 (redirects.txt: 옛슬러그<TAB>새슬러그)
+    #      글 주소를 바꿀 때 옛 주소를 404로 두지 않고 새 주소로 자동 이동시켜 색인을 넘긴다.
+    redirects_path = os.path.join(BASE_DIR, "redirects.txt")
+    redirect_files = set()  # 고아 파일 정리에서 지우면 안 되는 안내 페이지 목록
+    if os.path.exists(redirects_path):
+        with open(redirects_path, "r", encoding="utf-8") as f:
+            count = 0
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "\t" not in line:
+                    continue
+                old_slug, new_slug = line.split("\t", 1)
+                new_url = f"https://{CONFIG['domain']}/posts/{urllib.parse.quote(new_slug)}.html"
+                stub = f"""<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>주소가 바뀌었어요 - {CONFIG.get('site_name', 'InfoLoomia')}</title>
+<link rel="canonical" href="{new_url}">
+<meta http-equiv="refresh" content="0; url={new_url}">
+<meta name="robots" content="noindex, follow">
+</head>
+<body>
+<p>이 글은 새 주소로 옮겨졌어요. 잠시 후 자동으로 이동해요. 이동하지 않으면 <a href="{new_url}">여기</a>를 눌러주세요.</p>
+</body>
+</html>"""
+                with open(os.path.join(PUBLIC_POSTS_DIR, f"{old_slug}.html"), "w", encoding="utf-8") as out:
+                    out.write(stub)
+                redirect_files.add(f"{old_slug}.html")
+                count += 1
+            print(f"[OK] 리다이렉트 페이지 {count}개 생성")
+
     # 6. sitemap.xml 파일 생성
     print("[*] sitemap.xml 생성 중...")
     now_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S+09:00")
@@ -329,7 +361,7 @@ def main():
         # 7. 고아 파일 정리
     print("[*] 고아 파일 정리 중...")
     posts_dir = os.path.join(PUBLIC_DIR, "posts")
-    expected = {f"{post['filename']}.html" for post in posts_metadata}
+    expected = {f"{post['filename']}.html" for post in posts_metadata} | redirect_files
     removed = 0
     for f in os.listdir(posts_dir):
         if f.endswith(".html") and f not in expected:
