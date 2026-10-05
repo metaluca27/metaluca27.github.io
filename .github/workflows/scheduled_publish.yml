@@ -39,7 +39,10 @@ jobs:
           git config --global user.email "metaluca27@users.noreply.github.com"
           git add docs
           # 새 글 HTML이 생겼을 때만 커밋 (sitemap 시각만 바뀐 경우는 무시)
-          if git diff --cached --name-only | grep -q '^docs/posts/'; then
+          # 주의: 파일 이름 목록을 grep 으로 찾으면 안 된다. git 은 한글 파일명을
+          # "docs/posts/\354..." 처럼 따옴표로 감싸 출력해서 '^docs/posts/' 에 안 걸린다.
+          # 영문 이름 글이 하나도 없게 된 2026-09-30 이후로 10/2 글이 발행되지 않았다.
+          if ! git diff --cached --quiet -- docs/posts; then
             git commit -m "예약 발행 (Scheduled Publish)"
             git push origin main
           else
