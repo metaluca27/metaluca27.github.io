@@ -205,7 +205,12 @@ def main():
         rendered = rendered.replace("{{ recent_posts_widget }}", recent_posts_widget)
         rendered = rendered.replace("{{ adsense_head_code }}", ads_codes["head"])
         rendered = rendered.replace("{{ adsense_sidebar_code }}", ads_codes["sidebar"])
-        
+        # 대표 주소: 사이트맵과 같은 방식(한글을 퍼센트 인코딩)으로 적는다
+        rendered = rendered.replace(
+            "{{ canonical_url }}",
+            f"https://{CONFIG['domain']}/posts/{urllib.parse.quote(post['filename'])}.html",
+        )
+
         output_file_path = os.path.join(PUBLIC_POSTS_DIR, f"{post['filename']}.html")
         with open(output_file_path, "w", encoding="utf-8") as f:
             f.write(rendered)
@@ -252,7 +257,8 @@ def main():
     rendered_index = rendered_index.replace("{{ recent_posts_widget }}", recent_posts_widget)
     rendered_index = rendered_index.replace("{{ adsense_head_code }}", ads_codes["head"])
     rendered_index = rendered_index.replace("{{ adsense_sidebar_code }}", ads_codes["sidebar"])
-    
+    rendered_index = rendered_index.replace("{{ canonical_url }}", f"https://{CONFIG['domain']}/")
+
     index_output_path = os.path.join(PUBLIC_DIR, "index.html")
     with open(index_output_path, "w", encoding="utf-8") as f:
         f.write(rendered_index)
