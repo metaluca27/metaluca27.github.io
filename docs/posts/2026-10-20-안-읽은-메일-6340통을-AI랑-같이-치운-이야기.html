@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>안 읽은 메일 6,340통을 AI랑 같이 치운 이야기 — AI는 읽기만 하고, 지우는 건 제가 했어요 - InfoLoomia</title>
+    <meta name="description" content="받은편지함에 메일이 7,089개, 그중 안 읽은 게 6,340개였어요. AI한테 정리를 시켰는데 AI는 메일을 읽을 수만 있고 지울 수는 없었어요. 그래서 AI가 찾고 제가 지웠어요. 뭘 지울지보다 뭘 남길지가 더 어려웠던 기록.">
+    <link rel="canonical" href="https://infoloomia.com/posts/2026-10-20-%EC%95%88-%EC%9D%BD%EC%9D%80-%EB%A9%94%EC%9D%BC-6340%ED%86%B5%EC%9D%84-AI%EB%9E%91-%EA%B0%99%EC%9D%B4-%EC%B9%98%EC%9A%B4-%EC%9D%B4%EC%95%BC%EA%B8%B0.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>안 읽은 메일 6,340통을 AI랑 같이 치운 이야기 — AI는 읽기만 하고, 지우는 건 제가 했어요</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-10-20</span>
+            <span><i class="fa-regular fa-folder"></i> 삽질기</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다.</p>
+<p>8월 어느 날 받은편지함을 열었는데 숫자가 이랬어요.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>개수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>받은편지함 전체</td>
+<td>7,089</td>
+</tr>
+<tr>
+<td>그중 안 읽은 것</td>
+<td>6,340</td>
+</tr>
+</tbody>
+</table>
+<p>열 통 중 아홉 통을 안 읽은 거예요. 이쯤 되면 메일함이 아니라 창고예요.</p>
+<p>AI 도구를 이것저것 써보다 보면 이렇게 돼요. 가입할 때마다 메일 주소를 넣고, 넣을 때마다 소식지가 오고, 서비스마다 알림을 보내고. 하나하나는 별것 아닌데 쌓이면 중요한 메일이 안 보여요.</p>
+<p>그래서 AI한테 정리를 시켰어요.</p>
+<h2>AI는 읽기만 할 수 있었어요</h2>
+<p>AI한테 제 메일함을 연결해 줬어요. 그리고 "광고 메일 다 지워줘"라고 했어요.</p>
+<p>못 지운대요.</p>
+<p>연결은 됐는데 <strong>읽기 전용</strong>이었어요. AI가 메일을 찾고 읽을 수는 있는데, 지우거나 분류 표시를 붙이거나 자동 규칙을 만드는 건 못 해요. 시키면 "권한이 더 필요하다"는 답이 와요.</p>
+<p>그래서 일을 나눴어요.</p>
+<table>
+<thead>
+<tr>
+<th>누가</th>
+<th>하는 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI</td>
+<td>메일함을 훑어서 뭐가 쌓여 있는지 찾기, 지울 묶음을 고르는 검색어 만들기</td>
+</tr>
+<tr>
+<td>저</td>
+<td>그 검색어를 메일 사이트에 붙여넣고 직접 지우기</td>
+</tr>
+</tbody>
+</table>
+<p>AI가 "이 검색어로 찾으면 암호화폐 거래소 광고가 나와요"라고 주면, 제가 그걸 붙여넣고 눌러서 지우는 식이에요.</p>
+<h2>지우는 방법 두 가지</h2>
+<h3>한꺼번에 지우기</h3>
+<ol>
+<li>메일 사이트 검색창에 AI가 준 검색어를 붙여넣어요.</li>
+<li>왼쪽 위 네모를 눌러서 전체 선택을 해요.</li>
+<li>그러면 위에 "일치하는 대화 모두 선택"이라는 글자가 조그맣게 떠요. <strong>이걸 눌러야 해요.</strong></li>
+<li>휴지통을 눌러요.</li>
+</ol>
+<p>3번을 안 누르면 지금 화면에 보이는 50개만 지워져요. 3,000개를 지우려면 60번을 해야 하는 거죠.</p>
+<p>그리고 이건 <strong>컴퓨터에서만 돼요.</strong> 폰 앱에는 전체 선택이 없어요.</p>
+<h3>앞으로 올 것도 자동으로 치우기</h3>
+<p>지우기만 하면 다음 주에 또 쌓여요. 그래서 자동 규칙을 만들었어요. "이 보낸 사람 메일은 받은편지함에 넣지 말고 바로 '소식지' 서랍으로."</p>
+<p>규칙을 하나씩 손으로 만들면 끝이 없어서, AI가 규칙 묶음을 파일 하나로 만들어 줬어요. 저는 그 파일을 메일 설정에서 불러오기만 했어요.</p>
+<p>여기도 놓치기 쉬운 데가 있었어요. 불러올 때 <strong>"기존 대화에도 적용"</strong>이라는 네모에 체크해야 해요. 체크 안 하면 앞으로 올 메일만 정리되고, 이미 쌓인 건 그대로 남아요.</p>
+<h2>세 묶음으로 나눴어요</h2>
+<table>
+<thead>
+<tr>
+<th>묶음</th>
+<th>어떻게</th>
+<th>뭐가 들어갔나</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>지울 것</td>
+<td>휴지통으로</td>
+<td>암호화폐 거래소 광고, 검색 알림, 구인 사이트 알림, 개발 사이트의 자동 알림</td>
+</tr>
+<tr>
+<td>서랍에 넣을 것</td>
+<td>'소식지' 표시를 붙이고 받은편지함은 건너뛰기</td>
+<td>소식지 서른 곳쯤</td>
+</tr>
+<tr>
+<td><strong>절대 남길 것</strong></td>
+<td>손대지 않기</td>
+<td>아래에</td>
+</tr>
+</tbody>
+</table>
+<h2>제일 어려웠던 건 "남길 것"이었어요</h2>
+<p>뭘 지울지는 쉬워요. 광고는 광고처럼 생겼으니까요.</p>
+<p>어려운 건 <strong>지우면 안 되는 걸 안 지우는 거</strong>였어요.</p>
+<ul>
+<li><strong>결제 영수증.</strong> 광고처럼 생긴 제목으로 와요.</li>
+<li><strong>앱 심사 결과.</strong> 토스에 앱을 올리면 승인됐다, 출시됐다는 메일이 와요. 자동으로 보내는 메일이라 알림 묶음에 섞여 들어가기 쉬워요.</li>
+<li><strong>본인 인증 메일.</strong> 가입할 때 받은 인증 메일이요. 나중에 계정을 되찾을 때 필요할 수 있어요.</li>
+<li><strong>계정 보안 알림.</strong></li>
+</ul>
+<p>그리고 제일 까다로운 게 <strong>같은 곳에서 광고도 보내고 중요한 것도 보내는 경우</strong>였어요. 어떤 서비스는 광고 메일이랑 "구독이 곧 끝납니다", "약관이 바뀝니다" 메일을 같은 주소로 보내요. 그 주소를 통째로 지우면 구독 만료 알림까지 같이 사라져요.</p>
+<p>개발 사이트 알림도 그랬어요. 전부 지우면 안 되고, 그중에서 "배포 미리보기가 만들어졌습니다", "자동 실행이 실패했습니다" 같은 특정 종류만 골라 지웠어요.</p>
+<p>그래서 AI한테 시킬 때 순서를 바꿨어요. "뭘 지울까?"보다 <strong>"뭘 남겨야 하지?"를 먼저</strong> 정했어요. 남길 목록을 먼저 만들고, 지우는 검색어가 그 목록을 건드리지 않는지 확인하고, 그다음에 지웠어요.</p>
+<h2>일주일 뒤에 영수증을 쓸 일이 생겼어요</h2>
+<p>메일을 정리한 게 8월 12일이에요. 일주일 뒤인 8월 19일에 제가 뭘 구독하고 있는지 전부 세어봤어요. 그때 쓴 게 메일함에 남아 있던 결제 영수증이에요.</p>
+<p>영수증을 광고랑 같이 쓸어버렸으면 못 했을 일이에요.</p>
+<p>정리할 땐 일주일 뒤에 영수증을 뒤질 줄 몰랐어요. 그냥 "돈이랑 계정에 관련된 건 남기자"고 정했던 건데, 그게 바로 쓸모가 있었어요.</p>
+<h2>AI가 못 지워서 다행이었을까요</h2>
+<p>처음엔 답답했어요. 시키면 다 해줄 줄 알았는데 "저는 못 지워요"라니요.</p>
+<p>근데 하다 보니 생각이 좀 바뀌었어요. 지우는 건 되돌리기 어려운 일이에요. 검색어 하나가 잘못되면 영수증 몇백 통이 한 번에 사라질 수 있어요. 제가 직접 붙여넣고, 몇 통이 걸렸는지 눈으로 보고, 제 손으로 누르니까 중간에 "어, 이건 왜 여기 있지?" 하고 멈출 수 있었어요.</p>
+<p>AI한테 지우는 것까지 맡길 수도 있대요. 연결을 다시 해서 권한을 더 주면 돼요. 아직 안 했어요.</p>
+<h2>한 달 반 뒤, 지금은요</h2>
+<p>이 글을 쓰면서 메일함을 다시 열어봤어요. 받은편지함 옆에 뜨는 숫자예요.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>받은편지함 옆 숫자</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8월 12일, 정리하기 전</td>
+<td>6,340</td>
+</tr>
+<tr>
+<td>8월 12일, 정리한 뒤</td>
+<td>3천 개 넘음</td>
+</tr>
+<tr>
+<td>지금</td>
+<td><strong>612</strong></td>
+</tr>
+</tbody>
+</table>
+<p>그날 그렇게 지웠는데도 3천 개가 넘게 남아 있었어요. ㅋㅋ 절반을 치우고도 3천 개예요.</p>
+<p>근데 한 달 반이 지난 지금은 612예요. <strong>정리한 날보다 그 뒤에 더 많이 줄었어요.</strong></p>
+<p>지우는 건 하루에 끝나는 일이고, 자동 규칙은 그 뒤로 매일 돌아가는 일이에요. 하루 동안 지운 것보다 한 달 반 동안 규칙이 걸러낸 게 더 컸던 것 같아요.</p>
+<p>612도 적은 숫자는 아니에요. 안 읽은 메일이 여전히 육백 통이니까요. 근데 6,340일 땐 메일함을 여는 것 자체가 싫었는데, 612는 열어볼 만해요.</p>
+<h2>정리하면</h2>
+<ul>
+<li>받은편지함 옆 숫자가 6,340에서 3천 남짓으로, 다시 612로 줄었어요.</li>
+<li>AI는 찾고, 저는 지웠어요.</li>
+<li>지울 것보다 <strong>남길 것을 먼저</strong> 정했어요.</li>
+<li>지우기만 하면 다시 쌓여요. 자동 규칙까지 만들어야 해요.</li>
+<li>컴퓨터로 해야 해요. 폰으로는 안 돼요.</li>
+</ul>
+<p>메일함이 창고가 된 분이라면, "일치하는 대화 모두 선택" 그 작은 글자 하나만 기억하셔도 돼요.</p>
+<hr />
+<p><em>이런 삽질을 모아놓은 전자책 『AI로 토스 미니앱 11개 만든 비개발자의 역습』은 <a href="https://kmong.com/self-marketing/803533">크몽</a>에 있어요.</em></p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    코딩은 못 하지만 궁금한 건 못 참는 비개발자 Luka의 삽질 기록이에요. 직접 파보고, 막힌 데까지 그대로 적습니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-10-20-안-읽은-메일-6340통을-AI랑-같이-치운-이야기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">안 읽은 메일 6,340통을 AI랑 같이 치운 이야기 — AI는 읽기만 하고, 지우는 건 제가 했어요</a></li>
+        <li><a href="/posts/2026-10-16-앱을-내고-45분-뒤에-시장조사를-했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">앱을 내고 45분 뒤에 시장조사를 했어요 — 하루 만에 만든 앱, 두 달째 안 보낸 메일</a></li>
+        <li><a href="/posts/2026-10-13-AI한테-국악을-시켰더니-중국-음악이-나왔어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">AI한테 국악을 시켰더니 중국 음악이 나왔어요 — 결국 사람이 연주한 민요 105곡을 찾아낸 이야기</a></li>
+        <li><a href="/posts/2026-10-09-24시간-AI-상담봇을-팔면서-제-채널은-제가-답하고-있었어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">24시간 AI 상담봇을 팔면서 제 채널은 제가 답하고 있었어요 — 카톡 상담봇 만들고 22시간, 또 36시간 먹통 된 이야기</a></li>
+        <li><a href="/posts/2026-10-06-폰으로-집-컴퓨터의-AI를-부리게-만든-이야기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">폰으로 집 컴퓨터의 AI를 부리게 만든 이야기 — 리모컨 하나 다는 데 막힌 곳 네 군데</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
