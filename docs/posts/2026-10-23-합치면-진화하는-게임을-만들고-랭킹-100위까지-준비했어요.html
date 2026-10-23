@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>합치면 진화하는 게임을 만들고 랭킹 100위까지 준비했어요 — 지금 랭킹에 있는 이름은 하나예요 - InfoLoomia</title>
+    <meta name="description" content="같은 캐릭터 둘을 붙이면 다음 단계로 진화하는 게임을 하루 만에 만들었어요. 점수를 속이지 못하게 막는 장치까지 달아서 랭킹 100위를 준비했는데, 한 달 반이 지난 지금 랭킹에 올라온 이름은 하나뿐이에요.">
+    <link rel="canonical" href="https://infoloomia.com/posts/2026-10-23-%ED%95%A9%EC%B9%98%EB%A9%B4-%EC%A7%84%ED%99%94%ED%95%98%EB%8A%94-%EA%B2%8C%EC%9E%84%EC%9D%84-%EB%A7%8C%EB%93%A4%EA%B3%A0-%EB%9E%AD%ED%82%B9-100%EC%9C%84%EA%B9%8C%EC%A7%80-%EC%A4%80%EB%B9%84%ED%96%88%EC%96%B4%EC%9A%94.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>합치면 진화하는 게임을 만들고 랭킹 100위까지 준비했어요 — 지금 랭킹에 있는 이름은 하나예요</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-10-23</span>
+            <span><i class="fa-regular fa-folder"></i> 삽질기</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다.</p>
+<p>게임을 하나 만들었어요. 위에서 캐릭터를 떨어뜨리고, 같은 캐릭터 둘이 닿으면 합쳐져서 다음 단계 캐릭터가 되는 게임이에요. 수박게임이라고 하면 아실 거예요. 과일 대신 제 캐릭터들이 떨어져요.</p>
+<p>AI한테 처음 한 말은 이랬어요.</p>
+<blockquote>
+<p>"진화하고 도파민 터지는 게임."</p>
+</blockquote>
+<p><a href="https://vaulted-bus-346411.web.app/merge">여기</a>서 바로 해볼 수 있어요. 설치 없어요.</p>
+<h2>그날 시간표</h2>
+<p>9월 5일이에요. 작업 기록에 남은 시각이에요.</p>
+<table>
+<thead>
+<tr>
+<th>시각</th>
+<th>한 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11:57</td>
+<td>설계 문서</td>
+</tr>
+<tr>
+<td>11:59</td>
+<td>캐릭터 그림을 뽑을 지시문</td>
+</tr>
+<tr>
+<td>12:33</td>
+<td>캐릭터 그림 11장 완성</td>
+</tr>
+<tr>
+<td>12:43</td>
+<td>귀가 잘린 그림 세 장 다시 자르기</td>
+</tr>
+<tr>
+<td>17:08</td>
+<td>만들 순서 정리 (아홉 단계)</td>
+</tr>
+<tr>
+<td>17:11</td>
+<td>점수 계산</td>
+</tr>
+<tr>
+<td>17:14</td>
+<td>랭킹 서버</td>
+</tr>
+<tr>
+<td>17:35</td>
+<td>물리, 합체, 효과음</td>
+</tr>
+<tr>
+<td>17:51</td>
+<td>배포</td>
+</tr>
+</tbody>
+</table>
+<p>만들기 시작해서 배포까지 <strong>40분</strong>이에요. 17시 11분에서 17시 51분.</p>
+<p>그런데 시간표를 보면 그 40분 앞에 다섯 시간이 있어요. 설계하고, 그림 뽑고, 순서를 정한 시간이요. 40분 만에 만든 게 아니라, 다섯 시간 동안 정해놓은 걸 40분 동안 옮긴 거예요.</p>
+<p>참고로 이날 아침에 애드센스 세 번째 반려 메일을 받았어요. 오전엔 떨어지고 오후엔 게임을 만든 날이에요.</p>
+<h2>열한 단계</h2>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>캐릭터</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1~5</td>
+<td>제 AI 에이전트 캐릭터 다섯</td>
+</tr>
+<tr>
+<td>6</td>
+<td>루카 (저예요)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>황금 루카</td>
+</tr>
+<tr>
+<td>8</td>
+<td>불꽃 루카</td>
+</tr>
+<tr>
+<td>9</td>
+<td>우주 루카</td>
+</tr>
+<tr>
+<td>10</td>
+<td>천사 루카</td>
+</tr>
+<tr>
+<td>11</td>
+<td>전설 루카</td>
+</tr>
+</tbody>
+</table>
+<p>1단계가 제일 작고 11단계가 제일 커요. 11단계 둘이 만나면 둘 다 사라지고 보너스 점수가 나와요.</p>
+<p>7단계부터는 루카 그림 하나에 효과만 입혀서 만들 수도 있었어요. 저는 그러지 말자고 했어요. <strong>단계마다 다른 그림이 있어야 보는 즐거움이 있다</strong>고요. 다음엔 뭐가 나올지 궁금해야 계속 합치게 되잖아요. 그래서 황금, 불꽃, 우주, 천사, 전설을 전부 따로 그렸어요.</p>
+<h2>삽질 1: 흰 티셔츠가 사라졌어요</h2>
+<p>캐릭터 그림은 흰 배경으로 나와요. 게임에 넣으려면 배경을 지워서 투명하게 만들어야 해요.</p>
+<p>AI가 "흰색인 부분을 지운다"는 방식으로 배경을 지웠어요. 그랬더니 <strong>루카의 흰 티셔츠도 같이 지워졌어요.</strong> 몸통에 구멍이 난 거예요.</p>
+<p>배경의 흰색이랑 티셔츠의 흰색이 완전히 같은 색이었거든요. 컴퓨터 눈에는 구별이 안 돼요.</p>
+<p>해결은 이랬어요. "흰색이면 지운다"가 아니라 <strong>"바깥 테두리에서 시작해서 이어진 흰색만 지운다"</strong>로 바꿨어요. 배경은 테두리에 닿아 있고 티셔츠는 안 닿아 있으니까요. 그래도 티셔츠 아래쪽은 테두리에 닿아서, 그 부분은 아예 시작점에서 뺐어요.</p>
+<p>천사 루카의 날개도 문제였어요. 날개가 거의 흰색이라 배경이랑 같이 날아갈 뻔했어요.</p>
+<h2>삽질 2: 귀가 잘렸어요</h2>
+<p>캐릭터를 동그라미 안에 넣어야 해요. 공처럼 굴러다녀야 하니까요.</p>
+<p>동그랗게 잘랐더니 세 캐릭터의 귀가 잘렸어요. 귀가 큰 애들이었어요. 그림 열한 장을 만들고 10분 뒤에 세 장을 다시 잘랐어요.</p>
+<h2>삽질 3: 그림이 안 떠요</h2>
+<p>배포한 주소에서 그림과 게임 파일을 못 찾는 문제가 있었어요.</p>
+<p>주소 때문이었어요. 게임 주소 끝에 <code>/</code>가 있느냐 없느냐에 따라, 컴퓨터가 그림을 찾으러 가는 위치가 달라져요. 제 게임은 끝에 <code>/</code> 없이 열렸고, 그러면 그림을 엉뚱한 폴더에서 찾아요.</p>
+<p>그림 위치를 "여기서 옆 폴더"가 아니라 "맨 처음부터 이 길로"라고 전부 다시 적었어요.</p>
+<h2>삽질 4: 흐릿해요</h2>
+<p>그림은 떴는데 흐릿했어요. 요즘 폰은 화면이 촘촘해서, 그냥 그리면 그림을 늘려서 보여줘요. 폰 화면의 촘촘한 정도에 맞춰서 더 크게 그린 다음 줄여서 보여주게 바꿨어요.</p>
+<p>용량도 줄였어요. 그림 열한 장이 3.8MB였는데 0.6MB로요. 폰에서 게임 하나 여는데 그림만 4MB면 기다리다 나가요.</p>
+<h2>점수를 속이지 못하게</h2>
+<p>랭킹을 만들면 꼭 생각해야 하는 게 있어요. <strong>누가 점수를 속이면 어떡하지?</strong></p>
+<p>이 게임은 점수를 폰에서 계산해서 서버로 보내요. 그 말은, 아는 사람은 게임을 안 하고도 "저 99999점이에요"라고 보낼 수 있다는 거예요.</p>
+<p>그래서 서버가 점수만 받지 않아요. <strong>몇 단계 캐릭터를 몇 번 합쳤는지</strong>도 같이 받아요. 그리고 계산해요. "이만큼 합쳤으면 아무리 잘해도 최대 몇 점"이 나오는데, 보낸 점수가 그걸 넘으면 거절해요.</p>
+<table>
+<thead>
+<tr>
+<th>서버가 확인하는 것</th>
+<th>걸리면</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>합친 횟수로 나올 수 있는 점수를 넘었나</td>
+<td>거절</td>
+</tr>
+<tr>
+<td>전체 합친 횟수와 단계별 횟수의 합이 맞나</td>
+<td>거절</td>
+</tr>
+<tr>
+<td>같은 곳에서 1초에 두 번 이상 보냈나</td>
+<td>거절</td>
+</tr>
+<tr>
+<td>이름이 열 글자를 넘나</td>
+<td>거절</td>
+</tr>
+</tbody>
+</table>
+<p>완벽한 방어는 아니에요. 작정하고 숫자를 맞춰서 보내면 뚫려요. 그래도 아무 숫자나 넣는 건 막아요.</p>
+<p>게임 쪽 계산이랑 서버 쪽 계산이 다르면 멀쩡한 점수가 거절당하니까, 둘이 같은 답을 내는지 확인하는 시험도 만들었어요.</p>
+<h2>사람 있는 곳에 올릴 수 있다는 걸 몰랐어요</h2>
+<p>그날 오전 작업 기록에 이런 게 남아 있어요.</p>
+<table>
+<thead>
+<tr>
+<th>시각</th>
+<th>한 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11:27</td>
+<td>예전에 만든 게임 두 개에, 게임 모음 사이트의 랭킹을 연결</td>
+</tr>
+<tr>
+<td>11:42</td>
+<td>되돌림</td>
+</tr>
+<tr>
+<td>11:57</td>
+<td>합체 게임 설계 시작</td>
+</tr>
+</tbody>
+</table>
+<p>붙였다가 15분 만에 뗐어요. 그리고 새로 만드는 합체 게임은 그 사이트의 랭킹 구조만 참고하고, 랭킹은 제 걸로 따로 만들었어요.</p>
+<p>그 사이트에는 게임 하러 오는 사람들이 이미 있었어요. 거기 올렸으면 누군가는 해봤을 거예요.</p>
+<p>왜 안 올렸냐면요. <strong>거기에 제 게임을 올릴 수 있다는 걸 몰랐어요.</strong> AI가 올리라고 한 적도 없고요. 알았으면 물어봤겠죠.</p>
+<p>안 하기로 한 게 아니에요. 할 수 있는 줄 몰랐던 거예요. 모르는 건 물어볼 수도 없어요.</p>
+<p>AI는 제가 물어본 건 잘 대답해 줘요. 근데 제가 뭘 모르는지는 제가 물어봐야 알려줘요. 그리고 저는 제가 뭘 모르는지 몰라요.</p>
+<h2>그래서 지금 랭킹은요</h2>
+<p>100위까지 저장하게 만들었어요. 100위 안에 들면 이름을 남길 수 있고, 못 들면 "100위까지 몇 점 남았어요"라고 알려줘요.</p>
+<p>이 글을 쓰면서 랭킹을 열어봤어요.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>준비한 자리</td>
+<td>100</td>
+</tr>
+<tr>
+<td>등록된 기록</td>
+<td><strong>4</strong></td>
+</tr>
+<tr>
+<td>이름 종류</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>1위 점수</td>
+<td>7,093</td>
+</tr>
+<tr>
+<td>최고 연속 합체</td>
+<td>10번</td>
+</tr>
+</tbody>
+</table>
+<p>그 이름 하나는 저예요. 저뿐인 것 같아요. ㅋㅋㅋㅋ</p>
+<p>1위도 저, 2위도 저, 3위도 저, 4위도 저예요. 제가 만든 게임에서 제가 저랑 경쟁하고 있어요.</p>
+<p>점수를 속이는 사람을 막으려고 서버에 검사를 네 개 달았는데, 막을 사람이 아직 안 왔어요. 100명이 몰릴 때를 대비해서 100위까지만 저장하게 만들었는데, 96자리가 비어 있어요.</p>
+<p>근데 저는 너무 재밌던데요.</p>
+<p>랭킹에 기록이 네 개 있다는 건 제가 적어도 네 판은 끝까지 했다는 뜻이에요. 1위 점수 7,093점도, 연속 합체 10번도 제 기록이에요. 만든 사람이 제일 열심히 하고 있어요.</p>
+<p>재밌는 게임을 만든 건지, 제가 만들어서 재밌는 건지는 저 혼자서는 알 수가 없어요. 다른 사람이 해봐야 알아요. 그리고 다른 사람은 아직 안 왔어요.</p>
+<hr />
+<p><em>이런 삽질을 모아놓은 전자책 『AI로 토스 미니앱 11개 만든 비개발자의 역습』은 <a href="https://kmong.com/self-marketing/803533">크몽</a>에 있어요.</em></p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    코딩은 못 하지만 궁금한 건 못 참는 비개발자 Luka의 삽질 기록이에요. 직접 파보고, 막힌 데까지 그대로 적습니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-10-23-합치면-진화하는-게임을-만들고-랭킹-100위까지-준비했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">합치면 진화하는 게임을 만들고 랭킹 100위까지 준비했어요 — 지금 랭킹에 있는 이름은 하나예요</a></li>
+        <li><a href="/posts/2026-10-20-안-읽은-메일-6340통을-AI랑-같이-치운-이야기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">안 읽은 메일 6,340통을 AI랑 같이 치운 이야기 — AI는 읽기만 하고, 지우는 건 제가 했어요</a></li>
+        <li><a href="/posts/2026-10-16-앱을-내고-45분-뒤에-시장조사를-했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">앱을 내고 45분 뒤에 시장조사를 했어요 — 하루 만에 만든 앱, 두 달째 안 보낸 메일</a></li>
+        <li><a href="/posts/2026-10-13-AI한테-국악을-시켰더니-중국-음악이-나왔어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">AI한테 국악을 시켰더니 중국 음악이 나왔어요 — 결국 사람이 연주한 민요 105곡을 찾아낸 이야기</a></li>
+        <li><a href="/posts/2026-10-09-24시간-AI-상담봇을-팔면서-제-채널은-제가-답하고-있었어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">24시간 AI 상담봇을 팔면서 제 채널은 제가 답하고 있었어요 — 카톡 상담봇 만들고 22시간, 또 36시간 먹통 된 이야기</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
