@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토스는 하루, 구글 플레이는 14일 — 첫 앱을 올리려면 테스터 12명이 필요했어요 - InfoLoomia</title>
+    <meta name="description" content="토스에 미니앱 16개를 올린 뒤에 구글 플레이에 첫 앱을 올려봤어요. 토스에선 하루 만에 출시된 적도 있는데, 구글 플레이는 테스터 12명이 14일 동안 써봐야 출시 신청을 할 수 있었어요. 비개발자가 처음 부딪힌 구글 플레이 기록.">
+    <link rel="canonical" href="https://infoloomia.com/posts/2026-10-27-%ED%86%A0%EC%8A%A4%EB%8A%94-%ED%95%98%EB%A3%A8-%EA%B5%AC%EA%B8%80-%ED%94%8C%EB%A0%88%EC%9D%B4%EB%8A%94-14%EC%9D%BC.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>토스는 하루, 구글 플레이는 14일 — 첫 앱을 올리려면 테스터 12명이 필요했어요</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-10-27</span>
+            <span><i class="fa-regular fa-folder"></i> 삽질기</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다.</p>
+<p><a href="/posts/2026-09-08-코딩-못-하는-비개발자가-토스에-미니앱-16개-올린-이야기.html">토스에 미니앱 16개를 올린 이야기</a>에서 "올리는 건 쉬웠다"고 썼어요. 아침에 아이디어가 나와서 저녁에 출시된 앱도 있었으니까요.</p>
+<p>그래서 구글 플레이도 비슷할 줄 알았어요.</p>
+<p>아니었어요. 이 글은 9월 말에 쓰고 있는데, <strong>앱은 아직 출시 전이에요.</strong> 지금 어디까지 왔는지 적어볼게요.</p>
+<h2>왜 갑자기 구글 플레이냐면요</h2>
+<p>토스 미니앱을 16개 만들고 나서 한번 멈춰서 따져봤어요. 왜 이렇게 조용하지?</p>
+<p>찾아보니 제가 주로 만들던 계산기 같은 <strong>도구 앱은 찾는 사람이 줄고 있었어요.</strong> 궁금한 건 AI한테 바로 물어보면 되니까요. 축의금 얼마 낼지 계산해 주는 앱을 굳이 깔 이유가 없어진 거예요.</p>
+<p>반대로 운세, 감정, 캐릭터 쪽은 꾸준했어요.</p>
+<p>그리고 더 큰 문제는 앱 종류가 아니었어요. <strong>알리는 통로가 없었어요.</strong> 16개를 만들었는데 16개 다 누가 찾아와 주길 기다리고만 있었어요.</p>
+<p>그래서 방향을 바꿨어요. 새 앱을 또 만들지 말고, <strong>하나에 집중하자.</strong></p>
+<h2>어떤 앱이냐면요</h2>
+<p>이름은 <strong>「오늘도 참았다 - 루릭」</strong>이에요. 첫 화면에 이렇게 써 있어요. "여기서는 안 참아도 돼."</p>
+<p><img alt="「오늘도 참았다 - 루릭」 첫 화면. 아직 베타 테스트 버전이에요" src="/images/posts/rurik-app-beta.jpg" /></p>
+<p>하고 싶었지만 참은 말이 있잖아요. 그걸 골라서 고양이 루릭한테 던지는 앱이에요.</p>
+<ol>
+<li>문구 80개 중에 하나를 골라요.</li>
+<li>고양이한테 던져요.</li>
+<li>고양이가 반응해요. 받아먹거나, 뻥 차거나, 구기거나, 모른 척하거나, 방석으로 깔고 앉아요. 아주 가끔은 박치기를 해요.</li>
+<li>그 장면을 카드로 저장하거나 공유해요.</li>
+</ol>
+<p><img alt="던지고 나면 나오는 카드. &quot;오늘은 일보다 고개를 더 많이 끄덕였다.&quot;" src="/images/posts/rurik-app-card.jpg" /></p>
+<p>인터넷도 안 쓰고, 광고도 없고, 가입도 없어요.</p>
+<h2>토스랑 뭐가 달랐냐면요</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>토스 미니앱</th>
+<th>구글 플레이</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>앱을 만드는 곳</td>
+<td>브라우저에서 돌아가는 파일</td>
+<td>안드로이드 앱으로 포장해야 함</td>
+</tr>
+<tr>
+<td>올리는 방법</td>
+<td>명령어 한 줄</td>
+<td>프로그램을 열어서 빌드하고, 나온 파일을 사이트에 올림</td>
+</tr>
+<tr>
+<td>출시 전 조건</td>
+<td>심사만</td>
+<td><strong>테스터 12명이 14일 동안 써봐야 함</strong></td>
+</tr>
+<tr>
+<td>제가 겪은 제일 빠른 출시</td>
+<td>하루</td>
+<td>아직 출시 전</td>
+</tr>
+</tbody>
+</table>
+<p>제일 큰 차이는 세 번째 줄이에요.</p>
+<h2>12명, 14일</h2>
+<p>구글 플레이는 개인이 새로 만든 개발자 계정으로 앱을 내려면 조건이 있어요.</p>
+<ul>
+<li><strong>테스터 12명 이상</strong>이</li>
+<li><strong>14일 동안 계속</strong> 테스트에 참여해야</li>
+<li>그제야 정식 출시를 <strong>신청</strong>할 수 있어요.</li>
+</ul>
+<p><img alt="테스터로 등록되면 이 화면이 떠요. 열두 명이 각자 이 화면을 봐야 해요" src="/images/posts/rurik-play-tester.jpg" /></p>
+<p>신청하면 또 심사가 있어요. 최대 7일.</p>
+<table>
+<thead>
+<tr>
+<th>날짜</th>
+<th>일어난 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9월 21일</td>
+<td>비공개 테스트 시작</td>
+</tr>
+<tr>
+<td>9월 23일 저녁</td>
+<td>테스터 12명 달성, 14일 세기 시작</td>
+</tr>
+<tr>
+<td>10월 7일쯤</td>
+<td>정식 출시 신청 가능</td>
+</tr>
+<tr>
+<td>10월 중순</td>
+<td>심사가 끝나면 출시 (예상)</td>
+</tr>
+</tbody>
+</table>
+<p>토스에서는 하루였던 일이 여기서는 한 달이에요.</p>
+<p>그리고 12명이 <strong>딱 12명</strong>이에요. 한 명이라도 빠지면 조건이 깨져요. 그래서 여유로 몇 명을 더 모아야 해요.</p>
+<p>열두 명은 친구들, 지인들, 그리고 커뮤니티에서 모았어요. SNS에는 이런 글을 올렸어요.</p>
+<blockquote>
+<p>🐾 베타테스터 모집 🐾
+「오늘도 참았다 - 루릭」</p>
+<p>오늘 참은 거, 루릭한테 던지고 가세요.
+냠냠 먹어 치우거나… 뻥 차 버리거나… 깔고 앉거나…
+어쩌다 ✨희귀 반응✨도 나와요.</p>
+<p>🤖 안드로이드: 댓글이나 DM으로 구글 메일 주소 알려주세요 → 테스트 초대 링크 보내드려요
+🍎 아이폰: 링크 하나면 끝! 설치 없이 바로 해볼 수 있어요</p>
+<p>희귀 반응 뜨면 캡처 자랑해 주세요 😼
+"여기서는 안 참아도 돼."</p>
+</blockquote>
+<p>안드로이드 쪽이 번거로워요. 테스터가 되려면 그분의 구글 메일 주소를 제가 받아서 명단에 넣어야 해요. 그다음에 초대 링크를 보내요. 앱 하나 써보자고 메일 주소를 알려달라는 거라, 부탁하는 쪽도 조심스러워요.</p>
+<p>앱을 만드는 건 AI랑 둘이 하면 돼요. 근데 열두 명은 AI가 못 데려와요.</p>
+<h2>아이폰 쓰는 사람은요</h2>
+<p>테스터를 모으다 보니 문제가 하나 나왔어요. 구글 플레이 테스트는 안드로이드 폰만 돼요. 아이폰 쓰는 사람은 도와주고 싶어도 못 해요.</p>
+<p>그래서 웹 버전을 따로 만들었어요. 같은 앱을 브라우저에서 열리게 한 거예요. 아이폰 쓰는 분들은 그걸로 써보고 의견을 줘요.</p>
+<p>다만 구글 플레이 테스터 숫자에는 안 들어가요. 12명은 안드로이드로 채워야 해요.</p>
+<h2>삽질: 폴더가 두 벌이었어요</h2>
+<p>앱을 고쳤는데 빌드한 앱에는 고친 게 안 들어가 있었어요.</p>
+<p>폴더가 두 벌이었어요.</p>
+<table>
+<thead>
+<tr>
+<th>폴더</th>
+<th>누가 쓰나</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>바탕화면에 있는 것</td>
+<td>AI가 여기서 고쳐요</td>
+</tr>
+<tr>
+<td>다운로드에 있는 것</td>
+<td>앱으로 포장하는 프로그램이 이걸 열어요</td>
+</tr>
+</tbody>
+</table>
+<p>AI는 바탕화면 폴더를 고치고, 포장 프로그램은 다운로드 폴더를 포장하고 있었어요. 서로 다른 폴더를 보고 있었던 거예요.</p>
+<p>지금은 고친 뒤에 바뀐 파일을 다운로드 폴더로 복사해요. 깔끔한 방법은 아닌데, 일단 그렇게 하고 있어요.</p>
+<h2>기다리는 동안 한 일</h2>
+<p>14일은 그냥 기다리는 시간이 아니었어요.</p>
+<ul>
+<li><strong>9월 23일</strong>: 두 번째 버전을 올렸어요. 고양이 반응을 여섯 가지로 늘렸어요. 그날 오후에 검토를 통과했어요.</li>
+<li><strong>9월 24일</strong>: 말풍선 위치를 고치고, 로딩 화면에서 멈추는 문제를 막았어요.</li>
+<li>테스터들이 주는 의견을 모으고 있어요. 모아서 세 번째 버전에 넣을 거예요.</li>
+</ul>
+<p>토스에서는 출시가 끝이었어요. 올리고 나면 다음 앱을 만들었어요. 여기서는 출시 전에 14일 동안 <strong>실제 사람이 쓰는 걸 보면서 고치게</strong> 돼요.</p>
+<p>처음엔 이 조건이 벽 같았어요. 근데 제 앱들이 조용했던 이유가 "알리는 통로가 없어서"였잖아요. 구글은 출시도 하기 전에 <strong>일단 열두 명을 데려오라</strong>고 시킨 거예요. 제가 16번 동안 안 했던 일을요.</p>
+<h2>지금 상태</h2>
+<p>이 글을 쓰는 9월 28일 기준이에요.</p>
+<ul>
+<li>비공개 테스트 중이에요. 구글 플레이에는 "사전 체험판"이라고 떠요.</li>
+<li>테스터 12명, 14일 중 5일째예요.</li>
+<li>정식 출시 신청은 10월 7일쯤 할 수 있어요.</li>
+</ul>
+<p><img alt="구글 플레이에 뜬 모습. 이름 옆에 &quot;사전 체험판&quot;이 붙어 있어요" src="/images/posts/rurik-play-early-access.jpg" /></p>
+<p>글이 올라가는 10월 말에는 출시가 됐을 수도 있고, 어디선가 또 막혔을 수도 있어요. 어떻게 됐는지는 다음에 쓸게요.</p>
+<h2>덧붙임: 출시됐어요 (10월 11일)</h2>
+<p>위 글은 9월 28일에 쓴 그대로 뒀어요. 그 뒤에 일어난 일만 덧붙여요.</p>
+<table>
+<thead>
+<tr>
+<th>날짜</th>
+<th>일어난 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10월 8일</td>
+<td>14일을 채우고 정식 출시 신청</td>
+</tr>
+<tr>
+<td>10월 9일</td>
+<td>승인 메일 도착. 최대 7일이라더니 하루 만에 왔어요</td>
+</tr>
+<tr>
+<td>10월 10일</td>
+<td>세 번째 버전으로 정식 출시 제출</td>
+</tr>
+<tr>
+<td>10월 11일</td>
+<td>구글 플레이에 공개</td>
+</tr>
+</tbody>
+</table>
+<p>9월 21일에 테스트를 시작했으니, 토스에서 하루였던 일이 여기서는 3주쯤 걸렸어요.</p>
+<p><strong>「오늘도 참았다 - 루릭」은 <a href="https://play.google.com/store/apps/details?id=com.metaluca.rulik">구글 플레이</a>에서 받을 수 있어요.</strong> 무료고, 가입도 광고도 없어요.</p>
+<hr />
+<p><em>이런 삽질을 모아놓은 전자책 『AI로 토스 미니앱 11개 만든 비개발자의 역습』은 <a href="https://kmong.com/self-marketing/803533">크몽</a>에 있어요.</em></p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    코딩은 못 하지만 궁금한 건 못 참는 비개발자 Luka의 삽질 기록이에요. 직접 파보고, 막힌 데까지 그대로 적습니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-10-27-토스는-하루-구글-플레이는-14일.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">토스는 하루, 구글 플레이는 14일 — 첫 앱을 올리려면 테스터 12명이 필요했어요</a></li>
+        <li><a href="/posts/2026-10-23-합치면-진화하는-게임을-만들고-랭킹-100위까지-준비했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">합치면 진화하는 게임을 만들고 랭킹 100위까지 준비했어요 — 지금 랭킹에 있는 이름은 하나예요</a></li>
+        <li><a href="/posts/2026-10-20-안-읽은-메일-6340통을-AI랑-같이-치운-이야기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">안 읽은 메일 6,340통을 AI랑 같이 치운 이야기 — AI는 읽기만 하고, 지우는 건 제가 했어요</a></li>
+        <li><a href="/posts/2026-10-16-앱을-내고-45분-뒤에-시장조사를-했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">앱을 내고 45분 뒤에 시장조사를 했어요 — 하루 만에 만든 앱, 두 달째 안 보낸 메일</a></li>
+        <li><a href="/posts/2026-10-13-AI한테-국악을-시켰더니-중국-음악이-나왔어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">AI한테 국악을 시켰더니 중국 음악이 나왔어요 — 결국 사람이 연주한 민요 105곡을 찾아낸 이야기</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
