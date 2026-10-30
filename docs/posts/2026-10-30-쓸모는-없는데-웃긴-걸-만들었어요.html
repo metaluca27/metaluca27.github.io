@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쓸모는 없는데 웃긴 걸 만들었어요 — 웹페이지를 기어다니는 무당벌레 - InfoLoomia</title>
+    <meta name="description" content="남이 만든 거미를 보고 '난 무당벌레로' 해서 크롬 확장 프로그램을 만들었어요. 보고 있는 웹페이지 위를 무당벌레가 기어다니며 형광펜을 칠해요. 쓸모는 없어요. 스토어에 안 올리고 내 크롬에만 까는 방법, 그리고 폴더를 지우면 벌레도 사라지는 이야기.">
+    <link rel="canonical" href="https://infoloomia.com/posts/2026-10-30-%EC%93%B8%EB%AA%A8%EB%8A%94-%EC%97%86%EB%8A%94%EB%8D%B0-%EC%9B%83%EA%B8%B4-%EA%B1%B8-%EB%A7%8C%EB%93%A4%EC%97%88%EC%96%B4%EC%9A%94.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AdSense Auto-injection -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3073744952767165" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0d0f14;
+            --card-bg: rgba(22, 28, 45, 0.6);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-color: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-color: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.7;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        /* Header / Navbar */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(13, 15, 20, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 1.05rem;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section (only on homepage) */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 8fr 4fr;
+            gap: 40px;
+            margin: 60px 0;
+            flex: 1;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards and Post list */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .post-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        .post-card:hover::before {
+            opacity: 1;
+        }
+
+        .post-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .post-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+
+        .post-title a {
+            color: var(--text-main);
+        }
+
+        .post-title a:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-excerpt {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Post Content Detail page */
+        .post-detail {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .post-detail h1 {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.25;
+            background: linear-gradient(135deg, #f3f4f6 60%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .post-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-top: 30px;
+        }
+
+        .post-content h2 {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin: 45px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .post-content h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+        }
+
+        .post-content p {
+            margin-bottom: 20px;
+            color: #d1d5db;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 0 0 20px 30px;
+        }
+
+        .post-content li {
+            margin-bottom: 8px;
+        }
+
+        .post-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding: 10px 20px;
+            background: rgba(59, 130, 246, 0.05);
+            margin: 30px 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .post-content code {
+            background: rgba(255, 255, 255, 0.07);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .post-content pre {
+            background: #111827;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 30px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9em;
+            color: #f3f4f6;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* AdSense Slots */
+        .adsense-slot {
+            margin: 30px 0;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .adsense-slot::before {
+            content: 'ADVERTISEMENT';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            background: rgba(13, 15, 20, 0.9);
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-compass"></i> InfoLoomia
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero / Headline (Only on Homepage) -->
+    
+
+    <!-- Main Content Layout -->
+    <div class="container main-layout">
+        
+        <!-- Center Content -->
+        <main>
+            
+        <article class="post-detail">
+            <h1>쓸모는 없는데 웃긴 걸 만들었어요 — 웹페이지를 기어다니는 무당벌레</h1>
+            
+        <div class="post-meta">
+            <span><i class="fa-regular fa-calendar"></i> 2026-10-30</span>
+            <span><i class="fa-regular fa-folder"></i> 삽질기</span>
+            <span><i class="fa-regular fa-user"></i> Luka</span>
+        </div>
+        
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+            <div class="post-content">
+                <p>안녕하세요, 코딩은 못 하지만 IT가 너무 궁금한 비개발자 루카(Luka)입니다.</p>
+<p>지금까지 이 블로그에 쓴 건 전부 뭔가 목적이 있는 물건이었어요. 번역기, 상담봇, 대화 도우미. 그리고 대부분 "만들었는데 사람이 안 와요"로 끝났고요.</p>
+<p>이번엔 처음부터 목적이 없어요. <strong>쓸모없는 걸 만들었어요.</strong> 그리고 지금까지 만든 것 중에 제일 자주 켜요.</p>
+<h2>남의 거미를 봤어요</h2>
+<p>10월 초에 트윗을 하나 봤어요. <a href="https://x.com/sintowdesign">@sintowdesign</a>이라는 분이 만든 크롬 확장 프로그램인데, 거미 한 마리가 웹페이지 위를 기어다니면서 문장에 형광펜을 칠해요.</p>
+<p>보고 바로 따라 하기로 했어요. 거미 대신 무당벌레로요. AI한테 이렇게 말했어요.</p>
+<blockquote>
+<p>"난 무당벌레로."</p>
+</blockquote>
+<p>그게 10월 4일이에요.</p>
+<h2>뭘 하는 애냐면요</h2>
+<p>크롬 오른쪽 위에 무당벌레 아이콘이 생겨요. 누르면 이렇게 돼요.</p>
+<ol>
+<li>화면 가장자리에서 무당벌레가 걸어 들어와요.</li>
+<li>글을 찾아가서 문장을 따라 기어요. 지나간 자리에 빨간 형광펜이 남아요. 한 번에 한 줄에서 네 줄.</li>
+<li>한 묶음을 칠하고 나면 가끔 낙서를 해요. 동그라미, 물결 밑줄, 별. 무당벌레가 직접 그 모양대로 걸어서 그려요.</li>
+<li>무당벌레를 누르면 등껍질이 열리고, 속날개를 파닥이면서 화면 밖으로 날아가요. 자국은 남아요.</li>
+<li>화면 아래 "무당벌레 끄기" 버튼을 누르면 벌레도 자국도 다 사라져요.</li>
+</ol>
+<p>이 블로그에 풀어놔 봤어요.</p>
+<p><img alt="제 글 제목을 따라 기어가는 중이에요. 지나간 자리가 빨갛게 칠해져요" src="/images/posts/ladybug-walking.jpg" /></p>
+<p>조금 기다렸더니 이렇게 해놨어요.</p>
+<p><img alt="한참 뒤. &quot;열어봤더니&quot;에 동그라미, &quot;공모전 나갔다가 떨어진&quot;에 물결 밑줄" src="/images/posts/ladybug-doodles.jpg" /></p>
+<p>"열어봤더니"에 동그라미를 치고, <strong>"공모전 나갔다가 떨어진"에 물결 밑줄</strong>을 그어놨어요. 아무 생각 없이 긋는 건데 하필 거기예요. 제 벌레가 제 탈락에 밑줄을 쳤어요.</p>
+<p><img alt="전체 화면. 프로필 문구에도 칠해놨고, 아래 가운데에 &quot;무당벌레 끄기&quot; 버튼이 보여요" src="/images/posts/ladybug-on-blog.jpg" /></p>
+<p>다리도 그냥 달려 있는 게 아니에요. 걸을 때 세 다리씩 번갈아 움직여요. 한쪽 앞다리·뒷다리랑 반대쪽 가운뎃다리가 같이요. 진짜 곤충이 그렇게 걷는대요. 이건 제가 시킨 게 아니라 AI가 알아서 그렇게 만들었어요.</p>
+<h2>그날 시간표</h2>
+<table>
+<thead>
+<tr>
+<th>시각</th>
+<th>한 일</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>15:38</td>
+<td>첫 버전 완성</td>
+</tr>
+<tr>
+<td>17:01</td>
+<td>끄기 버튼을 화면 위에서 아래 가운데로 옮김</td>
+</tr>
+</tbody>
+</table>
+<p>고친 게 버튼 위치 하나예요. 이 블로그에 쓴 것 중에 삽질이 제일 적었어요. 써보고 나온 말도 한마디였어요.</p>
+<blockquote>
+<p>"잘 다니네."</p>
+</blockquote>
+<h2>스토어에 안 올리고 내 크롬에만 깔기</h2>
+<p>확장 프로그램은 보통 크롬 웹스토어에서 받잖아요. 저는 스토어에 안 올렸어요. 그래도 제 크롬에는 깔 수 있어요.</p>
+<ol>
+<li>크롬 주소창에 <code>chrome://extensions</code>를 쳐요.</li>
+<li>오른쪽 위 <strong>개발자 모드</strong>를 켜요.</li>
+<li><strong>압축해제된 확장 프로그램을 로드합니다</strong>를 누르고, 확장 프로그램 폴더를 골라요.</li>
+<li>주소창 옆 퍼즐 조각을 눌러서 무당벌레를 고정해요.</li>
+</ol>
+<p>"개발자 모드"라는 이름이 겁나게 생겼는데, 그냥 스위치 하나예요. 개발자가 아니어도 켤 수 있어요.</p>
+<h2>폴더를 지우면 벌레도 사라져요</h2>
+<p>이렇게 깐 확장 프로그램은 스토어에서 받은 것과 다른 점이 있어요. 크롬 안으로 복사돼 들어가는 게 아니에요. 크롬이 <strong>그 폴더를 매번 들여다보고</strong> 있는 거예요.</p>
+<p>그래서 바탕화면에 있는 그 폴더를 지우거나 옮기면 무당벌레가 꺼져요. 정리한다고 폴더를 치우면 벌레도 같이 치워지는 거예요.</p>
+<p>강의 나갈 때 쓰는 노트북에도 깔았는데, 폴더를 압축해서 옮긴 다음 거기서 똑같이 불러왔어요. 미니PC랑 노트북에 각각 폴더가 하나씩 있어요. 버튼 위치를 고쳤을 때도 두 군데를 따로 고쳐야 했어요.</p>
+<h2>권한 얘기를 하나만 할게요</h2>
+<p>확장 프로그램을 깔 때 "모든 웹사이트의 데이터를 읽고 변경할 수 있습니다" 같은 무서운 문구가 뜰 때가 있어요.</p>
+<p>무당벌레는 그 권한을 안 받아요. <strong>제가 아이콘을 누른 그 탭에서만</strong> 움직여요. 누르지 않은 다른 탭에서는 아무것도 못 해요. 그리고 페이지에 있는 글을 고치지도 않아요. 글 위에 투명한 막을 한 장 덮고 그 위에 그리는 거예요.</p>
+<p>이것도 제가 요구한 게 아니라 AI가 그렇게 설계해서 가져왔어요. 설계 문서에 "설치 시 모든 사이트 접근 권한 요청 없음"이라고 적혀 있더라고요. 남이 만든 확장 프로그램을 깔 때 뭘 봐야 하는지를, 제 걸 만들면서 처음 알았어요.</p>
+<p>못 들어가는 곳도 있어요. 크롬 설정 화면이나 웹스토어 같은 데는 못 들어가요. 크롬이 막아놨어요.</p>
+<h2>안 한 것들</h2>
+<p>설계 문서 끝에 "안 하는 것"이 적혀 있어요.</p>
+<ul>
+<li>여러 마리</li>
+<li>웹스토어 등록</li>
+<li>설정 화면</li>
+</ul>
+<p>지금도 안 했어요. 한 마리면 충분히 웃겨요.</p>
+<h2>왜 이게 제일 자주 켜질까요</h2>
+<p>제가 만든 것들을 떠올려 봤어요. 랭킹에 저 혼자 있는 게임, 손님이 거의 없는 상담봇, 메일을 아직 안 보낸 대화 도우미.</p>
+<p>그건 전부 <strong>남이 써줘야 완성되는</strong> 물건이에요. 그래서 사람이 안 오면 미완성인 채로 남아요.</p>
+<p>무당벌레는 저 혼자 쓰려고 만들었어요. 제가 켜면 그걸로 끝이에요. 올 사람을 기다릴 필요가 없어요.</p>
+<p>쓸 데도 하나 생겼어요. 저는 강의를 하는데, 10월 6일 수업에서 다들 집중력이 떨어지는 타이밍에 화면에 얘를 풀어놨어요.</p>
+<blockquote>
+<p>"저게 뭐야?"</p>
+</blockquote>
+<p>교실이 깼어요. 엄청 재밌어하셨어요. 흐트러진 분위기를 다시 모으는 데 이만한 게 없더라고요. 사람 모으려고 만든 상담봇은 손님이 거의 없는데, 그냥 웃기려고 만든 벌레는 한 번에 교실 하나를 잡았어요.</p>
+<p>쓸모없다고 썼는데, 쓸모가 생겼어요. 강의 도구예요.</p>
+<hr />
+<p><em>아이디어의 원본은 <a href="https://x.com/sintowdesign">@sintowdesign</a> 님의 거미 확장 프로그램이에요. 저는 벌레만 바꿨어요.</em></p>
+<p><em>이런 삽질을 모아놓은 전자책 『AI로 토스 미니앱 11개 만든 비개발자의 역습』은 <a href="https://kmong.com/self-marketing/803533">크몽</a>에 있어요.</em></p>
+            </div>
+            
+    <div class="adsense-slot">
+        <!-- 본문 내 광고 영역 -->
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center;"
+             data-ad-layout="in-article"
+             data-ad-format="fluid"
+             data-ad-client="ca-pub-3073744952767165"
+             data-ad-slot="body"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+    
+        </article>
+        
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            
+            <!-- Bio Widget -->
+            <div class="widget">
+                <h3 class="widget-title"><i class="fa-solid fa-user"></i> 프로필</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    코딩은 못 하지만 궁금한 건 못 참는 비개발자 Luka의 삽질 기록이에요. 직접 파보고, 막힌 데까지 그대로 적습니다.
+                </p>
+            </div>
+            
+            <!-- AdSense Sidebar Slot -->
+            
+    <div class="widget">
+        <h3 class="widget-title"><i class="fa-solid fa-rectangle-ad"></i> 광고</h3>
+        <div class="adsense-slot">
+            <!-- 사이드바 광고 영역 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3073744952767165"
+                 data-ad-slot="sidebar"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+            
+            <!-- Recent Posts Widget -->
+            <div class="widget">
+    <h3 class="widget-title"><i class="fa-solid fa-list"></i> 최근 포스팅</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px;">
+        <li><a href="/posts/2026-10-30-쓸모는-없는데-웃긴-걸-만들었어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">쓸모는 없는데 웃긴 걸 만들었어요 — 웹페이지를 기어다니는 무당벌레</a></li>
+        <li><a href="/posts/2026-10-27-토스는-하루-구글-플레이는-14일.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">토스는 하루, 구글 플레이는 14일 — 첫 앱을 올리려면 테스터 12명이 필요했어요</a></li>
+        <li><a href="/posts/2026-10-23-합치면-진화하는-게임을-만들고-랭킹-100위까지-준비했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">합치면 진화하는 게임을 만들고 랭킹 100위까지 준비했어요 — 지금 랭킹에 있는 이름은 하나예요</a></li>
+        <li><a href="/posts/2026-10-20-안-읽은-메일-6340통을-AI랑-같이-치운-이야기.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">안 읽은 메일 6,340통을 AI랑 같이 치운 이야기 — AI는 읽기만 하고, 지우는 건 제가 했어요</a></li>
+        <li><a href="/posts/2026-10-16-앱을-내고-45분-뒤에-시장조사를-했어요.html" style="font-size: 0.95rem; line-height: 1.4; display: block;">앱을 내고 45분 뒤에 시장조사를 했어요 — 하루 만에 만든 앱, 두 달째 안 보낸 메일</a></li>
+    </ul>
+</div>
+
+            
+        </aside>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="/">홈</a></li>
+                <li><a href="/about.html">소개</a></li>
+                <li><a href="/contact.html">연락처</a></li>
+                <li><a href="/privacy-policy.html">개인정보처리방침</a></li>
+                <li><a href="https://github.com/metaluca27" target="_blank">GitHub</a></li>
+            </ul>
+            <p>&copy; 2026 InfoLoomia. Powered by NABE (Nova Autonomous Blog Engine).</p>
+        </div>
+    </footer>
+
+</body>
+</html>
